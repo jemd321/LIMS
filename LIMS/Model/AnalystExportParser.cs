@@ -79,9 +79,64 @@ namespace LIMS.Model
             return new TransitionMRM() { Q1 = Q1, Q3 = Q3 };
         }
 
-        private static void ProcessRegressionInfo(List<string> headerBuffer)
+        private static AnalystExportHeaderRegressionInfo ProcessRegressionInfo(List<string> headerBuffer)
         {
-            throw new NotImplementedException();
+            string[] firstLine = headerBuffer[0].Split('\t');
+            Regression regression = ParseRegression(firstLine[0].Split(' ')[1]);
+            WeightingFactor weightingFactor = ParseWeightingFactor(firstLine[2]);
+
+            double? a, b, c = null;
+            a = double.Parse(headerBuffer[1].Split(' ')[1]);
+            b = double.Parse(headerBuffer[2].Split(' ')[1]);
+            c = double.Parse(headerBuffer[3].Split(' ')[1]);
+
+            double rSquared = double.Parse(headerBuffer[4].Split(' ')[1]);
+            return new AnalystExportHeaderRegressionInfo()
+            {
+                Regression = regression,
+                WeightingFactor = weightingFactor,
+                A = a,
+                B = b,
+                C = c,
+                RSquared = rSquared
+            };
+        }
+
+        private static WeightingFactor ParseWeightingFactor(string inputWeightingFactor)
+        {
+            WeightingFactor weightingFactor;
+            switch (inputWeightingFactor)
+            {
+                case "1":
+                    weightingFactor = WeightingFactor.One;
+                    break;
+                case "1  / x":
+                    weightingFactor = WeightingFactor.OneOverX;
+                    break;
+                case "1  / (x * x)":
+                    weightingFactor = WeightingFactor.OneOverXSquared;
+                    break;
+                default:
+                    throw new ArgumentException("unrecognised weighting factor in analyst result table export");
+            }
+            return weightingFactor;
+        }
+
+        private static Regression ParseRegression(string inputRegression)
+        {
+            Regression regression;
+            switch (inputRegression)
+            {
+                case "Linear":
+                    regression = Regression.Linear;
+                    break;
+                case "Quadratic":
+                    regression = Regression.Quadratic;
+                    break;
+                default:
+                    throw new ArgumentException("unrecognised regression type in analyst result table export");
+            }
+            return regression;
         }
 
         private static bool BlockIsRegressionInfo(List<string> buffer)
