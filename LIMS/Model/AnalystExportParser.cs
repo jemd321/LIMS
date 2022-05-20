@@ -51,9 +51,32 @@ namespace LIMS.Model
             }
         }
 
-        private static void ProcessPeakInfo(List<string> headerBuffer)
+        private static AnalystExportHeaderPeakInfo ProcessPeakInfo(List<string> headerBuffer)
         {
-            throw new NotImplementedException();
+            string peakName = headerBuffer[0].Split(' ')[1];
+            bool isInternalStandard = headerBuffer[1].TrimEnd() == "Use as Internal Standard";
+            string internalStandard = null;
+            if (!isInternalStandard)
+            {
+                internalStandard = headerBuffer[1].Split(' ')[1];
+            }
+            var transitionMRM = ParseTransition(headerBuffer[2]);
+            return new AnalystExportHeaderPeakInfo()
+            {
+                PeakName = peakName,
+                IsInternalStandard = isInternalStandard,
+                InternalStandard = internalStandard,
+                TransitionMRM = transitionMRM
+            };
+        }
+
+        private static TransitionMRM ParseTransition(string line)
+        {
+            string transition = line.Split(' ')[1];
+            var splitTransition = transition.Split('/');
+            double Q1 = double.Parse(splitTransition[0]);
+            double Q3 = double.Parse(splitTransition[1]);
+            return new TransitionMRM() { Q1 = Q1, Q3 = Q3 };
         }
 
         private static void ProcessRegressionInfo(List<string> headerBuffer)

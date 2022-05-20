@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LIMS.Data
+﻿namespace LIMS.Data
 {
     public readonly record struct AnalystExportHeaderPeakInfo
     {
+        public string PeakName { get; init; }
+        public bool IsInternalStandard { get; init; }
+
+        public string InternalStandard { get; init; }
+        public TransitionMRM TransitionMRM { get; init; }
     }
 }
