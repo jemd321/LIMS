@@ -101,6 +101,22 @@ namespace LIMS.Model
                 RSquared = rSquared
             };
         }
+        private static Regression ParseRegression(string inputRegression)
+        {
+            Regression regression;
+            switch (inputRegression)
+            {
+                case "Linear":
+                    regression = Regression.Linear;
+                    break;
+                case "Quadratic":
+                    regression = Regression.Quadratic;
+                    break;
+                default:
+                    throw new ArgumentException("unrecognised regression type in analyst result table export");
+            }
+            return regression;
+        }
 
         private static WeightingFactor ParseWeightingFactor(string inputWeightingFactor)
         {
@@ -122,27 +138,11 @@ namespace LIMS.Model
             return weightingFactor;
         }
 
-        private static Regression ParseRegression(string inputRegression)
-        {
-            Regression regression;
-            switch (inputRegression)
-            {
-                case "Linear":
-                    regression = Regression.Linear;
-                    break;
-                case "Quadratic":
-                    regression = Regression.Quadratic;
-                    break;
-                default:
-                    throw new ArgumentException("unrecognised regression type in analyst result table export");
-            }
-            return regression;
-        }
-
         private static bool BlockIsRegressionInfo(List<string> buffer)
         {
-            throw new NotImplementedException();
+            return buffer[0].StartsWith('F');
         }
+
 
         private static void ProcessDataRow(string line)
         {
