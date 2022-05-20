@@ -4,7 +4,7 @@ using System.IO;
 
 namespace LIMS.Model
 {
-    public class AnalystExportParser
+    public static class AnalystExportParser
     {
         public enum AnalystExportSections
         {
@@ -12,7 +12,8 @@ namespace LIMS.Model
             RegressionInfo,
             DataRows
         }
-        public AnalystExportParser(string filePath)
+
+        public static void ReadAnalystExport(string filePath)
         {
             using var reader = new StreamReader(filePath);
 
@@ -21,20 +22,23 @@ namespace LIMS.Model
 
             while (!reader.EndOfStream)
             {
+                string line = reader.ReadLine();
                 if (currentSection == AnalystExportSections.DataRows)
                 {
                     ProcessDataRow();
+                    continue;
                 }
+                if (line == @"\r\n")
+                {
 
-                string line = reader.ReadLine();
+                }
                 // peak obj
                 // regression info
                 // line
             }
-
         }
 
-        private void ProcessDataRow()
+        private static void ProcessDataRow()
         {
             throw new NotImplementedException();
         }
