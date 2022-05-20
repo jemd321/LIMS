@@ -13,8 +13,11 @@ namespace LIMS.Model
             DataRows
         }
 
+        const string NEWLINE = @"\r\n";
         public static void ReadAnalystExport(string filePath)
         {
+            
+            
             using var reader = new StreamReader(filePath);
 
             var currentSection = AnalystExportSections.PeakInfo;
@@ -23,19 +26,29 @@ namespace LIMS.Model
             while (!reader.EndOfStream)
             {
                 string line = reader.ReadLine();
+                if (line == NEWLINE)
+                {
+                    if (IsBlockRegressionInfo(buffer))
+                    {
+
+                    }
+                }
+
                 if (currentSection == AnalystExportSections.DataRows)
                 {
                     ProcessDataRow();
                     continue;
                 }
-                if (line == @"\r\n")
-                {
 
-                }
                 // peak obj
                 // regression info
                 // line
             }
+        }
+
+        private static bool IsBlockRegressionInfo(List<string> buffer)
+        {
+            throw new NotImplementedException();
         }
 
         private static void ProcessDataRow()
