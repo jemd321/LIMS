@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LIMS.Data;
+using LIMS.Enums;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -6,52 +8,65 @@ namespace LIMS.Model
 {
     public static class AnalystExportParser
     {
-        public enum AnalystExportSections
-        {
-            PeakInfo,
-            RegressionInfo,
-            DataRows
-        }
-
         const string NEWLINE = @"\r\n";
         public static void ReadAnalystExport(string filePath)
         {
-            
-            
+            var headerPeakInfo = new List<AnalystExportHeaderPeakInfo>();
+            var headerRegressionInfo = new List<AnalystExportHeaderRegressionInfo>();
+            var dataRows = new List<AnalystExportRow>();
+
             using var reader = new StreamReader(filePath);
 
-            var currentSection = AnalystExportSections.PeakInfo;
-            var buffer = new List<string>();
+            var currentSection = AnalystExportSections.Header;
+            var headerBuffer = new List<string>();
 
             while (!reader.EndOfStream)
             {
                 string line = reader.ReadLine();
                 if (line == NEWLINE)
                 {
-                    if (IsBlockRegressionInfo(buffer))
+                    switch (currentSection)
                     {
-
+                        case AnalystExportSections.Header:
+                            if (BlockIsRegressionInfo(headerBuffer))
+                            {
+                                ProcessRegressionInfo(headerBuffer);
+                                currentSection = AnalystExportSections.DataRows;
+                            }
+                            else
+                            {
+                                ProcessPeakInfo(headerBuffer);
+                            }
+                            break;
+                        case AnalystExportSections.DataRows:
+                            break;
                     }
                 }
-
                 if (currentSection == AnalystExportSections.DataRows)
                 {
-                    ProcessDataRow();
+                    ProcessDataRow(line);
                     continue;
                 }
-
-                // peak obj
-                // regression info
-                // line
+                headerBuffer.Add(line);
             }
         }
 
-        private static bool IsBlockRegressionInfo(List<string> buffer)
+        private static void ProcessPeakInfo(List<string> headerBuffer)
         {
             throw new NotImplementedException();
         }
 
-        private static void ProcessDataRow()
+        private static void ProcessRegressionInfo(List<string> headerBuffer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static bool BlockIsRegressionInfo(List<string> buffer)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void ProcessDataRow(string line)
         {
             throw new NotImplementedException();
         }

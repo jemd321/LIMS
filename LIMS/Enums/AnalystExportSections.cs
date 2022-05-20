@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LIMS.Enums
+﻿namespace LIMS.Enums
 {
-    internal class AnalystExportSections
+    /// <summary>
+    /// Defines the logical sections that an Analyst result table export is split into
+    /// </summary>
+    public enum AnalystExportSections
     {
+        Header,
+        DataRows
     }
 }

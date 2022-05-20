@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LIMS.Data
 {
-    internal class AnalystExportHeaderPeakData
+    public readonly record struct AnalystExportHeaderPeakInfo
     {
     }
 }

@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace LIMS.Enums
 {
-    internal class Regression
+    public enum Regression
     {
+        Linear, 
+        Quadratic
     }
 }
