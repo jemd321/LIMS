@@ -3,21 +3,22 @@
     public readonly record struct AnalystExportRow
     {
         public readonly string SampleName { get; init; }
-        public readonly int SampleID { get; init; }
+        public readonly string SampleID { get; init; }
         public readonly string FileType { get; init; }
         public readonly string SampleDescription { get; init; }
         public readonly string SetNumber { get; init; }
         public readonly string AcquisitonMethod { get; init; }
         public readonly string AcquisitionDate { get; init; }
         public readonly string RackType { get; init; }
-        public readonly string Vial { get; init; }
-        public readonly string Position { get; init; }
+        public readonly string RackNumber { get; init; }
+        public readonly string VialPosition { get; init; }
         public readonly string PlateType { get; init; }
         public readonly string PlateNumber { get; init; }
         public readonly string FileName { get; init; }
         public readonly string DilutionFactor { get; init; }
         public readonly string WeightToVolumeRatio { get; init; }
-        public readonly string SampleAnnotation { get; init; }
+        public readonly string SampleAnnotation1 { get; init; }
+        public readonly string SampleAnnotation2 { get; init; }
         public readonly string PeakName { get; init; }
         public readonly string Units { get; init; }
         public readonly string Area { get; init; }

@@ -16,6 +16,7 @@ namespace LIMSTests
             var actual = AnalystExportParser.ParseAnalystExport(sampleAnalystExport);
 
             Assert.AreEqual(expected, actual);
+
         }
     }
 }
