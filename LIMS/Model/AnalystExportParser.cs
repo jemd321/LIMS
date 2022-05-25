@@ -9,18 +9,19 @@ namespace LIMS.Model
     public static class AnalystExportParser
     {
         const string NEWLINE = @"\r\n";
-        public static void ReadAnalystExport(string filePath)
+        public static AnalystExport ParseAnalystExport(string analystExport)
         {
             var headerPeakInfo = new List<AnalystExportHeaderPeakInfo>();
             var headerRegressionInfo = new List<AnalystExportHeaderRegressionInfo>();
             var dataRows = new List<AnalystExportRow>();
 
-            using var reader = new StreamReader(filePath);
+            using var reader = new StringReader(analystExport);
 
             var currentSection = AnalystExportSections.Header;
             var headerBuffer = new List<string>();
 
-            while (!reader.EndOfStream)
+            const int ENDTOKEN = -1;
+            while (reader.Peek() != ENDTOKEN)
             {
                 string line = reader.ReadLine();
                 if (line == NEWLINE)
@@ -49,6 +50,7 @@ namespace LIMS.Model
                 }
                 headerBuffer.Add(line);
             }
+            return new AnalystExport();
         }
 
         private static AnalystExportHeaderPeakInfo ProcessPeakInfo(List<string> headerBuffer)

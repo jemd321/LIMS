@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LIMS.Data
 {
-    internal class AnalystExport
+    public class AnalystExport
     {
     }
 }
