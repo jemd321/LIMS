@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace LIMS.Data
 {
-    public class AnalystExport
+    public readonly record struct AnalystExport
     {
+        public readonly List<AnalystExportHeaderPeakInfo> Peaks { get; init; }
+        public readonly AnalystExportHeaderRegressionInfo AnalystRegressionInfo { get; init; }
+        public readonly List<AnalystExportRow> DataRows { get; init; }
+
     }
 }

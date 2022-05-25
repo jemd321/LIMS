@@ -3,12 +3,12 @@ using LIMS.Enums;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace LIMS.Model
 {
     public static class AnalystExportParser
     {
-        const string NEWLINE = @"\r\n";
         public static AnalystExport ParseAnalystExport(string analystExport)
         {
             var headerPeakInfo = new List<AnalystExportHeaderPeakInfo>();
@@ -25,7 +25,7 @@ namespace LIMS.Model
             while (reader.Peek() != ENDTOKEN)
             {
                 string line = reader.ReadLine();
-                if (line == NEWLINE)
+                if (string.IsNullOrEmpty(line))
                 {
                     switch (currentSection)
                     {
@@ -34,13 +34,15 @@ namespace LIMS.Model
                             {
                                 headerRegressionInfo.Add(ProcessRegressionInfo(headerBuffer));
                                 currentSection = AnalystExportSections.DataRows;
+                                dataRowHeaderSeparatorCount++;
+                                headerBuffer.Clear();
                             }
                             else
                             {
                                 headerPeakInfo.Add(ProcessPeakInfo(headerBuffer));
-                                dataRowHeaderSeparatorCount++;
+                                headerBuffer.Clear();
                             }
-                            break;
+                            continue;
                         case AnalystExportSections.DataRows:
                             dataRowHeaderSeparatorCount++;
                             continue;
@@ -59,17 +61,22 @@ namespace LIMS.Model
                 }
                 headerBuffer.Add(line);
             }
-            return new AnalystExport();
+            return new AnalystExport()
+            {
+                Peaks = headerPeakInfo,
+                AnalystRegressionInfo = headerRegressionInfo[0],
+                DataRows = dataRows
+            };
         }
 
         private static AnalystExportHeaderPeakInfo ProcessPeakInfo(List<string> headerBuffer)
         {
-            string peakName = headerBuffer[0].Split(' ')[1];
+            string peakName = headerBuffer[0].Split(' ')[2];
             bool isInternalStandard = headerBuffer[1].TrimEnd() == "Use as Internal Standard";
             string internalStandard = null;
             if (!isInternalStandard)
             {
-                internalStandard = headerBuffer[1].Split(' ')[1];
+                internalStandard = headerBuffer[1].Split(' ')[2];
             }
             var transitionMRM = ParseTransition(headerBuffer[2]);
             return new AnalystExportHeaderPeakInfo()
@@ -83,7 +90,7 @@ namespace LIMS.Model
 
         private static TransitionMRM ParseTransition(string line)
         {
-            string transition = line.Split(' ')[1];
+            string transition = line.Split(' ')[2];
             var splitTransition = transition.Split('/');
             double Q1 = double.Parse(splitTransition[0]);
             double Q3 = double.Parse(splitTransition[1]);
@@ -93,15 +100,15 @@ namespace LIMS.Model
         private static AnalystExportHeaderRegressionInfo ProcessRegressionInfo(List<string> headerBuffer)
         {
             string[] firstLine = headerBuffer[0].Split('\t');
-            Regression regression = ParseRegression(firstLine[0].Split(' ')[1]);
-            WeightingFactor weightingFactor = ParseWeightingFactor(firstLine[2]);
+            Regression regression = ParseRegression(firstLine[1]);
+            WeightingFactor weightingFactor = ParseWeightingFactor(firstLine[3]);
 
             double? a, b, c = null;
-            a = double.Parse(headerBuffer[1].Split(' ')[1]);
-            b = double.Parse(headerBuffer[2].Split(' ')[1]);
-            c = double.Parse(headerBuffer[3].Split(' ')[1]);
+            a = double.Parse(headerBuffer[1].Split('\t')[1]);
+            b = double.Parse(headerBuffer[2].Split('\t')[1]);
+            c = double.Parse(headerBuffer[3].Split('\t')[1]);
 
-            double rSquared = double.Parse(headerBuffer[4].Split(' ')[1]);
+            double rSquared = double.Parse(headerBuffer[4].Split('\t')[1]);
             return new AnalystExportHeaderRegressionInfo()
             {
                 Regression = regression,
@@ -251,7 +258,7 @@ namespace LIMS.Model
                 "Sample Desc.",
                 "Set Number",
                 "Acquisition Method",
-                "Date of Acq",
+                "Date of Acq.",
                 "Rack Type",
                 "Rack Number",
                 "Vial Position",
@@ -261,6 +268,7 @@ namespace LIMS.Model
                 "Dil.Factor",
                 "Weight To Volume Ratio",
                 "Sample Annotation",
+                "Sample Annotation",
                 "Peak Name",
                 "Units",
                 "Area",
@@ -268,8 +276,8 @@ namespace LIMS.Model
                 "Height",
                 "Analyte Annotation",
                 "Conc.",
-                "R.T",
-                "Expected R.T.",
+                "R.T.",
+                "Expected RT",
                 "RT Window",
                 "Centroid Location",
                 "Start Scan",
@@ -323,9 +331,10 @@ namespace LIMS.Model
                 "Accuracy",
                 "Resp.Factor",
                 "Resp.Factor",
-                "Resp.Factor"
+                "Resp.Factor",
+                ""
             };
-            if (headers != validHeaderFormat)
+            if (headers.SequenceEqual(validHeaderFormat))
             {
                 throw new FileFormatException("Data Row headers in export do not match expected format");
             }
