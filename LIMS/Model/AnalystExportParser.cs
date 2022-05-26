@@ -68,6 +68,10 @@ namespace LIMS.Model
                 DataRows = dataRows
             };
         }
+        private static bool BlockIsRegressionInfo(List<string> buffer)
+        {
+            return buffer[0].StartsWith('F');
+        }
 
         private static AnalystExportHeaderPeakInfo ProcessPeakInfo(List<string> headerBuffer)
         {
@@ -86,14 +90,6 @@ namespace LIMS.Model
                 InternalStandard = internalStandard,
                 TransitionMRM = transitionMRM
             };
-        }
-
-        private static TransitionMRM ParseTransition(string transition)
-        {
-            var splitTransition = transition.Split('/');
-            double Q1 = double.Parse(splitTransition[0]);
-            double Q3 = double.Parse(splitTransition[1]);
-            return new TransitionMRM() { Q1 = Q1, Q3 = Q3 };
         }
 
         private static AnalystExportHeaderRegressionInfo ProcessRegressionInfo(List<string> headerBuffer)
@@ -118,48 +114,6 @@ namespace LIMS.Model
                 RSquared = rSquared
             };
         }
-        private static Regression ParseRegression(string inputRegression)
-        {
-            Regression regression;
-            switch (inputRegression)
-            {
-                case "Linear":
-                    regression = Regression.Linear;
-                    break;
-                case "Quadratic":
-                    regression = Regression.Quadratic;
-                    break;
-                default:
-                    throw new ArgumentException("unrecognised regression type in analyst result table export");
-            }
-            return regression;
-        }
-
-        private static WeightingFactor ParseWeightingFactor(string inputWeightingFactor)
-        {
-            WeightingFactor weightingFactor;
-            switch (inputWeightingFactor)
-            {
-                case "1":
-                    weightingFactor = WeightingFactor.One;
-                    break;
-                case "1  / x":
-                    weightingFactor = WeightingFactor.OneOverX;
-                    break;
-                case "1  / (x * x)":
-                    weightingFactor = WeightingFactor.OneOverXSquared;
-                    break;
-                default:
-                    throw new FileFormatException("unrecognised weighting factor in analyst result table export");
-            }
-            return weightingFactor;
-        }
-
-        private static bool BlockIsRegressionInfo(List<string> buffer)
-        {
-            return buffer[0].StartsWith('F');
-        }
-
 
         private static AnalystExportRow ProcessDataRow(string line)
         {
@@ -239,15 +193,49 @@ namespace LIMS.Model
             };
         }
 
-        private static Units ParseUnits(string units)
+        private static TransitionMRM ParseTransition(string transition)
         {
-            switch (units)
+            var splitTransition = transition.Split('/');
+            double Q1 = double.Parse(splitTransition[0]);
+            double Q3 = double.Parse(splitTransition[1]);
+            return new TransitionMRM() { Q1 = Q1, Q3 = Q3 };
+        }
+
+        private static Regression ParseRegression(string inputRegression)
+        {
+            Regression regression;
+            switch (inputRegression)
             {
-                case "ng/mL":
-                    return Units.ng_mL;
+                case "Linear":
+                    regression = Regression.Linear;
+                    break;
+                case "Quadratic":
+                    regression = Regression.Quadratic;
+                    break;
                 default:
-                    throw new FileFormatException("Unrecognised units in analyst export");
+                    throw new FileFormatException("unrecognised regression type in analyst result table export");
             }
+            return regression;
+        }
+
+        private static WeightingFactor ParseWeightingFactor(string inputWeightingFactor)
+        {
+            WeightingFactor weightingFactor;
+            switch (inputWeightingFactor)
+            {
+                case "1":
+                    weightingFactor = WeightingFactor.One;
+                    break;
+                case "1  / x":
+                    weightingFactor = WeightingFactor.OneOverX;
+                    break;
+                case "1  / (x * x)":
+                    weightingFactor = WeightingFactor.OneOverXSquared;
+                    break;
+                default:
+                    throw new FileFormatException("unrecognised weighting factor in analyst result table export");
+            }
+            return weightingFactor;
         }
 
         private static SampleType ParseSampleType(string sampleType)
@@ -262,6 +250,17 @@ namespace LIMS.Model
                     return SampleType.QualityControl;
                 default:
                     throw new FileFormatException("Invalid sample type (STD/QC etc.) in analyst export");
+            }
+        }
+
+        private static Units ParseUnits(string units)
+        {
+            switch (units)
+            {
+                case "ng/mL":
+                    return Units.ng_mL;
+                default:
+                    throw new FileFormatException("Unrecognised units in analyst export");
             }
         }
 
