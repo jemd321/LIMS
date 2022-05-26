@@ -78,7 +78,7 @@ namespace LIMS.Model
             {
                 internalStandard = headerBuffer[1].Split(' ')[2];
             }
-            var transitionMRM = ParseTransition(headerBuffer[2]);
+            var transitionMRM = ParseTransition(headerBuffer[2].Split('\t')[2]);
             return new AnalystExportHeaderPeakInfo()
             {
                 PeakName = peakName,
@@ -88,9 +88,8 @@ namespace LIMS.Model
             };
         }
 
-        private static TransitionMRM ParseTransition(string line)
+        private static TransitionMRM ParseTransition(string transition)
         {
-            string transition = line.Split(' ')[2];
             var splitTransition = transition.Split('/');
             double Q1 = double.Parse(splitTransition[0]);
             double Q3 = double.Parse(splitTransition[1]);
@@ -168,85 +167,104 @@ namespace LIMS.Model
             return new AnalystExportRow()
             {
                 SampleName = data[0],
-                SampleID = data[1],
-                FileType = data[2],
-                SampleDescription = data[3],
-                SetNumber = data[4],
+                SampleID = int.Parse(data[1]),
+                SampleType = ParseSampleType(data[2]),
+                SampleDescription = data[3] == "none" ? "" : data[3],
+                SetNumber = int.Parse(data[4]),
                 AcquisitonMethod = data[5],
-                AcquisitionDate = data[6],
+                AcquisitionDate = DateTime.Parse(data[6]),
                 RackType = data[7],
-                RackNumber = data[8],
-                VialPosition = data[9],
+                RackNumber = int.Parse(data[8]),
+                VialPosition = int.Parse(data[9]),
                 PlateType = data[10],
-                PlateNumber = data[11],
+                PlateNumber = int.Parse(data[11]),
                 FileName = data[12],
-                DilutionFactor = data[13],
-                WeightToVolumeRatio = data[14],
+                DilutionFactor = int.Parse(data[13]),
+                WeightToVolumeRatio = int.Parse(data[14]),
                 SampleAnnotation1 = data[15],
                 SampleAnnotation2 = data[16],
                 PeakName = data[17],
-                Units = data[18],
-                Area = data[19],
-                AnalytePeakHeightForDAD = data[20],
-                Height = data[21],
-                AnalyteAnnotation = data[22],
-                Concentration = data[23],
-                RetentionTime = data[24],
-                ExpectedRetentionTime = data[25],
-                RetentionTimeWindow = data[26],
-                CentroidLocation = data[27],
-                StartScan = data[28],
-                StartTime = data[29],
-                EndScan = data[30],
-                EndTime = data[31],
+                Units = ParseUnits(data[18]),
+                Area = double.Parse(data[19]),
+                Height = double.Parse(data[21]),
+                AnalyteAnnotation = data[22] == "N/A" ? "" : data[22],
+                NominalConcentration = data[23] == "N/A" ? 0d : double.Parse(data[23]),
+                RetentionTime = double.Parse(data[24]),
+                ExpectedRetentionTime = double.Parse(data[25]),
+                RetentionTimeWindow = double.Parse(data[26]),
+                CentroidLocation = double.Parse(data[27]),
+                StartScan = int.Parse(data[28]),
+                StartTime = double.Parse(data[29]),
+                EndScan = int.Parse(data[30]),
+                EndTime = double.Parse(data[31]),
                 IntegrationType = data[32],
-                SignalToNoiseRatio = data[33],
-                PeakWidth = data[34],
-                StandardQueryStatus = data[35],
-                AnalyteMassRange = data[36],
-                AnalytePeakAreaForDAD = data[37],
-                AnalyteToISAreaRatio = data[38],
-                AnalyteToISHeightRatio = data[39],
-                AnalyteWavelengthRanges = data[40],
-                AnalyteUVRange = data[41],
-                AnalytePeakWidthAtHalfHeight = data[42],
-                AnalyteSlopeOfBaseline = data[43],
+                SignalToNoiseRatio = data[33] == "N/A" ? null : double.Parse(data[33]),
+                PeakWidth = double.Parse(data[34]),
+                StandardQueryStatus = data[35] == "N/A" ? "" : data[35],
+                AnalyteTransitionMRM = ParseTransition(data[36].Split(' ')[0]),
+                AnalyteToISAreaRatio = data[38] == "N/A" ? null : double.Parse(data[38]),
+                AnalyteToISHeightRatio = data[39] == "N/A" ? null : double.Parse(data[39]),
+                AnalytePeakWidthAtHalfHeight = double.Parse(data[42]),
+                AnalyteSlopeOfBaseline = double.Parse(data[43]),
                 AnalyteProcessingAlgorithm = data[44],
-                AnalytePeakAsymmetry = data[45],
+                AnalytePeakAsymmetry = double.Parse(data[45]),
                 ISPeakName = data[46],
-                ISUnits = data[47],
-                ISArea = data[48],
-                ISPeakAreaForDAD = data[49],
-                ISHeight = data[50],
-                ISConcentration = data[51],
-                ISRetentionTime = data[52],
-                ISExpectedRetentionTime = data[53],
-                ISRetentionTimeWindow = data[54],
-                ISCentroidLocation = data[55],
-                ISStartScan = data[56],
-                ISStartTime = data[57],
-                ISStopScan = data[58],
-                ISEndTime = data[59],
+                ISUnits = ParseUnits(data[47]),
+                ISArea = double.Parse(data[49]),
+                ISHeight = double.Parse(data[50]),
+                ISConcentration = double.Parse(data[51]),
+                ISRetentionTime = double.Parse(data[52]),
+                ISExpectedRetentionTime = double.Parse(data[53]),
+                ISRetentionTimeWindow = double.Parse(data[54]),
+                ISCentroidLocation = double.Parse(data[55]),
+                ISStartScan = int.Parse(data[56]),
+                ISStartTime = double.Parse(data[57]),
+                ISStopScan = int.Parse(data[58]),
+                ISEndTime = double.Parse(data[59]),
                 ISIntegrationType = data[60],
-                ISSignalToNoiseRatio = data[61],
-                ISPeakWidth = data[62],
-                ISMassRange = data[63],
-                ISWaveLengthRanges = data[64],
-                ISUVRange = data[65],
-                ISPeakWidthAtHalfHeight = data[66],
-                ISSlopeOfBaseline = data[67],
+                ISSignalToNoiseRatio = data[61] == "N/A" ? 0d : double.Parse(data[61]),
+                ISPeakWidth = double.Parse(data[62]),
+                ISTransitionMRM = ParseTransition(data[63]),
+                ISPeakWidthAtHalfHeight = double.Parse(data[66]),
+                ISSlopeOfBaseline = double.Parse(data[67]),
                 ISProcessingAlgorithm = data[68],
-                ISPeakAsymmetry = data[69],
-                UseRecord = data[70],
-                RecordModified = data[71],
-                CalculatedConcentrationForDAD = data[72],
-                RelativeRetentionTime = data[73],
-                Accuracy = data[74],
-                ResponseFactor1 = data[75],
-                ResponseFactor2 = data[76],
-                ResponseFactor3 = data[77]
+                ISPeakAsymmetry = double.Parse(data[69]),
+                UseRecord = data[70] == "1",
+                RecordModified = data[71] == "1",
+                RelativeRetentionTime = double.Parse(data[73]),
+                Accuracy = data[74] == "N/A" ? null : double.Parse(data[74]),
+                ResponseFactor1 = data[75] == "N/A" ? null : double.Parse(data[74]),
+                ResponseFactor2 = data[76] == "N/A" ? null : double.Parse(data[75]),
+                ResponseFactor3 = data[77] == "N/A" ? null : double.Parse(data[76]),
             };
         }
+
+        private static Units ParseUnits(string units)
+        {
+            switch (units)
+            {
+                case "ng/mL":
+                    return Units.ng_mL;
+                default:
+                    throw new FileFormatException("Unrecognised units in analyst export");
+            }
+        }
+
+        private static SampleType ParseSampleType(string sampleType)
+        {
+            switch (sampleType)
+            {
+                case "Unknown":
+                    return SampleType.Unknown;
+                case "Standard":
+                    return SampleType.Standard;
+                case "Quality Control":
+                    return SampleType.QualityControl;
+                default:
+                    throw new FileFormatException("Invalid sample type (STD/QC etc.) in analyst export");
+            }
+        }
+
         private static void VerifyDataRowHeaders(string headerRow)
         {
             string[] headers = headerRow.Split('\t');
