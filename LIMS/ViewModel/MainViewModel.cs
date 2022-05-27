@@ -27,18 +27,22 @@ namespace LIMS.ViewModel
             {
                 selectedFile = fileDialog.FileName;
             }
-            var regressionDataProvider = new AnalystFileImporter(selectedFile);
-            SelectedRegressionViewModel = new RegressionViewModel(regressionDataProvider);
-            await SelectedRegressionViewModel.Load();
+            if (!string.IsNullOrEmpty(selectedFile))
+            {
+                var regressionDataProvider = new AnalystFileImporter(selectedFile);
+                SelectedRegressionViewModel = new RegressionViewModel(regressionDataProvider);
+                await SelectedRegressionViewModel.Load();
+            }
+
         }
-        public ViewModelBase SelectedRegressionViewModel 
-        { 
-            get => _selectedRegressionViewModel; 
+        public ViewModelBase SelectedRegressionViewModel
+        {
+            get => _selectedRegressionViewModel;
             set
             {
                 _selectedRegressionViewModel = value;
                 RaisePropertyChanged();
-            } 
+            }
         }
         public RegressionViewModel RegressionViewModel { get; }
 
