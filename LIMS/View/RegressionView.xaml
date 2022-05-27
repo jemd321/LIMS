@@ -3,23 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:view="clr-namespace:LIMS.View"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
     <TabControl>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="200" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <DataGrid Grid.RowSpan="2">
-
+        <TabItem Header="Data"
+                 IsSelected="True">
+            <DataGrid ItemsSource="{Binding DataGridSource}">
+                
             </DataGrid>
-        </Grid>
-    </TabControl>
+            <!--<view:RegressionDataView />-->
+        </TabItem>
+        <TabItem Header="Statistics">
 
+        </TabItem>
+        <TabItem Header="Calibration Line">
+
+        </TabItem>
+        <TabItem Header="IStd Plot">
+
+        </TabItem>
+    </TabControl>
 </UserControl>
