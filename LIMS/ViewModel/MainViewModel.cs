@@ -1,25 +1,48 @@
 ﻿using LIMS.Command;
+using LIMS.Data;
+using LIMS.Model;
 using Microsoft.Win32;
 using System;
+using System.IO;
 
 namespace LIMS.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        public MainViewModel(RegressionViewModel regressionViewModel)
+        private ViewModelBase _selectedRegressionViewModel;
+
+        public MainViewModel()
         {
-            RegressionViewModel = regressionViewModel;
-            OpenFileCommand = new DelegateCommand(OpenFile);
+            ImportAnalystFileCommand = new DelegateCommand(ImportAnalystFile);
         }
 
-        private void OpenFile(object parameter)
+        private async void ImportAnalystFile(object parameter)
         {
-            var filedialog = new OpenFileDialog();
-            filedialog.ShowDialog();
-        }
+            var fileDialog = new OpenFileDialog();
+            fileDialog.Filter = "Text documents (.txt)|*.txt";
 
+            bool? result = fileDialog.ShowDialog();
+            string selectedFile = "";
+            if (result == true)
+            {
+                selectedFile = fileDialog.FileName;
+            }
+            var regressionDataProvider = new AnalystFileImporter(selectedFile);
+            SelectedRegressionViewModel = new RegressionViewModel(regressionDataProvider);
+            await SelectedRegressionViewModel.Load();
+        }
+        public ViewModelBase SelectedRegressionViewModel 
+        { 
+            get => _selectedRegressionViewModel; 
+            set
+            {
+                _selectedRegressionViewModel = value;
+                RaisePropertyChanged();
+            } 
+        }
         public RegressionViewModel RegressionViewModel { get; }
-        public DelegateCommand OpenFileCommand { get; }
+
+        public DelegateCommand ImportAnalystFileCommand { get; }
 
 
     }
