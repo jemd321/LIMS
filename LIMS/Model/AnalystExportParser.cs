@@ -2,6 +2,7 @@
 using LIMS.Enums;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -82,7 +83,7 @@ namespace LIMS.Model
             {
                 internalStandard = headerBuffer[1].Split(' ')[2];
             }
-            var transitionMRM = ParseTransition(headerBuffer[2].Split('\t')[2]);
+            var transitionMRM = ParseTransition(headerBuffer[2].Split(' ')[2]);
             return new AnalystExportHeaderPeakInfo()
             {
                 PeakName = peakName,
@@ -133,8 +134,8 @@ namespace LIMS.Model
                 PlateType = data[10],
                 PlateNumber = int.Parse(data[11]),
                 FileName = data[12],
-                DilutionFactor = int.Parse(data[13]),
-                WeightToVolumeRatio = int.Parse(data[14]),
+                DilutionFactor = double.Parse(data[13]),
+                WeightToVolumeRatio = double.Parse(data[14]),
                 SampleAnnotation1 = data[15],
                 SampleAnnotation2 = data[16],
                 PeakName = data[17],
@@ -156,40 +157,41 @@ namespace LIMS.Model
                 PeakWidth = double.Parse(data[34]),
                 StandardQueryStatus = data[35] == "N/A" ? "" : data[35],
                 AnalyteTransitionMRM = ParseTransition(data[36].Split(' ')[0]),
-                AnalyteToISAreaRatio = data[38] == "N/A" ? null : double.Parse(data[38]),
-                AnalyteToISHeightRatio = data[39] == "N/A" ? null : double.Parse(data[39]),
+                AnalyteToISAreaRatio = data[38] == "#DIV/0!" ? null : double.Parse(data[38]),
+                AnalyteToISHeightRatio = data[39] == "#DIV/0!" ? null : double.Parse(data[39]),
                 AnalytePeakWidthAtHalfHeight = double.Parse(data[42]),
-                AnalyteSlopeOfBaseline = double.Parse(data[43]),
+                AnalyteSlopeOfBaseline = data[43] == "#DIV/0!" ? 0d : double.Parse(data[43]),
                 AnalyteProcessingAlgorithm = data[44],
                 AnalytePeakAsymmetry = double.Parse(data[45]),
                 ISPeakName = data[46],
                 ISUnits = ParseUnits(data[47]),
-                ISArea = double.Parse(data[49]),
+                ISArea = double.Parse(data[48]),
                 ISHeight = double.Parse(data[50]),
-                ISConcentration = double.Parse(data[51]),
-                ISRetentionTime = double.Parse(data[52]),
-                ISExpectedRetentionTime = double.Parse(data[53]),
-                ISRetentionTimeWindow = double.Parse(data[54]),
-                ISCentroidLocation = double.Parse(data[55]),
-                ISStartScan = int.Parse(data[56]),
-                ISStartTime = double.Parse(data[57]),
-                ISStopScan = int.Parse(data[58]),
-                ISEndTime = double.Parse(data[59]),
-                ISIntegrationType = data[60],
-                ISSignalToNoiseRatio = data[61] == "N/A" ? 0d : double.Parse(data[61]),
-                ISPeakWidth = double.Parse(data[62]),
-                ISTransitionMRM = ParseTransition(data[63]),
-                ISPeakWidthAtHalfHeight = double.Parse(data[66]),
-                ISSlopeOfBaseline = double.Parse(data[67]),
-                ISProcessingAlgorithm = data[68],
-                ISPeakAsymmetry = double.Parse(data[69]),
-                UseRecord = data[70] == "1",
-                RecordModified = data[71] == "1",
-                RelativeRetentionTime = double.Parse(data[73]),
-                Accuracy = data[74] == "N/A" ? null : double.Parse(data[74]),
-                ResponseFactor1 = data[75] == "N/A" ? null : double.Parse(data[74]),
-                ResponseFactor2 = data[76] == "N/A" ? null : double.Parse(data[75]),
-                ResponseFactor3 = data[77] == "N/A" ? null : double.Parse(data[76]),
+                ISConcentration = double.Parse(data[52]),
+                ISRetentionTime = double.Parse(data[53]),
+                ISExpectedRetentionTime = double.Parse(data[54]),
+                ISRetentionTimeWindow = double.Parse(data[55]),
+                ISCentroidLocation = double.Parse(data[56]),
+                ISStartScan = int.Parse(data[57]),
+                ISStartTime = double.Parse(data[58]),
+                ISStopScan = int.Parse(data[59]),
+                ISEndTime = double.Parse(data[60]),
+                ISIntegrationType = data[61],
+                ISSignalToNoiseRatio = data[62] == "N/A" ? 0d : double.Parse(data[62]),
+                ISPeakWidth = double.Parse(data[63]),
+                ISTransitionMRM = ParseTransition(data[64].Split(' ')[0]),
+                ISPeakWidthAtHalfHeight = double.Parse(data[67]),
+                ISSlopeOfBaseline = double.Parse(data[68]),
+                ISProcessingAlgorithm = data[69],
+                ISPeakAsymmetry = double.Parse(data[70]),
+                UseRecord = data[71] == "1",
+                RecordModified = data[72] == "1",
+                CalculatedConcentration = data[73] == "#DIV/0!" || data[73] == "No Peak" ? 0d : double.Parse(data[73]),
+                RelativeRetentionTime = double.Parse(data[75]),
+                Accuracy = data[76] == "N/A" ? null : double.Parse(data[76]),
+                ResponseFactor1 = data[77] == "N/A" ? null : double.Parse(data[77]),
+                ResponseFactor2 = data[78] == "N/A" ? null : double.Parse(data[78]),
+                ResponseFactor3 = data[79] == "N/A" ? null : double.Parse(data[79]),
             };
         }
 

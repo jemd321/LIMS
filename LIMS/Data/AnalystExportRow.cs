@@ -18,8 +18,8 @@ namespace LIMS.Data
         public readonly string PlateType { get; init; }
         public readonly int PlateNumber { get; init; }
         public readonly string FileName { get; init; }
-        public readonly int DilutionFactor { get; init; }
-        public readonly int WeightToVolumeRatio { get; init; }
+        public readonly double DilutionFactor { get; init; }
+        public readonly double WeightToVolumeRatio { get; init; }
         public readonly string SampleAnnotation1 { get; init; }
         public readonly string SampleAnnotation2 { get; init; }
         public readonly string PeakName { get; init; }
@@ -70,6 +70,7 @@ namespace LIMS.Data
         public readonly double ISPeakAsymmetry { get; init; }
         public readonly bool UseRecord { get; init; }
         public readonly bool RecordModified { get; init; }
+        public readonly double CalculatedConcentration { get; init; }
         public readonly double RelativeRetentionTime { get; init; }
         public readonly double? Accuracy { get; init; }
         public readonly double? ResponseFactor1 { get; init; }
