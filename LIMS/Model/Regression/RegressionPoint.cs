@@ -4,8 +4,9 @@ namespace LIMS.Model.Regression
 {
     public abstract class RegressionPoint
     {
+
         // Concentration
-        public double X { get; init; }
+        public double? X { get; init; }
         // Instrument Response
         public double? Y { get; init; }
 
