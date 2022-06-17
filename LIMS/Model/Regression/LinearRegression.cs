@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace LIMS.Model
+﻿namespace LIMS.Model.Regression
 {
-    internal class LinearRegression
+    public class LinearRegression
     {
+        public LinearRegression()
+        {
+
+        }
     }
 }

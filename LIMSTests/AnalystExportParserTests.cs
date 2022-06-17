@@ -40,7 +40,7 @@ namespace LIMSTests
 
             var headerInfo = new AnalystExportHeaderRegressionInfo()
             {
-                Regression = Regression.Quadratic,
+                Regression = RegressionType.Quadratic,
                 WeightingFactor = WeightingFactor.OneOverXSquared,
                 A = 0.00117,
                 B = 0.0021,

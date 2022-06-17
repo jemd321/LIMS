@@ -4,6 +4,7 @@ namespace LIMS.ViewModel
 {
     public class RegressionDataItemViewModel : ViewModelBase
     {
+        // refactor to take from model rather than store in private backing field.
         private int _sampleNumber;
         private string _sampleName;
         private SampleType _sampleType;

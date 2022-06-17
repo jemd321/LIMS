@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LIMS.Enums;
 
-namespace LIMS.Data
+namespace LIMS.Model.Regression
 {
-    internal class RegressionPoint
+    public abstract class RegressionPoint
     {
+        // Concentration
+        public double X { get; init; }
+        // Instrument Response
+        public double? Y { get; init; }
+
+        public bool IsActive { get; set; } = true;
+        public string SampleName { get; init; }
+        public abstract SampleType SampleType { get; }
     }
 }

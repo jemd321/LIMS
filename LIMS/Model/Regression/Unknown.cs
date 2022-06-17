@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LIMS.Enums;
 
 namespace LIMS.Model.Regression
 {
-    internal class Unknown
+    public class Unknown : RegressionPoint
     {
+        public override SampleType SampleType => SampleType.Unknown;
     }
 }

@@ -96,7 +96,7 @@ namespace LIMS.Model
         private static AnalystExportHeaderRegressionInfo ProcessRegressionInfo(List<string> headerBuffer)
         {
             string[] firstLine = headerBuffer[0].Split('\t');
-            Regression regression = ParseRegression(firstLine[1]);
+            RegressionType regression = ParseRegression(firstLine[1]);
             WeightingFactor weightingFactor = ParseWeightingFactor(firstLine[3]);
 
             double? a, b, c = null;
@@ -203,16 +203,16 @@ namespace LIMS.Model
             return new TransitionMRM() { Q1 = Q1, Q3 = Q3 };
         }
 
-        private static Regression ParseRegression(string inputRegression)
+        private static RegressionType ParseRegression(string inputRegression)
         {
-            Regression regression;
+            RegressionType regression;
             switch (inputRegression)
             {
                 case "Linear":
-                    regression = Regression.Linear;
+                    regression = RegressionType.Linear;
                     break;
                 case "Quadratic":
-                    regression = Regression.Quadratic;
+                    regression = RegressionType.Quadratic;
                     break;
                 default:
                     throw new FileFormatException("unrecognised regression type in analyst result table export");
