@@ -16,7 +16,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <DataGrid Grid.RowSpan="2"
-                  ItemsSource="{Binding AnalystExport}">
+                  ItemsSource="{Binding DataRows}">
 
         </DataGrid>
         <TextBlock Grid.Column="2"

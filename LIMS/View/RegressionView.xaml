@@ -4,25 +4,45 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:view="clr-namespace:LIMS.View"
+             xmlns:viewModel="clr-namespace:LIMS.ViewModel"
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
+    <UserControl.Resources>
+        <DataTemplate DataType="{x:Type viewModel:RegressionDataViewModel}">
+            <view:RegressionDataView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:RegressionStatisticsViewModel}">
+            <view:RegressionStatisticsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:RegressionGraphViewModel}">
+            <view:RegressionGraphView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:RegressionISPlotViewModel}">
+            <view:RegressionISPlotView />
+        </DataTemplate>
+    </UserControl.Resources>
     <TabControl>
         <TabItem Header="Data"
                  IsSelected="True">
-            <DataGrid ItemsSource="{Binding DataGridSource}">
-                
-            </DataGrid>
-            <!--<view:RegressionDataView />-->
+            <view:RegressionDataView>
+
+            </view:RegressionDataView>
         </TabItem>
         <TabItem Header="Statistics">
+            <view:RegressionStatisticsView>
 
+            </view:RegressionStatisticsView>
         </TabItem>
         <TabItem Header="Calibration Line">
+            <view:RegressionGraphView>
 
+            </view:RegressionGraphView>
         </TabItem>
         <TabItem Header="IStd Plot">
+            <view:RegressionISPlotView>
 
+            </view:RegressionISPlotView>
         </TabItem>
     </TabControl>
 </UserControl>

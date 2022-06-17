@@ -16,6 +16,11 @@ namespace LIMS.ViewModel
             _regressionDataProvider = regressionDataProvider;
         }
 
+        public RegressionDataViewModel RegressionDataViewModel { get; private set; }
+        public RegressionStatisticsViewModel RegressionStatisticsViewModel { get; private set; }
+        public RegressionGraphViewModel RegressionGraphViewModel { get; private set; }
+        public RegressionISPlotViewModel RegressionISPlotViewModel { get; private set; }
+
         public AnalystExport AnalystExport
         {
             get => _analystExport;
@@ -26,15 +31,10 @@ namespace LIMS.ViewModel
             }
         }
 
-        public ObservableCollection<AnalystExportRow> DataGridSource { get; } = new();
-
         public async override Task Load()
         {
             AnalystExport = await _regressionDataProvider.GetData();
-            foreach (var datarow in AnalystExport.DataRows)
-            {
-                DataGridSource.Add(datarow);
-            }
+            RegressionDataViewModel = new RegressionDataViewModel(AnalystExport);
 
     
         }
