@@ -10,6 +10,57 @@ namespace LIMS.Model.Regression
         public LinearRegression(AnalystExport analystExport)
         {
             CreateRegressionDataPoints(analystExport);
+            UpdateRegression();
+        }
+
+        public void UpdateRegression()
+        {
+            double? xSum = 0;
+            double? ySum = 0;
+            double? xySum = 0;
+            double? xSquaredSum = 0;
+            int activeStandards = 0;
+
+            foreach (var standard in Standards)
+            {
+                if (!standard.IsActive)
+                {
+                    continue;
+                }
+                ++activeStandards;
+                double? x = standard.X;
+                double? y = standard.Y;
+                xSum += x;
+                ySum += y;
+                xySum += x * y;
+                xSquaredSum += x * x;
+            }
+
+            double? gradient = 
+                (activeStandards * xySum) - (xSum * ySum) /
+                (activeStandards * xSquaredSum) - (xSum * xSum);
+            double? yIntercept =
+                ySum - (gradient * xSum) /
+                activeStandards;
+
+            CalculateConcentrations();
+            CalculateSTDQCBias();
+            CalculateQCPresicion();
+        }
+
+        private void CalculateQCPresicion()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void CalculateSTDQCBias()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void CalculateConcentrations()
+        {
+            throw new NotImplementedException();
         }
 
         public List<Standard> Standards { get; init; } = new();
@@ -22,8 +73,6 @@ namespace LIMS.Model.Regression
             {
                 ProcessDataRow(dataRow);
             }
-
-
         }
 
         private void ProcessDataRow(AnalystExportRow dataRow)
