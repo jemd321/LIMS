@@ -14,5 +14,7 @@ namespace LIMS.ViewModel
         }
 
         public virtual Task Load() => Task.CompletedTask;
+
+        public virtual Task Load(string rawData) => Task.CompletedTask;
     }
 }

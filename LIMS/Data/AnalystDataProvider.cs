@@ -1,15 +1,68 @@
 ﻿using LIMS.Enums;
 using LIMS.Model;
+using LIMS.Model.RegressionModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LIMS.Data
 {
-    public static class AnalystDataProvider
+    public class AnalystDataProvider : IRegressionDataProvider
     {
-        public static AnalystExport ParseAnalystExport(string analystExport)
+        public async Task<RegressionData> GetRegressionData(string rawAnalystData)
+        {
+            List<Standard> standards = new();
+            List<QualityControl> qualityControls = new();
+            List<Unknown> unknowns = new();
+
+            await Task.Run(() =>
+            {
+                AnalystExport analystExport = ParseAnalystExport(ref rawAnalystData);
+
+                foreach (var dataRow in analystExport.DataRows)
+                {
+                    SampleType sampleType = dataRow.SampleType;
+                    switch (sampleType)
+                    {
+                        case SampleType.Standard:
+                            standards.Add(new Standard
+                            {
+                                X = dataRow.NominalConcentration,
+                                Y = dataRow.Area,
+                                SampleName = dataRow.SampleName,
+                            });
+                            break;
+                        case SampleType.QualityControl:
+                            qualityControls.Add(new QualityControl
+                            {
+                                X = dataRow.NominalConcentration,
+                                Y = dataRow.Area,
+                                SampleName = dataRow.SampleName,
+                            });
+                            break;
+                        case SampleType.Unknown:
+                            unknowns.Add(new Unknown
+                            {
+                                Y = dataRow.Area,
+                                SampleName = dataRow.SampleName,
+                            });
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            });
+            return new RegressionData
+            {
+                Standards = standards,
+                QualityControls = qualityControls,
+                Unknowns = unknowns
+            };
+        }
+
+        private AnalystExport ParseAnalystExport(ref string analystExport)
         {
             var headerPeakInfo = new List<AnalystExportHeaderPeakInfo>();
             var headerRegressionInfo = new List<AnalystExportHeaderRegressionInfo>();
@@ -64,16 +117,17 @@ namespace LIMS.Data
             return new AnalystExport()
             {
                 Peaks = headerPeakInfo,
-                AnalystRegressionInfo = headerRegressionInfo[0],
+                RegressionInfo = headerRegressionInfo[0],
                 DataRows = dataRows
             };
         }
-        private static bool BlockIsRegressionInfo(List<string> buffer)
+
+        private bool BlockIsRegressionInfo(List<string> buffer)
         {
             return buffer[0].StartsWith('F');
         }
 
-        private static AnalystExportHeaderPeakInfo ProcessPeakInfo(List<string> headerBuffer)
+        private AnalystExportHeaderPeakInfo ProcessPeakInfo(List<string> headerBuffer)
         {
             string peakName = headerBuffer[0].Split(' ')[2];
             bool isInternalStandard = headerBuffer[1].TrimEnd() == "Use as Internal Standard";
@@ -92,7 +146,7 @@ namespace LIMS.Data
             };
         }
 
-        private static AnalystExportHeaderRegressionInfo ProcessRegressionInfo(List<string> headerBuffer)
+        private AnalystExportHeaderRegressionInfo ProcessRegressionInfo(List<string> headerBuffer)
         {
             string[] firstLine = headerBuffer[0].Split('\t');
             RegressionType regression = ParseRegression(firstLine[1]);
@@ -115,7 +169,7 @@ namespace LIMS.Data
             };
         }
 
-        private static AnalystExportRow ProcessDataRow(string line)
+        private AnalystExportRow ProcessDataRow(string line)
         {
             string[] data = line.Split('\t');
             return new AnalystExportRow()
@@ -194,7 +248,7 @@ namespace LIMS.Data
             };
         }
 
-        private static TransitionMRM ParseTransition(string transition)
+        private TransitionMRM ParseTransition(string transition)
         {
             var splitTransition = transition.Split('/');
             double Q1 = double.Parse(splitTransition[0]);
@@ -202,7 +256,7 @@ namespace LIMS.Data
             return new TransitionMRM() { Q1 = Q1, Q3 = Q3 };
         }
 
-        private static RegressionType ParseRegression(string inputRegression)
+        private RegressionType ParseRegression(string inputRegression)
         {
             RegressionType regression;
             switch (inputRegression)
@@ -219,7 +273,7 @@ namespace LIMS.Data
             return regression;
         }
 
-        private static WeightingFactor ParseWeightingFactor(string inputWeightingFactor)
+        private WeightingFactor ParseWeightingFactor(string inputWeightingFactor)
         {
             WeightingFactor weightingFactor;
             switch (inputWeightingFactor)
@@ -239,7 +293,7 @@ namespace LIMS.Data
             return weightingFactor;
         }
 
-        private static SampleType ParseSampleType(string sampleType)
+        private SampleType ParseSampleType(string sampleType)
         {
             switch (sampleType)
             {
@@ -254,7 +308,7 @@ namespace LIMS.Data
             }
         }
 
-        private static Units ParseUnits(string units)
+        private Units ParseUnits(string units)
         {
             switch (units)
             {
@@ -265,7 +319,7 @@ namespace LIMS.Data
             }
         }
 
-        private static void VerifyDataRowHeaders(string headerRow)
+        private void VerifyDataRowHeaders(string headerRow)
         {
             string[] headers = headerRow.Split('\t');
             string[] validHeaderFormat =

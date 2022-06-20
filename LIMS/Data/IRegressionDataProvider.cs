@@ -4,6 +4,6 @@ namespace LIMS.Model
 {
     public interface IRegressionDataProvider
     {
-        public Task<AnalystExport> GetData();
+        public Task<RegressionData> GetRegressionData(string rawData);
     }
 }

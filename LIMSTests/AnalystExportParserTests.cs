@@ -136,7 +136,7 @@ namespace LIMSTests
             var expected = new AnalystExport()
             {
                 Peaks = peakInfo,
-                AnalystRegressionInfo = headerInfo,
+                RegressionInfo = headerInfo,
                 DataRows = dataRows
             };
 
@@ -144,7 +144,7 @@ namespace LIMSTests
 
             Assert.AreEqual(expected.Peaks[0], actual.Peaks[0]);
             Assert.AreEqual(expected.Peaks[1], actual.Peaks[1]);
-            Assert.AreEqual(expected.AnalystRegressionInfo, actual.AnalystRegressionInfo);
+            Assert.AreEqual(expected.RegressionInfo, actual.RegressionInfo);
             Assert.AreEqual(expected.DataRows[0], actual.DataRows[0]);
 
         }

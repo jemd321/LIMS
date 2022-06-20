@@ -8,20 +8,20 @@
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
-    <UserControl.Resources>
-        <DataTemplate DataType="{x:Type viewModel:RegressionDataViewModel}">
+    <!--<UserControl.Resources>
+        <DataTemplate DataType="{x:Type viewModel:LIMS.Model.RegressionDataViewModel}">
             <view:RegressionDataView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModel:RegressionStatisticsViewModel}">
+        <DataTemplate DataType="{x:Type viewModel:LIMS.Model.RegressionStatisticsViewModel}">
             <view:RegressionStatisticsView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModel:RegressionGraphViewModel}">
+        <DataTemplate DataType="{x:Type viewModel:LIMS.Model.RegressionGraphViewModel}">
             <view:RegressionGraphView />
         </DataTemplate>
-        <DataTemplate DataType="{x:Type viewModel:RegressionISPlotViewModel}">
+        <DataTemplate DataType="{x:Type viewModel:LIMS.Model.RegressionISPlotViewModel}">
             <view:RegressionISPlotView />
         </DataTemplate>
-    </UserControl.Resources>
+    </UserControl.Resources>-->
     <TabControl>
         <TabItem Header="Data"
                  IsSelected="True">

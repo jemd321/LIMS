@@ -1,8 +1,6 @@
 ﻿using LIMS.Command;
 using LIMS.Data;
-using LIMS.Model;
 using Microsoft.Win32;
-using System;
 using System.IO;
 
 namespace LIMS.ViewModel
@@ -10,9 +8,14 @@ namespace LIMS.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private ViewModelBase _selectedRegressionViewModel;
+        private readonly DataImporter _dataImporter;
 
-        public MainViewModel()
+
+        public MainViewModel(RegressionViewModel regressionViewModel, DataImporter dataImporter)
         {
+            _dataImporter = dataImporter;
+            RegressionViewModel = regressionViewModel;
+
             ImportAnalystFileCommand = new DelegateCommand(ImportAnalystFile);
         }
 
@@ -29,13 +32,15 @@ namespace LIMS.ViewModel
             }
             if (!string.IsNullOrEmpty(selectedFile))
             {
-                var regressionDataProvider = new DataImporter(selectedFile);
-                SelectedRegressionViewModel = new RegressionViewModel(regressionDataProvider);
-                await SelectedRegressionViewModel.Load();
+                FileInfo validFilePath = _dataImporter.ValidateFilePath(selectedFile);
+                string rawData = await _dataImporter.GetRawData(validFilePath);
+                
+                SelectedViewModel = RegressionViewModel;
+                await SelectedViewModel.Load(rawData);
             }
-
         }
-        public ViewModelBase SelectedRegressionViewModel
+
+        public ViewModelBase SelectedViewModel
         {
             get => _selectedRegressionViewModel;
             set
@@ -44,6 +49,7 @@ namespace LIMS.ViewModel
                 RaisePropertyChanged();
             }
         }
+
         public RegressionViewModel RegressionViewModel { get; }
 
         public DelegateCommand ImportAnalystFileCommand { get; }
