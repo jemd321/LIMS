@@ -1,4 +1,6 @@
-﻿using LIMS.ViewModel;
+﻿using LIMS.Data;
+using LIMS.Model;
+using LIMS.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
@@ -21,6 +23,9 @@ namespace LIMS
 
             services.AddTransient<MainViewModel>();
             services.AddTransient<RegressionViewModel>();
+
+            services.AddTransient<IRegressionDataProvider, AnalystDataProvider>();
+            services.AddTransient<DataImporter>();
         }
 
         protected override void OnStartup(StartupEventArgs e)

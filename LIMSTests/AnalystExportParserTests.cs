@@ -10,6 +10,7 @@ namespace LIMSTests
         [TestMethod]
         public void ReadAnalystExport_GivenFilePath_ReturnsParsedExport()
         {
+            var analystDataProvider = new AnalystDataProvider();
             string sampleAnalystExport = Properties.Resources.SampleAnalystExport;
             // to add expected object
             var peakInfo = new List<AnalystExportHeaderPeakInfo>();
@@ -140,7 +141,7 @@ namespace LIMSTests
                 DataRows = dataRows
             };
 
-            var actual = AnalystDataProvider.ParseAnalystExport(sampleAnalystExport);
+            var actual = analystDataProvider.ParseAnalystExport(ref sampleAnalystExport);
 
             Assert.AreEqual(expected.Peaks[0], actual.Peaks[0]);
             Assert.AreEqual(expected.Peaks[1], actual.Peaks[1]);

@@ -62,7 +62,7 @@ namespace LIMS.Data
             };
         }
 
-        private AnalystExport ParseAnalystExport(ref string analystExport)
+        public AnalystExport ParseAnalystExport(ref string analystExport)
         {
             var headerPeakInfo = new List<AnalystExportHeaderPeakInfo>();
             var headerRegressionInfo = new List<AnalystExportHeaderRegressionInfo>();
