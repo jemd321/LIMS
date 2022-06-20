@@ -1,4 +1,4 @@
-﻿namespace LIMS.Data
+﻿namespace LIMS.Model
 {
     public readonly record struct AnalystExportHeaderPeakInfo
     {

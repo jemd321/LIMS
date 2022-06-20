@@ -1,7 +1,7 @@
 ﻿using LIMS.Enums;
 using System;
 
-namespace LIMS.Data
+namespace LIMS.Model
 {
     public record AnalystExportRow
     {

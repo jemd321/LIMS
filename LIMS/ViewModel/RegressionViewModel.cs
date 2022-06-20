@@ -1,5 +1,4 @@
-﻿using LIMS.Data;
-using LIMS.Model;
+﻿using LIMS.Model;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 

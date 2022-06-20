@@ -1,4 +1,4 @@
-﻿using LIMS.Data;
+﻿using LIMS.Model;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 

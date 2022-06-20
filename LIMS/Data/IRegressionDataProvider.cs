@@ -1,5 +1,4 @@
-﻿using LIMS.Data;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace LIMS.Model
 {
