@@ -4,18 +4,18 @@ using System.Threading.Tasks;
 
 namespace LIMS.Data
 {
-    public class AnalystFileImporter : IRegressionDataProvider
+    public class DataImporter : IRegressionDataProvider
     {
         private readonly string _filePath;
 
-        public AnalystFileImporter(string filePath)
+        public DataImporter(string filePath)
         {
             _filePath = filePath;
         }
         public Task<AnalystExport> GetData()
         {
             string fileContent = File.ReadAllText(_filePath);
-            return Task.Run(() => AnalystExportParser.ParseAnalystExport(fileContent));
+            return Task.Run(() => AnalystDataProvider.ParseAnalystExport(fileContent));
         }
     }
 }

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace LIMS.Data
 {
-    public static class AnalystExportParser
+    public static class AnalystDataProvider
     {
         public static AnalystExport ParseAnalystExport(string analystExport)
         {

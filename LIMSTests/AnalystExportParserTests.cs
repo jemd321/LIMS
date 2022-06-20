@@ -140,7 +140,7 @@ namespace LIMSTests
                 DataRows = dataRows
             };
 
-            var actual = AnalystExportParser.ParseAnalystExport(sampleAnalystExport);
+            var actual = AnalystDataProvider.ParseAnalystExport(sampleAnalystExport);
 
             Assert.AreEqual(expected.Peaks[0], actual.Peaks[0]);
             Assert.AreEqual(expected.Peaks[1], actual.Peaks[1]);

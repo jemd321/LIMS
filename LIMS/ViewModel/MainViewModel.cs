@@ -29,7 +29,7 @@ namespace LIMS.ViewModel
             }
             if (!string.IsNullOrEmpty(selectedFile))
             {
-                var regressionDataProvider = new AnalystFileImporter(selectedFile);
+                var regressionDataProvider = new DataImporter(selectedFile);
                 SelectedRegressionViewModel = new RegressionViewModel(regressionDataProvider);
                 await SelectedRegressionViewModel.Load();
             }
