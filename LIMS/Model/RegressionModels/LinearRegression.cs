@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace LIMS.Model.Regression
+namespace LIMS.Model.RegressionModels
 {
-    public class LinearRegression
+    public class LinearRegression : Regression
     {
         public LinearRegression(AnalystExport analystExport)
         {

@@ -1,8 +1,8 @@
 ﻿using LIMS.Enums;
 
-namespace LIMS.Model.Regression
+namespace LIMS.Model.RegressionModels
 {
-    public class QualityControl : RegressionPoint
+    public class QualityControl : RegressionDataPoint
     {
         public override SampleType SampleType => SampleType.QualityControl;
     }

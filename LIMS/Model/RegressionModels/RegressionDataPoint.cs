@@ -1,8 +1,8 @@
 ﻿using LIMS.Enums;
 
-namespace LIMS.Model.Regression
+namespace LIMS.Model.RegressionModels
 {
-    public abstract class RegressionPoint
+    public abstract class RegressionDataPoint
     {
 
         // Concentration

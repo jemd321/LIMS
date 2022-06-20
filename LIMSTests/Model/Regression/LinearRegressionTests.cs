@@ -1,12 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LIMS.Model.Regression;
+using LIMS.Model.RegressionModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LIMS.Model.Regression.Tests
+namespace LIMS.Model.RegressionModels.Tests
 {
     [TestClass()]
     public class LinearRegressionTests

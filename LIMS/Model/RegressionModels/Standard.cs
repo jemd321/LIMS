@@ -1,8 +1,8 @@
 ﻿using LIMS.Enums;
 
-namespace LIMS.Model.Regression
+namespace LIMS.Model.RegressionModels
 {
-    public class Standard : RegressionPoint
+    public class Standard : RegressionDataPoint
     {
         public override SampleType SampleType => SampleType.Standard;
     }
