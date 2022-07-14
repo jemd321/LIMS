@@ -67,7 +67,7 @@ namespace LIMS.Model.RegressionModels
 
         private double? CalculateConcentration(double? instrumentResponse)
         {
-            return (instrumentResponse - Gradient) / YIntercept;
+            return (instrumentResponse - YIntercept) / Gradient;
         }
 
         private void CalculateQCPresicion()

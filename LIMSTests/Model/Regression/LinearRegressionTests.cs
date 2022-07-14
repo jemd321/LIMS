@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace LIMS.Model.RegressionModels.Tests
 {
+#pragma warning disable CS8629 // Nullable value type may be null.
     [TestClass()]
     public class LinearRegressionTests
     {
@@ -52,7 +53,7 @@ namespace LIMS.Model.RegressionModels.Tests
             var testRegression = new LinearRegression(_regressionData);
             const double EXPECTEDGRADIENT = 120.706;
 
-            Assert.IsTrue((EXPECTEDGRADIENT - testRegression.Gradient) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(EXPECTEDGRADIENT - testRegression.Gradient)) < TOLERANCE);
         }
 
         [TestMethod()]
@@ -61,7 +62,35 @@ namespace LIMS.Model.RegressionModels.Tests
             var testRegression = new LinearRegression(_regressionData);
             const double EXPECTEDYINTERCEPT = 0.209;
 
-            Assert.IsTrue((EXPECTEDYINTERCEPT - testRegression.YIntercept) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(EXPECTEDYINTERCEPT - testRegression.YIntercept)) < TOLERANCE);
+        }
+
+        [TestMethod()]
+        public void NewRegression_GivenRegressionData_CalculatesStandardConcentrations()
+        {
+            var testRegression = new LinearRegression(_regressionData);
+
+            Assert.IsTrue(Math.Abs(((double)testRegression.RegressionData.Standards[0].CalculatedConcentration - -0.00173)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[1].CalculatedConcentration - 0.10067)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[2].CalculatedConcentration - 0.20397)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[3].CalculatedConcentration - 0.29576)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[4].CalculatedConcentration - 0.40247)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[5].CalculatedConcentration - 0.49882)) < TOLERANCE);
+        }
+
+        [TestMethod()]
+        public void NewRegression_GivenRegressionData_CalculatesQCConcentrations()
+        {
+            var testRegression = new LinearRegression(_regressionData);
+
+            Assert.IsTrue(Math.Abs(((double)testRegression.RegressionData.QualityControls[0].CalculatedConcentration - 0.32965)) < TOLERANCE);
+        }
+        [TestMethod()]
+        public void NewRegression_GivenRegressionData_CalculatesUnknownConcentrations()
+        {
+            var testRegression = new LinearRegression(_regressionData);
+
+            Assert.IsTrue(Math.Abs(((double)testRegression.RegressionData.Unknowns[0].CalculatedConcentration - 0.16396)) < TOLERANCE);
         }
     }
 }
