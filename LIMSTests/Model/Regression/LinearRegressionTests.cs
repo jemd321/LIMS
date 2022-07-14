@@ -114,5 +114,11 @@ namespace LIMS.Model.RegressionModels.Tests
 
             Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.QualityControls[0].Accuracy - -5.8142)) < TOLERANCE);
         }
+        public void NewRegression_GivenRegressionData_AccuracyNotCalculatedforUnknown()
+        {
+            var testRegression = new LinearRegression(_regressionData);
+
+            Assert.IsNull(testRegression.RegressionData.QualityControls[0].Accuracy);
+        }
     }
 }
