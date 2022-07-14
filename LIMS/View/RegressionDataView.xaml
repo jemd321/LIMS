@@ -9,14 +9,18 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="300" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <DataGrid Grid.RowSpan="2"
+        <DataGrid Grid.Row ="0"
                   ItemsSource="{Binding Standards}">
+
+        </DataGrid>
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding QualityControls}">
 
         </DataGrid>
         <TextBlock Grid.Column="2"

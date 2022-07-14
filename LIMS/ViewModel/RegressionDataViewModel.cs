@@ -29,9 +29,24 @@ namespace LIMS.ViewModel
                         IsActive = standard.IsActive
                     }) ;
             }
+            foreach (var qualityControl in _currentRegression.RegressionData.QualityControls)
+            {
+                QualityControls.Add(
+                    new RegressionDataItemViewModel()
+                    {
+                        SampleName = qualityControl.SampleName,
+                        SampleType = qualityControl.SampleType,
+                        InstrumentResponse = qualityControl.InstrumentResponse,
+                        Accuracy = qualityControl.Accuracy,
+                        CalculatedConcentration = qualityControl.CalculatedConcentration,
+                        NominalConcentration = qualityControl.NominalConcentration,
+                        IsActive = qualityControl.IsActive
+                    });
+            }
         }
 
         public ObservableCollection<RegressionDataItemViewModel> Standards { get; } = new();
+        public ObservableCollection<RegressionDataItemViewModel> QualityControls { get; } = new();
 
 
 
