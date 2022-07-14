@@ -16,7 +16,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <DataGrid Grid.RowSpan="2"
-                  ItemsSource="{Binding DataRows}">
+                  ItemsSource="{Binding Standards}">
 
         </DataGrid>
         <TextBlock Grid.Column="2"

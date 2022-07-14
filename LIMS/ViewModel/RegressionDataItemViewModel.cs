@@ -9,8 +9,10 @@ namespace LIMS.ViewModel
         private string _sampleName;
         private SampleType _sampleType;
         private double? _instrumentResponse;
-        private double? _bias;
-        private bool _includeInRegression;
+        private double? _accuracy;
+        private bool _isActive;
+        private double? _calculatedConcentration;
+        private double? _nominalConcentration;
 
         public int SampleNumber
         {
@@ -52,22 +54,41 @@ namespace LIMS.ViewModel
             }
         }
 
-        public double? Bias
+        public double? CalculatedConcentration
         {
-            get => _bias;
+            get => _calculatedConcentration;
             set
             {
-                _bias = value;
+                _calculatedConcentration = value;
+                RaisePropertyChanged();
+            }
+        }
+        public double? NominalConcentration
+        {
+            get => _nominalConcentration;
+            set
+            {
+                _nominalConcentration = value;
                 RaisePropertyChanged();
             }
         }
 
-        public bool IncludeInRegression
+        public double? Accuracy
         {
-            get => _includeInRegression;
+            get => _accuracy;
             set
             {
-                _includeInRegression = value;
+                _accuracy = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool IsActive
+        {
+            get => _isActive;
+            set
+            {
+                _isActive = value;
                 RaisePropertyChanged();
             }
         }

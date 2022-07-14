@@ -1,4 +1,5 @@
 ﻿using LIMS.Data;
+using LIMS.Factory;
 using LIMS.Model;
 using LIMS.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,6 +26,7 @@ namespace LIMS
             services.AddTransient<RegressionViewModel>();
 
             services.AddTransient<IRegressionDataProvider, AnalystDataProvider>();
+            services.AddTransient<IRegressionFactory, RegressionFactory>();
             services.AddTransient<DataImporter>();
         }
 

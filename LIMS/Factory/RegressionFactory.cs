@@ -5,7 +5,7 @@ using System;
 
 namespace LIMS.Factory
 {
-    public class RegressionFactory
+    public class RegressionFactory : IRegressionFactory
     {
         public Regression ConstructRegression(RegressionData regressionData, RegressionType regressionType = RegressionType.Linear, WeightingFactor weightingFactor = WeightingFactor.OneOverXSquared)
         {

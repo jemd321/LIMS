@@ -89,7 +89,7 @@ namespace LIMS.Model.RegressionModels
 
         private void CalculateQCPresicion()
         {
-            
+            // TODO
         }
 
 

@@ -1,31 +1,37 @@
-﻿using LIMS.Model;
-using System.Collections.Generic;
+﻿using LIMS.Model.RegressionModels;
 using System.Collections.ObjectModel;
 
 namespace LIMS.ViewModel
 {
     public class RegressionDataViewModel : ViewModelBase
     {
-        private readonly AnalystExport _analystExport;
+        private readonly LinearRegression _currentRegression;
 
-        public RegressionDataViewModel(AnalystExport analystExport)
+        public RegressionDataViewModel(LinearRegression currentRegression)
         {
-            _analystExport = analystExport;
-            foreach (var row in _analystExport.DataRows)
+            _currentRegression = currentRegression;
+            ConstructDataRows();
+        }
+
+        private void ConstructDataRows()
+        {
+            foreach (var standard in _currentRegression.RegressionData.Standards)
             {
-                DataRows.Add(new RegressionDataItemViewModel()
-                {
-                    SampleNumber = row.SetNumber,
-                    SampleName = row.SampleName,
-                    SampleType = row.SampleType,
-                    InstrumentResponse = row.ResponseFactor1,
-                    Bias = 100d,
-                    IncludeInRegression = row.UseRecord
-                });
+                Standards.Add(
+                    new RegressionDataItemViewModel()
+                    {
+                        SampleName = standard.SampleName,
+                        SampleType = standard.SampleType,
+                        InstrumentResponse = standard.InstrumentResponse,
+                        Accuracy = standard.Accuracy,
+                        CalculatedConcentration = standard.CalculatedConcentration,
+                        NominalConcentration = standard.NominalConcentration,
+                        IsActive = standard.IsActive
+                    }) ;
             }
         }
 
-        public ObservableCollection<RegressionDataItemViewModel> DataRows { get; } = new();
+        public ObservableCollection<RegressionDataItemViewModel> Standards { get; } = new();
 
 
 
