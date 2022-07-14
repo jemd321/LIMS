@@ -29,23 +29,23 @@ namespace LIMS.Data
                         case SampleType.Standard:
                             standards.Add(new Standard
                             {
-                                X = dataRow.NominalConcentration,
-                                Y = dataRow.Area,
+                                NominalConcentration = dataRow.NominalConcentration,
+                                InstrumentResponse = dataRow.Area,
                                 SampleName = dataRow.SampleName,
                             });
                             break;
                         case SampleType.QualityControl:
                             qualityControls.Add(new QualityControl
                             {
-                                X = dataRow.NominalConcentration,
-                                Y = dataRow.Area,
+                                NominalConcentration = dataRow.NominalConcentration,
+                                InstrumentResponse = dataRow.Area,
                                 SampleName = dataRow.SampleName,
                             });
                             break;
                         case SampleType.Unknown:
                             unknowns.Add(new Unknown
                             {
-                                Y = dataRow.Area,
+                                InstrumentResponse = dataRow.Area,
                                 SampleName = dataRow.SampleName,
                             });
                             break;

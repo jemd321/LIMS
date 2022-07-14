@@ -8,11 +8,14 @@ namespace LIMS.Model.RegressionModels
     {
         public LinearRegression(RegressionData regressionData)
         {
+            RegressionData = regressionData;
             UpdateRegression();
         }
 
         public RegressionData RegressionData { get; private set; }
 
+        public double? Gradient { get; private set; }
+        public double? YIntercept { get; private set; }
         public void UpdateRegression()
         {
             double? xSum = 0;
@@ -28,39 +31,38 @@ namespace LIMS.Model.RegressionModels
                     continue;
                 }
                 ++activeStandards;
-                double? x = standard.X;
-                double? y = standard.Y;
+                double? x = standard.NominalConcentration;
+                double? y = standard.InstrumentResponse;
                 xSum += x;
                 ySum += y;
                 xySum += x * y;
                 xSquaredSum += x * x;
             }
 
-            double? gradient = 
-                (activeStandards * xySum) - (xSum * ySum) /
-                (activeStandards * xSquaredSum) - (xSum * xSum);
-            double? yIntercept =
-                ySum - (gradient * xSum) /
-                activeStandards;
+            Gradient =
+                ((activeStandards * xySum) - (xSum * ySum)) /
+                ((activeStandards * xSquaredSum) - (xSum * xSum));
+            YIntercept =
+                (ySum - (Gradient * xSum)) / activeStandards;
 
             CalculateConcentrations();
             CalculateSTDQCBias();
             CalculateQCPresicion();
         }
-
+        private void CalculateConcentrations()
+        {
+            
+        }
         private void CalculateQCPresicion()
         {
-            throw new NotImplementedException();
+            
         }
 
         private void CalculateSTDQCBias()
         {
-            throw new NotImplementedException();
+            
         }
 
-        private void CalculateConcentrations()
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }
