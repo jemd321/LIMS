@@ -46,7 +46,7 @@ namespace LIMS.Model.RegressionModels
                 (ySum - (Gradient * xSum)) / activeStandards;
 
             UpdateAllCalculatedConcentrations();
-            CalculateSTDQCBias();
+            CalculateStandardAndQCAccuracy();
             CalculateQCPresicion();
         }
         private void UpdateAllCalculatedConcentrations()
@@ -70,9 +70,21 @@ namespace LIMS.Model.RegressionModels
             return (instrumentResponse - YIntercept) / Gradient;
         }
 
-        private void CalculateSTDQCBias()
+        private void CalculateStandardAndQCAccuracy()
         {
-            
+            foreach (var standard in RegressionData.Standards)
+            {
+                standard.Accuracy = CalculateAccuracy(standard.CalculatedConcentration, standard.NominalConcentration);
+            }
+            foreach (var qualityControl in RegressionData.QualityControls)
+            {
+                qualityControl.Accuracy = CalculateAccuracy(qualityControl.CalculatedConcentration, qualityControl.NominalConcentration);
+            }
+        }
+
+        private double? CalculateAccuracy(double? observedConcentration, double? nominalConcentration)
+        {
+            return nominalConcentration == 0 ? null : ((observedConcentration - nominalConcentration) / nominalConcentration) * 100;
         }
 
         private void CalculateQCPresicion()
