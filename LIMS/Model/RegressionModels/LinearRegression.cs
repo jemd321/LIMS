@@ -70,15 +70,17 @@ namespace LIMS.Model.RegressionModels
             return (instrumentResponse - YIntercept) / Gradient;
         }
 
+        private void CalculateSTDQCBias()
+        {
+            
+        }
+
         private void CalculateQCPresicion()
         {
             
         }
 
-        private void CalculateSTDQCBias()
-        {
-            
-        }
+
 
 
     }

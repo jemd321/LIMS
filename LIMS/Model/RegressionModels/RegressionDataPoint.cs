@@ -9,7 +9,8 @@ namespace LIMS.Model.RegressionModels
         public double? CalculatedConcentration { get; set; }
         // Instrument Response
         public double? InstrumentResponse { get; init; }
-        public double? NominalConcentration { get; init; }
+        public double? NominalConcentration { get; set; }
+        public decimal? Accuracy { get; set; }
 
         public bool IsActive { get; set; } = true;
         public string SampleName { get; init; }

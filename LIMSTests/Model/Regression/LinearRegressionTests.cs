@@ -70,7 +70,7 @@ namespace LIMS.Model.RegressionModels.Tests
         {
             var testRegression = new LinearRegression(_regressionData);
 
-            Assert.IsTrue(Math.Abs(((double)testRegression.RegressionData.Standards[0].CalculatedConcentration - -0.00173)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[0].CalculatedConcentration - -0.00173)) < TOLERANCE);
             Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[1].CalculatedConcentration - 0.10067)) < TOLERANCE);
             Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[2].CalculatedConcentration - 0.20397)) < TOLERANCE);
             Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[3].CalculatedConcentration - 0.29576)) < TOLERANCE);
@@ -85,12 +85,34 @@ namespace LIMS.Model.RegressionModels.Tests
 
             Assert.IsTrue(Math.Abs(((double)testRegression.RegressionData.QualityControls[0].CalculatedConcentration - 0.32965)) < TOLERANCE);
         }
+
         [TestMethod()]
         public void NewRegression_GivenRegressionData_CalculatesUnknownConcentrations()
         {
             var testRegression = new LinearRegression(_regressionData);
 
             Assert.IsTrue(Math.Abs(((double)testRegression.RegressionData.Unknowns[0].CalculatedConcentration - 0.16396)) < TOLERANCE);
+        }
+
+        [TestMethod()]
+        public void NewRegression_GivenRegressionData_CalculatesStandardAccuracy()
+        {
+            var testRegression = new LinearRegression(_regressionData);
+
+            Assert.IsNull(testRegression.RegressionData.Standards[0].Accuracy);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[1].Accuracy - 0.67m)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[2].Accuracy - 1.985m)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[3].Accuracy - -1.413m)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[4].Accuracy - 0.6175m)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[5].Accuracy - -0.236m)) < TOLERANCE);
+        }
+
+        [TestMethod()]
+        public void NewRegression_GivenRegressionData_CalculatesQCAccuracy()
+        {
+            var testRegression = new LinearRegression(_regressionData);
+
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.QualityControls[1].Accuracy - 5.8142m)) < TOLERANCE);
         }
     }
 }
