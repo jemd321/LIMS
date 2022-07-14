@@ -54,5 +54,14 @@ namespace LIMS.Model.RegressionModels.Tests
 
             Assert.IsTrue((EXPECTEDGRADIENT - testRegression.Gradient) < TOLERANCE);
         }
+
+        [TestMethod()]
+        public void NewRegression_GivenRegressionData_CorrectYIntercept()
+        {
+            var testRegression = new LinearRegression(_regressionData);
+            const double EXPECTEDYINTERCEPT = 0.209;
+
+            Assert.IsTrue((EXPECTEDYINTERCEPT - testRegression.YIntercept) < TOLERANCE);
+        }
     }
 }

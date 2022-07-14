@@ -45,14 +45,31 @@ namespace LIMS.Model.RegressionModels
             YIntercept =
                 (ySum - (Gradient * xSum)) / activeStandards;
 
-            CalculateConcentrations();
+            UpdateAllCalculatedConcentrations();
             CalculateSTDQCBias();
             CalculateQCPresicion();
         }
-        private void CalculateConcentrations()
+        private void UpdateAllCalculatedConcentrations()
         {
-            
+            foreach (var standard in RegressionData.Standards)
+            {
+                standard.CalculatedConcentration = CalculateConcentration(standard.InstrumentResponse);
+            }
+            foreach (var qualityControl in RegressionData.QualityControls)
+            {
+                qualityControl.CalculatedConcentration = CalculateConcentration(qualityControl.InstrumentResponse);
+            }
+            foreach (var unknown in RegressionData.Unknowns)
+            {
+                unknown.CalculatedConcentration = CalculateConcentration(unknown.InstrumentResponse);
+            }
         }
+
+        private double? CalculateConcentration(double? instrumentResponse)
+        {
+            return (instrumentResponse - Gradient) / YIntercept;
+        }
+
         private void CalculateQCPresicion()
         {
             
