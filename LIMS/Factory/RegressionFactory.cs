@@ -12,7 +12,7 @@ namespace LIMS.Factory
             switch (regressionType)
             {
                 case RegressionType.Linear:
-                    return new LinearRegression(regressionData);
+                    return new LinearRegression(regressionData, weightingFactor);
                 case RegressionType.Quadratic:
                     throw new NotImplementedException();
                 default:

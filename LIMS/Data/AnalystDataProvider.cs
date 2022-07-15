@@ -278,14 +278,17 @@ namespace LIMS.Data
             WeightingFactor weightingFactor;
             switch (inputWeightingFactor)
             {
-                case "1":
-                    weightingFactor = WeightingFactor.One;
-                    break;
                 case "1  / x":
                     weightingFactor = WeightingFactor.OneOverX;
                     break;
                 case "1  / (x * x)":
                     weightingFactor = WeightingFactor.OneOverXSquared;
+                    break;
+                case "1  / y":
+                    weightingFactor = WeightingFactor.OneOverY;
+                    break;
+                case "1  / (y * y)":
+                    weightingFactor = WeightingFactor.OneOverYSquared;
                     break;
                 default:
                     throw new FileFormatException("unrecognised weighting factor in analyst result table export");

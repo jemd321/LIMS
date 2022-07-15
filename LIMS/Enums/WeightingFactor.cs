@@ -8,8 +8,12 @@ namespace LIMS.Enums
 {
     public enum WeightingFactor
     {
-        One,
+        Unweighted,
+        OneOverXHalf,
         OneOverX,
-        OneOverXSquared
+        OneOverXSquared,
+        OneOverYHalf,
+        OneOverY,
+        OneOverYSquared
     }
 }
