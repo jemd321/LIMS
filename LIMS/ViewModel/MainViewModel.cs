@@ -10,7 +10,6 @@ namespace LIMS.ViewModel
         private ViewModelBase _selectedRegressionViewModel;
         private readonly DataImporter _dataImporter;
 
-
         public MainViewModel(RegressionViewModel regressionViewModel, DataImporter dataImporter)
         {
             _dataImporter = dataImporter;
