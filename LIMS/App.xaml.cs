@@ -3,7 +3,6 @@ using LIMS.Factory;
 using LIMS.Model;
 using LIMS.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Windows;
 
 namespace LIMS
@@ -27,7 +26,7 @@ namespace LIMS
 
             services.AddTransient<IRegressionDataProvider, AnalystDataProvider>();
             services.AddTransient<IRegressionFactory, RegressionFactory>();
-            services.AddTransient<DataImporter>();
+            services.AddTransient<FileDataService>();
         }
 
         protected override void OnStartup(StartupEventArgs e)

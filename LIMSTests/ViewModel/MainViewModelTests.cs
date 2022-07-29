@@ -11,13 +11,13 @@ namespace LIMS.ViewModel.Tests
     {
         private MainViewModel _mainViewModel = default!;
         private RegressionViewModel _regressionViewModel = default!;
-        private Mock<DataImporter> _dataImporter = default!;
+        private Mock<FileDataService> _dataImporter = default!;
 
         [TestInitialize]
         public void SetupTest()
         {
             _regressionViewModel = SetupRegressionViewModel();
-            _dataImporter = new Mock<DataImporter>();
+            _dataImporter = new Mock<FileDataService>();
             _mainViewModel = new MainViewModel(_regressionViewModel, _dataImporter.Object);
         }
 

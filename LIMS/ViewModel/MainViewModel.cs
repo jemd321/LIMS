@@ -8,9 +8,9 @@ namespace LIMS.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private ViewModelBase _selectedRegressionViewModel;
-        private readonly DataImporter _dataImporter;
+        private readonly FileDataService _dataImporter;
 
-        public MainViewModel(RegressionViewModel regressionViewModel, DataImporter dataImporter)
+        public MainViewModel(RegressionViewModel regressionViewModel, FileDataService dataImporter)
         {
             _dataImporter = dataImporter;
             RegressionViewModel = regressionViewModel;
