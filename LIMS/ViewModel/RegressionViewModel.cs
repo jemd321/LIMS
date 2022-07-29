@@ -13,7 +13,7 @@ namespace LIMS.ViewModel
 
         private readonly IRegressionDataProvider _regressionDataProvider;
         private readonly IRegressionFactory _regressionFactory;
-        private RegressionDataViewModel _regressionDataViewModel;
+        private IRegressionDataViewModel _regressionDataViewModel;
 
         public RegressionViewModel(IRegressionDataProvider regressionDataProvider, IRegressionFactory regressionFactory)
         {
@@ -21,7 +21,7 @@ namespace LIMS.ViewModel
             _regressionFactory = regressionFactory;
         }
 
-        public RegressionDataViewModel RegressionDataViewModel
+        public IRegressionDataViewModel RegressionDataViewModel
         {
             get => _regressionDataViewModel;
             set

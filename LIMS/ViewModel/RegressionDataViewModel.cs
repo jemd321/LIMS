@@ -3,7 +3,12 @@ using System.Collections.ObjectModel;
 
 namespace LIMS.ViewModel
 {
-    public class RegressionDataViewModel : ViewModelBase
+    public interface IRegressionDataViewModel
+    {
+        public ObservableCollection<RegressionDataItemViewModel> Standards { get;}
+        public ObservableCollection<RegressionDataItemViewModel> QualityControls { get;}
+    }
+    public class RegressionDataViewModel : ViewModelBase, IRegressionDataViewModel
     {
         private readonly Regression _currentRegression;
 
