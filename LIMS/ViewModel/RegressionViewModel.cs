@@ -33,12 +33,12 @@ namespace LIMS.ViewModel
         public RegressionStatisticsViewModel RegressionStatisticsViewModel { get; private set; }
         public RegressionGraphViewModel RegressionGraphViewModel { get; private set; }
         public RegressionISPlotViewModel RegressionISPlotViewModel { get; private set; }
-        public LinearRegression Regression { get; private set; }
+        public Regression Regression { get; private set; }
 
         public async override Task Load(string rawData)
         {
             RegressionData regressionData = await _regressionDataProvider.GetRegressionData(rawData);
-            Regression = _regressionFactory.ConstructRegression(regressionData) as LinearRegression;
+            Regression = _regressionFactory.ConstructRegression(regressionData);
 
             RegressionDataViewModel = new RegressionDataViewModel(Regression);
         }

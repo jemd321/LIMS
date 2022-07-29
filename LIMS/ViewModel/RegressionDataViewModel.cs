@@ -5,9 +5,9 @@ namespace LIMS.ViewModel
 {
     public class RegressionDataViewModel : ViewModelBase
     {
-        private readonly LinearRegression _currentRegression;
+        private readonly Regression _currentRegression;
 
-        public RegressionDataViewModel(LinearRegression currentRegression)
+        public RegressionDataViewModel(Regression currentRegression)
         {
             _currentRegression = currentRegression;
             ConstructDataRows();

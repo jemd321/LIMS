@@ -1,6 +1,5 @@
 ﻿using LIMS.Enums;
 using System;
-using System.Collections.Generic;
 
 namespace LIMS.Model.RegressionModels
 {
@@ -12,12 +11,7 @@ namespace LIMS.Model.RegressionModels
             UpdateRegression();
         }
 
-        public RegressionData RegressionData { get; private set; }
-        public WeightingFactor WeightingFactor { get; private set; }
-        public double? Gradient { get; private set; }
-        public double? YIntercept { get; private set; }
-
-        public void UpdateRegression()
+        public override void UpdateRegression()
         {
             switch (WeightingFactor)
             {
