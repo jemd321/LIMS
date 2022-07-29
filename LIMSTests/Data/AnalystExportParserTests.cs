@@ -2,7 +2,7 @@ using LIMS.Data;
 using LIMS.Model;
 using LIMS.Enums;
 
-namespace LIMSTests
+namespace LIMSTests.Data
 {
     [TestClass]
     public class AnalystExportParserTests
@@ -98,25 +98,25 @@ namespace LIMSTests
                 AnalyteSlopeOfBaseline = 0d,
                 AnalyteProcessingAlgorithm = "Specify Parameters - MQIII",
                 AnalytePeakAsymmetry = 1.07,
-                ISPeakName = "Itraconazole-d9", 
+                ISPeakName = "Itraconazole-d9",
                 ISUnits = Units.ng_mL,
                 ISHeight = 5580d,
                 ISArea = 15015.6,
                 ISConcentration = 1d,
-                ISRetentionTime = 1.76, 
-                ISExpectedRetentionTime = 1.76, 
-                ISRetentionTimeWindow = 10d, 
-                ISCentroidLocation = 1.76, 
-                ISStartScan = 474, 
+                ISRetentionTime = 1.76,
+                ISExpectedRetentionTime = 1.76,
+                ISRetentionTimeWindow = 10d,
+                ISCentroidLocation = 1.76,
+                ISStartScan = 474,
                 ISStartTime = 1.66,
-                ISStopScan = 534, 
+                ISStopScan = 534,
                 ISEndTime = 1.87,
                 ISIntegrationType = "Base To Base",
                 ISSignalToNoiseRatio = 0d,
                 ISPeakWidth = 0.21,
                 ISTransitionMRM = new TransitionMRM()
                 {
-                    Q1 = 714.500, 
+                    Q1 = 714.500,
                     Q3 = 401.300
                 },
                 ISPeakWidthAtHalfHeight = 0.0399,
@@ -125,11 +125,11 @@ namespace LIMSTests
                 ISPeakAsymmetry = 0.998,
                 UseRecord = false,
                 RecordModified = false,
-                CalculatedConcentration = 4.31, 
+                CalculatedConcentration = 4.31,
                 RelativeRetentionTime = 1.01,
-                Accuracy = null, 
+                Accuracy = null,
                 ResponseFactor1 = null,
-                ResponseFactor2 = 0.936, 
+                ResponseFactor2 = 0.936,
                 ResponseFactor3 = 1d,
             };
             dataRows.Add(dataRow1);
