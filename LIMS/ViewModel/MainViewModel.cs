@@ -34,7 +34,7 @@ namespace LIMS.ViewModel
                 FileInfo validFilePath = _dataImporter.ValidateFilePath(selectedFile);
                 string rawData = await _dataImporter.GetRawData(validFilePath);
                 
-                SelectedViewModel = RegressionViewModel;
+                SelectedViewModel = (ViewModelBase)RegressionViewModel;
                 await SelectedViewModel.Load(rawData);
             }
         }
