@@ -9,9 +9,9 @@ namespace LIMS.ViewModel.Tests
     [TestClass()]
     public class MainViewModelTests
     {
-        private MainViewModel _mainViewModel;
-        private RegressionViewModel _regressionViewModel;
-        private Mock<DataImporter> _dataImporter;
+        private MainViewModel _mainViewModel = default!;
+        private RegressionViewModel _regressionViewModel = default!;
+        private Mock<DataImporter> _dataImporter = default!;
 
         [TestInitialize]
         public void SetupTest()
