@@ -1,6 +1,9 @@
 ﻿using LIMS.Command;
 using LIMS.Data;
+using LIMS.Model;
 using Microsoft.Win32;
+using System;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace LIMS.ViewModel
@@ -8,14 +11,52 @@ namespace LIMS.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private ViewModelBase _selectedRegressionViewModel;
-        private readonly FileDataService _dataImporter;
+        private readonly FileDataService _fileDataService;
 
-        public MainViewModel(RegressionViewModel regressionViewModel, FileDataService dataImporter)
+        public MainViewModel(RegressionViewModel regressionViewModel, FileDataService fileDataService)
         {
-            _dataImporter = dataImporter;
+            _fileDataService = fileDataService;
             RegressionViewModel = regressionViewModel;
 
+            CreateNewProjectCommand = new DelegateCommand(CreateNewProject);
+            OpenAnalyticalRunCommand = new DelegateCommand(OpenAnalyticalRun);
             ImportAnalystFileCommand = new DelegateCommand(ImportAnalystFile);
+            SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun);
+
+            LoadProjectsList();
+        }
+
+
+        public ViewModelBase SelectedViewModel
+        {
+            get => _selectedRegressionViewModel;
+            set
+            {
+                _selectedRegressionViewModel = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public RegressionViewModel RegressionViewModel { get; }
+        public ObservableCollection<Project> Projects { get; }
+        public DelegateCommand CreateNewProjectCommand { get; }
+        public DelegateCommand OpenAnalyticalRunCommand { get; }
+        public DelegateCommand ImportAnalystFileCommand { get; }
+        public DelegateCommand SaveAnalyticalRunCommand { get; }
+
+        private void CreateNewProject(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void OpenAnalyticalRun(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void SaveAnalyticalRun(object parameter)
+        {
+            throw new NotImplementedException();
         }
 
         private async void ImportAnalystFile(object parameter)
@@ -31,27 +72,22 @@ namespace LIMS.ViewModel
             }
             if (!string.IsNullOrEmpty(selectedFile))
             {
-                FileInfo validFilePath = _dataImporter.ValidateFilePath(selectedFile);
-                string rawData = await _dataImporter.GetRawData(validFilePath);
-                
+                FileInfo validFilePath = _fileDataService.ValidateFilePath(selectedFile);
+                string rawData = await _fileDataService.GetRawData(validFilePath);
+
                 SelectedViewModel = (ViewModelBase)RegressionViewModel;
                 await SelectedViewModel.Load(rawData);
             }
         }
 
-        public ViewModelBase SelectedViewModel
+        private void LoadProjectsList()
         {
-            get => _selectedRegressionViewModel;
-            set
-            {
-                _selectedRegressionViewModel = value;
-                RaisePropertyChanged();
-            }
+            throw new NotImplementedException();
         }
 
-        public RegressionViewModel RegressionViewModel { get; }
 
-        public DelegateCommand ImportAnalystFileCommand { get; }
+
+
 
 
     }
