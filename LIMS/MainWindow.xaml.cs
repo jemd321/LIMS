@@ -1,9 +1,8 @@
 ﻿using LIMS.ViewModel;
-using System.Windows;
 
 namespace LIMS
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private readonly MainViewModel _viewModel;
 
