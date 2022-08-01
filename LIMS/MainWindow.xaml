@@ -17,12 +17,21 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20" />
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="150" />
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal"
+                    Grid.ColumnSpan="2">
+            <TextBlock Text="Project:"
+                       Margin="3 2 3 3"/>
+            <ComboBox MinWidth="100"
+                      Margin="5 3 5 3"/>
+            <Button Width=""/>
+
+        </StackPanel>
         <StackPanel Grid.Row="1"
                     Background="Gray">
             <Button Content="Open"

@@ -1,6 +1,7 @@
 ﻿using LIMS.Model;
 using System;
 using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace LIMS.Data
@@ -24,7 +25,8 @@ namespace LIMS.Data
 
         public void SaveRun(RegressionData regressionData)
         {
-            throw new NotImplementedException();
+            var jsonDoc = JsonSerializer.Serialize<RegressionData>(regressionData);
+           
         }
     }
 }
