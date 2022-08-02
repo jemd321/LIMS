@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 
 namespace LIMS.ViewModel
 {
@@ -23,7 +24,8 @@ namespace LIMS.ViewModel
             ImportAnalystFileCommand = new DelegateCommand(ImportAnalystFile);
             SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun);
 
-            LoadProjectsList();
+            _fileDataService.CreateApplicationStorage();
+            Projects = LoadProjectsList();
         }
 
 
@@ -80,15 +82,11 @@ namespace LIMS.ViewModel
             }
         }
 
-        private void LoadProjectsList()
+        private ObservableCollection<Project> LoadProjectsList()
         {
-            throw new NotImplementedException();
+            var observableProjects = new ObservableCollection<Project>();
+            _fileDataService.LoadProjects().ForEach(observableProjects.Add);
+            return observableProjects;
         }
-
-
-
-
-
-
     }
 }

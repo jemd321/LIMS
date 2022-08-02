@@ -2,13 +2,12 @@
 {
     public record AnalyticalRun
     {
-        public AnalyticalRun(string runID, RegressionData runData)
+        public AnalyticalRun(string analyticalRunID)
         {
-            RunID = runID;
-            RunData = runData;
+            RunID = analyticalRunID;
         }
 
         public string RunID { get; }
-        public RegressionData RunData { get; }
+        public RegressionData RunData { get; set; }
     }
 }

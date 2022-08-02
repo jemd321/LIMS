@@ -19,7 +19,8 @@
         <ComboBox MinWidth="90"
                   Margin="0 3 5 3"
                   Height="20"
-                  MinHeight="20" />
+                  MinHeight="20"
+                  ItemsSource="{Binding Projects}"/>
         <TextBlock Text="Analytical Run:"
                    Margin="3 2 3 3"
                    VerticalAlignment="Center" />
