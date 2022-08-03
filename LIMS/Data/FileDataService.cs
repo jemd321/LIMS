@@ -110,12 +110,12 @@ namespace LIMS.Data
             string analyticalRunDirectory = _fileSystem.Path.Combine(ProjectsDirectory, project.ProjectID, analyticalRunID);
             string runFileName = analyticalRunID + ".json";
             string runFilePath = _fileSystem.Path.Combine(analyticalRunDirectory, runFileName);
-            if (!_fileSystem.File.Exists(analyticalRunDirectory))
+            if (!_fileSystem.File.Exists(runFilePath))
             {
                 // File not found exception - if the file does not exist then the project/analytical run list is bugged.
                 throw new FileNotFoundException("No analytical run file was found for the selected analytical run ID");
             }
-            string fileContents = File.ReadAllText(runFilePath);
+            string fileContents = _fileSystem.File.ReadAllText(runFilePath);
             var regressionData = JsonSerializer.Deserialize<RegressionData>(fileContents);
             return new AnalyticalRun(analyticalRunID, project.ProjectID, regressionData);
         }
@@ -129,7 +129,7 @@ namespace LIMS.Data
                 throw new DirectoryNotFoundException("No project exists for this analytical run");
             }
 
-            string projectDirectory = _fileSystem.Path.Combine(ProjectsDirectory, analyticalRun.ParentProjectID);
+            string projectDirectory = _fileSystem.Path.Combine(ProjectsDirectory, analyticalRun.ParentProjectID, analyticalRun.AnalyticalRunID);
             string filePath = _fileSystem.Path.Combine(projectDirectory, analyticalRun.AnalyticalRunID + ".json");
 
             string jsonDoc = JsonSerializer.Serialize(analyticalRun.RegressionData);

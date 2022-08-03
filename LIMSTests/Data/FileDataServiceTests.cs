@@ -67,13 +67,43 @@ namespace LIMS.Data.Tests
         [TestMethod()]
         public void LoadAnalyticalRun_GivenAnalyticalRunID_GetsAnalyticalRun()
         {
-            Assert.Fail();
+            string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
+            _mockfileSystem.AddDirectory(testProjectDirectory);
+            _fileDataService = new FileDataService(_mockfileSystem);
+
+            var mockAnalyticalRun = new AnalyticalRun("TestRun", "Test", _mockRegressionData);
+            _fileDataService.SaveAnalyticalRun(mockAnalyticalRun);
+            var testProject = new Project("Test");
+            const string TESTANALYTICALRUN = "TestRun";
+            testProject.AnalyticalRunIDs.Add(TESTANALYTICALRUN);
+
+            var actualLoadedRun = _fileDataService.LoadAnalyticalRun(testProject, TESTANALYTICALRUN);
+
+            Assert.AreEqual(mockAnalyticalRun.AnalyticalRunID, actualLoadedRun.AnalyticalRunID);
+            Assert.AreEqual(mockAnalyticalRun.ParentProjectID, actualLoadedRun.ParentProjectID);
+            Assert.IsTrue(actualLoadedRun.RegressionData.Standards.Any());
+        }
+
+        [TestMethod()]
+        public void LoadAnalyticalRun_GivenIncorrectAnalyticalRunID_Throws()
+        {
+            string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
+            _mockfileSystem.AddDirectory(testProjectDirectory);
+            _fileDataService = new FileDataService(_mockfileSystem);
+
+            var mockAnalyticalRun = new AnalyticalRun("TestRun", "Test", _mockRegressionData);
+            _fileDataService.SaveAnalyticalRun(mockAnalyticalRun);
+            var testProject = new Project("Test");
+            const string TESTANALYTICALRUN = "IncorrectRun";
+            testProject.AnalyticalRunIDs.Add(TESTANALYTICALRUN);
+
+            Assert.ThrowsException<FileNotFoundException>(() => _fileDataService.LoadAnalyticalRun(testProject, TESTANALYTICALRUN));
         }
 
         [TestMethod()]
         public void SaveAnalyticalRun_GivenRun_SavesAsJsonFile()
         {
-            string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test");
+            string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
             _mockfileSystem.AddDirectory(testProjectDirectory);
             _fileDataService = new FileDataService(_mockfileSystem);
 
@@ -88,7 +118,7 @@ namespace LIMS.Data.Tests
         [TestMethod]
         public void SaveAnalyticalRun_GivenExistingRun_OverwritesJsonFile()
         {
-            string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test");
+            string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
             string expectedSaveFilePath = Path.Combine(testProjectDirectory, "TestRun.json");
             _mockfileSystem.AddDirectory(testProjectDirectory);
             _mockfileSystem.AddFile(expectedSaveFilePath, new MockFileData(""));
