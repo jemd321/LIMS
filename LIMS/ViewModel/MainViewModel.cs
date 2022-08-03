@@ -26,7 +26,7 @@ namespace LIMS.ViewModel
             SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun);
         }
 
-        public void Load()
+        public new void Load()
         {
             _fileDataService.SetupApplicationStorage();
             Projects = LoadProjectsList();

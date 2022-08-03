@@ -16,7 +16,7 @@ namespace LIMS.Data
         void SetupApplicationStorage();
         List<Project> LoadProjects();
         string LoadRun(AnalyticalRun analyticalRun);
-        void SaveRun(RegressionData regressionData);
+        void SaveAnalyticalRun(AnalyticalRun analyticalRun);
         FileInfo ValidateFilePath(string filePath);
         Task<string> GetRawData(FileInfo fileInfo);
     }
@@ -98,8 +98,7 @@ namespace LIMS.Data
                 foreach (var analyticalRunDirectory in analyticalRunDirectories)
                 {
                     string analyticalRunID = analyticalRunDirectory.Split('\\').Last();
-                    var analyticalRun = new AnalyticalRun(analyticalRunID, project.ProjectID);
-                    project.AnalyticalRuns.Add(analyticalRun.AnalyticalRunID, analyticalRun);
+                    project.AnalyticalRunIDs.Add(analyticalRunID);
                 }
                 projects.Add(project);
             }
@@ -111,10 +110,20 @@ namespace LIMS.Data
             throw new NotImplementedException();
         }
 
-        public void SaveRun(RegressionData regressionData)
+        public void SaveAnalyticalRun(AnalyticalRun analyticalRun)
         {
-            var jsonDoc = JsonSerializer.Serialize<RegressionData>(regressionData);
+            var projects = from p in _fileSystem.Directory.GetDirectories(ProjectsDirectory)
+                           select p.Split('\\').Last();
+            if (!projects.Contains(analyticalRun.ParentProjectID))
+            {
+                throw new DirectoryNotFoundException("No project exists for this analytical run");
+            }
 
+            string projectDirectory = _fileSystem.Path.Combine(ProjectsDirectory, analyticalRun.ParentProjectID);
+            string filePath = _fileSystem.Path.Combine(projectDirectory, analyticalRun.AnalyticalRunID + ".Json");
+
+            string jsonDoc = JsonSerializer.Serialize(analyticalRun.RegressionData);
+            _fileSystem.File.WriteAllText(filePath, jsonDoc);
         }
 
         // TODO add file validation

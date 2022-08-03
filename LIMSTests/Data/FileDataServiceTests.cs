@@ -13,7 +13,7 @@ namespace LIMS.Data.Tests
     {
         private MockFileSystem _mockfileSystem = default!;
         private FileDataService _fileDataService = default!;
-        private RegressionData _regressionData = default!;
+        private RegressionData _mockRegressionData = default!;
 
         private string _expectedAppDataRoaming = default!;
         private string _expectedAppDirectory = default!;
@@ -26,7 +26,7 @@ namespace LIMS.Data.Tests
         {
             _mockfileSystem = new MockFileSystem();
             _fileDataService = new FileDataService(_mockfileSystem);
-            _regressionData = SetupRegressionData();
+            _mockRegressionData = SetupRegressionData();
 
             _expectedAppDataRoaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             _expectedAppDirectory = Path.Combine(_expectedAppDataRoaming, "LIMS");
@@ -65,18 +65,42 @@ namespace LIMS.Data.Tests
         }
 
         [TestMethod()]
-        public void LoadRun_GivenRunInfo_GetsRegressionData()
+        public void LoadAnalyticalRun_GivenAnalyticalRunID_GetsAnalyticalRun()
         {
             Assert.Fail();
         }
 
         [TestMethod()]
-        public void SaveRun_GivenRegressionData_SavesAsJSon()
+        public void SaveAnalyticalRun_GivenRun_SavesAsJsonFile()
         {
-            _fileDataService.SaveRun(_regressionData);
+            string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test");
+            _mockfileSystem.AddDirectory(testProjectDirectory);
+            _fileDataService = new FileDataService(_mockfileSystem);
 
-            Assert.Fail();
+            string expectedSaveFilePath = Path.Combine(testProjectDirectory, "TestRun.json");
+            var mockAnalyticalRun = new AnalyticalRun("TestRun", "Test", _mockRegressionData);
 
+            _fileDataService.SaveAnalyticalRun(mockAnalyticalRun);
+
+            Assert.IsTrue(_mockfileSystem.FileExists(expectedSaveFilePath));
+        }
+
+        [TestMethod]
+        public void SaveAnalyticalRun_GivenExistingRun_OverwritesJsonFile()
+        {
+            string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test");
+            string expectedSaveFilePath = Path.Combine(testProjectDirectory, "TestRun.json");
+            _mockfileSystem.AddDirectory(testProjectDirectory);
+            _mockfileSystem.AddFile(expectedSaveFilePath, new MockFileData(""));
+            _fileDataService = new FileDataService(_mockfileSystem);
+
+
+            var mockAnalyticalRun = new AnalyticalRun("TestRun", "Test", _mockRegressionData);
+
+            _fileDataService.SaveAnalyticalRun(mockAnalyticalRun);
+            string actualFileContent = _mockfileSystem.File.ReadAllText(expectedSaveFilePath);
+
+            Assert.IsTrue(actualFileContent.Length > 0);
         }
 
         [TestMethod()]
@@ -146,7 +170,7 @@ namespace LIMS.Data.Tests
         public void LoadProjects_WhenProjectsWithRunsExist_ReturnsLoadedProject()
         {
             var expectedProject = new Project("Test");
-            expectedProject.AnalyticalRuns.Add("TestRun", new AnalyticalRun("TestRun", "Test"));
+            expectedProject.AnalyticalRunIDs.Add("TestRun");
 
             _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
             _mockfileSystem.AddDirectory(Path.Combine(_expectedProjectsDirectory, "Test"));
@@ -154,29 +178,10 @@ namespace LIMS.Data.Tests
 
             var loadedProjects = _fileDataService.LoadProjects();
             var actualProject = loadedProjects.First();
-            var actualAnalyticalRun = actualProject.AnalyticalRuns.First();
+            var actualAnalyticalRun = actualProject.AnalyticalRunIDs.First();
 
-            Assert.IsTrue(actualProject.AnalyticalRuns.Count == 1);
-            Assert.IsTrue(actualAnalyticalRun.Key == expectedProject.AnalyticalRuns.First().Value.AnalyticalRunID);
-            Assert.IsTrue(actualAnalyticalRun.Value.ParentProjectID == expectedProject.ProjectID);
-        }
-
-        [TestMethod()]
-        public void LoadRunTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void SaveRunTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void ValidateFilePathTest1()
-        {
-            Assert.Fail();
+            Assert.IsTrue(actualProject.AnalyticalRunIDs.Count == 1);
+            Assert.IsTrue(actualAnalyticalRun == expectedProject.AnalyticalRunIDs.First());
         }
     }
 }
