@@ -14,7 +14,6 @@ namespace LIMS.Data
         string ApplicationDirectory { get; }
         string ProjectsDirectory { get; }
         void CreateApplicationStorage();
-        bool IsApplicationStorageSetup();
         List<Project> LoadProjects();
         string LoadRun(AnalyticalRun analyticalRun);
         void SaveRun(RegressionData regressionData);
@@ -64,23 +63,23 @@ namespace LIMS.Data
             {
                 return;
             }
-            if (!Directory.Exists(ApplicationDirectory))
+            if (!_fileSystem.Directory.Exists(ApplicationDirectory))
             {
-                Directory.CreateDirectory(ApplicationDirectory);
+                _fileSystem.Directory.CreateDirectory(ApplicationDirectory);
             }
-            if (!Directory.Exists(ProjectsDirectory))
+            if (!_fileSystem.Directory.Exists(ProjectsDirectory))
             {
-                Directory.CreateDirectory(ProjectsDirectory);
+                _fileSystem.Directory.CreateDirectory(ProjectsDirectory);
             }
         }
 
-        public bool IsApplicationStorageSetup()
+        private bool IsApplicationStorageSetup()
         {
             if (ApplicationDirectory == string.Empty || ProjectsDirectory == string.Empty)
             {
                 return false;
             }
-            if (Directory.Exists(ApplicationDirectory) && Directory.Exists(ProjectsDirectory))
+            if (_fileSystem.Directory.Exists(ApplicationDirectory) && _fileSystem.Directory.Exists(ProjectsDirectory))
             {
                 return true;
             }
@@ -94,11 +93,11 @@ namespace LIMS.Data
                 return null;
             }
             var projects = new List<Project>();
-            string[] projectDirectories = Directory.GetDirectories(ProjectsDirectory);
+            string[] projectDirectories = _fileSystem.Directory.GetDirectories(ProjectsDirectory);
             foreach (var projectDirectory in projectDirectories)
             {
                 var project = new Project(projectDirectory);
-                string[] analyticalRunDirectories = Directory.GetDirectories(projectDirectory);
+                string[] analyticalRunDirectories = _fileSystem.Directory.GetDirectories(projectDirectory);
                 foreach (var analyticalRunDirectory in analyticalRunDirectories)
                 {
                     var analyticalRun = new AnalyticalRun(analyticalRunDirectory, project.ProjectID);
