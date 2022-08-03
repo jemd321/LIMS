@@ -15,7 +15,7 @@ namespace LIMS.Data
         string ProjectsDirectory { get; }
         void SetupApplicationStorage();
         List<Project> LoadProjects();
-        string LoadRun(AnalyticalRun analyticalRun);
+        AnalyticalRun LoadAnalyticalRun(Project project, string analyticalRunID);
         void SaveAnalyticalRun(AnalyticalRun analyticalRun);
         FileInfo ValidateFilePath(string filePath);
         Task<string> GetRawData(FileInfo fileInfo);
@@ -105,9 +105,19 @@ namespace LIMS.Data
             return projects;
         }
 
-        public string LoadRun(AnalyticalRun analyticalRun)
+        public AnalyticalRun LoadAnalyticalRun(Project project, string analyticalRunID)
         {
-            throw new NotImplementedException();
+            string analyticalRunDirectory = _fileSystem.Path.Combine(ProjectsDirectory, project.ProjectID, analyticalRunID);
+            string runFileName = analyticalRunID + ".json";
+            string runFilePath = _fileSystem.Path.Combine(analyticalRunDirectory, runFileName);
+            if (!_fileSystem.File.Exists(analyticalRunDirectory))
+            {
+                // File not found exception - if the file does not exist then the project/analytical run list is bugged.
+                throw new FileNotFoundException("No analytical run file was found for the selected analytical run ID");
+            }
+            string fileContents = File.ReadAllText(runFilePath);
+            var regressionData = JsonSerializer.Deserialize<RegressionData>(fileContents);
+            return new AnalyticalRun(analyticalRunID, project.ProjectID, regressionData);
         }
 
         public void SaveAnalyticalRun(AnalyticalRun analyticalRun)
@@ -120,7 +130,7 @@ namespace LIMS.Data
             }
 
             string projectDirectory = _fileSystem.Path.Combine(ProjectsDirectory, analyticalRun.ParentProjectID);
-            string filePath = _fileSystem.Path.Combine(projectDirectory, analyticalRun.AnalyticalRunID + ".Json");
+            string filePath = _fileSystem.Path.Combine(projectDirectory, analyticalRun.AnalyticalRunID + ".json");
 
             string jsonDoc = JsonSerializer.Serialize(analyticalRun.RegressionData);
             _fileSystem.File.WriteAllText(filePath, jsonDoc);
