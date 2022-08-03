@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LIMS.ViewModel;
+using Moq;
 using LIMS.Data;
 using LIMSTests.Extensions;
 using LIMS.Factory;
@@ -34,9 +36,15 @@ namespace LIMS.ViewModel.Tests
             var fired = _mainViewModel.IsPropertyChangedFired(() =>
             {
                 _mainViewModel.SelectedViewModel = _regressionViewModel;
-            }, nameof(_mainViewModel.SelectedViewModel)); 
-            
+            }, nameof(_mainViewModel.SelectedViewModel));
+
             Assert.IsTrue(fired);
+        }
+
+        [TestMethod()]
+        public void Load_WhenCalled_LoadsProjectList()
+        {
+            Assert.Fail();
         }
     }
 }

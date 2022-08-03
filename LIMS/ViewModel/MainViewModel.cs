@@ -6,15 +6,16 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LIMS.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
         private ViewModelBase _selectedRegressionViewModel;
-        private readonly FileDataService _fileDataService;
+        private readonly IFileDataService _fileDataService;
 
-        public MainViewModel(RegressionViewModel regressionViewModel, FileDataService fileDataService)
+        public MainViewModel(RegressionViewModel regressionViewModel, IFileDataService fileDataService)
         {
             _fileDataService = fileDataService;
             RegressionViewModel = regressionViewModel;
@@ -23,11 +24,13 @@ namespace LIMS.ViewModel
             OpenAnalyticalRunCommand = new DelegateCommand(OpenAnalyticalRun);
             ImportAnalystFileCommand = new DelegateCommand(ImportAnalystFile);
             SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun);
+        }
 
+        public void Load()
+        {
             _fileDataService.CreateApplicationStorage();
             Projects = LoadProjectsList();
         }
-
 
         public ViewModelBase SelectedViewModel
         {
@@ -40,7 +43,7 @@ namespace LIMS.ViewModel
         }
 
         public RegressionViewModel RegressionViewModel { get; }
-        public ObservableCollection<Project> Projects { get; }
+        public ObservableCollection<Project> Projects { get; private set; }
         public DelegateCommand CreateNewProjectCommand { get; }
         public DelegateCommand OpenAnalyticalRunCommand { get; }
         public DelegateCommand ImportAnalystFileCommand { get; }

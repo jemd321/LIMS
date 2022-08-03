@@ -8,7 +8,20 @@ using System.Threading.Tasks;
 
 namespace LIMS.Data
 {
-    public class FileDataService
+    public interface IFileDataService
+    {
+        string ApplicationDirectory { get; }
+        string ProjectsDirectory { get; }
+        void CreateApplicationStorage();
+        bool IsApplicationStorageSetup();
+        List<Project> LoadProjects();
+        string LoadRun(AnalyticalRun analyticalRun);
+        void SaveRun(RegressionData regressionData);
+        FileInfo ValidateFilePath(string filePath);
+        Task<string> GetRawData(FileInfo fileInfo);
+    }
+
+    public class FileDataService : IFileDataService
     {
         public string ApplicationDirectory => GetApplicationDirectory();
         public string ProjectsDirectory => GetProjectsDirectory();
@@ -80,15 +93,15 @@ namespace LIMS.Data
                 string[] analyticalRunDirectories = Directory.GetDirectories(projectDirectory);
                 foreach (var analyticalRunDirectory in analyticalRunDirectories)
                 {
-                    var analyticalRun = new AnalyticalRun(analyticalRunDirectory);
-                    project.AnalyticalRuns.Add(analyticalRun.RunID, analyticalRun);
+                    var analyticalRun = new AnalyticalRun(analyticalRunDirectory, project.ProjectID);
+                    project.AnalyticalRuns.Add(analyticalRun.AnalyticalRunID, analyticalRun);
                 }
                 projects.Add(project);
             }
             return projects;
         }
 
-        public RegressionData LoadRun(string runID)
+        public string LoadRun(AnalyticalRun analyticalRun)
         {
             throw new NotImplementedException();
         }
@@ -98,11 +111,6 @@ namespace LIMS.Data
             var jsonDoc = JsonSerializer.Serialize<RegressionData>(regressionData);
 
         }
-
-
-
-
-
 
         // TODO add file validation
         public FileInfo ValidateFilePath(string filePath)
