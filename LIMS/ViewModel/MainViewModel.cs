@@ -28,7 +28,7 @@ namespace LIMS.ViewModel
 
         public void Load()
         {
-            _fileDataService.CreateApplicationStorage();
+            _fileDataService.SetupApplicationStorage();
             Projects = LoadProjectsList();
         }
 

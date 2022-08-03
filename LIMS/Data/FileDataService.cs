@@ -13,7 +13,7 @@ namespace LIMS.Data
     {
         string ApplicationDirectory { get; }
         string ProjectsDirectory { get; }
-        void CreateApplicationStorage();
+        void SetupApplicationStorage();
         List<Project> LoadProjects();
         string LoadRun(AnalyticalRun analyticalRun);
         void SaveRun(RegressionData regressionData);
@@ -57,7 +57,7 @@ namespace LIMS.Data
             return Path.Combine(ApplicationDirectory, PROJECTSDIRECTORYNAME);
         }
 
-        public void CreateApplicationStorage()
+        public void SetupApplicationStorage()
         {
             if (IsApplicationStorageSetup())
             {
@@ -88,19 +88,17 @@ namespace LIMS.Data
 
         public List<Project> LoadProjects()
         {
-            if (!IsApplicationStorageSetup())
-            {
-                return null;
-            }
             var projects = new List<Project>();
             string[] projectDirectories = _fileSystem.Directory.GetDirectories(ProjectsDirectory);
             foreach (var projectDirectory in projectDirectories)
             {
-                var project = new Project(projectDirectory);
+                string projectID = projectDirectory.Split('\\').Last();
+                var project = new Project(projectID);
                 string[] analyticalRunDirectories = _fileSystem.Directory.GetDirectories(projectDirectory);
                 foreach (var analyticalRunDirectory in analyticalRunDirectories)
                 {
-                    var analyticalRun = new AnalyticalRun(analyticalRunDirectory, project.ProjectID);
+                    string analyticalRunID = analyticalRunDirectory.Split('\\').Last();
+                    var analyticalRun = new AnalyticalRun(analyticalRunID, project.ProjectID);
                     project.AnalyticalRuns.Add(analyticalRun.AnalyticalRunID, analyticalRun);
                 }
                 projects.Add(project);

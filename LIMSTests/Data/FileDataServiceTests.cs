@@ -11,14 +11,26 @@ namespace LIMS.Data.Tests
     [TestClass()]
     public class FileDataServiceTests
     {
+        private MockFileSystem _mockfileSystem = default!;
         private FileDataService _fileDataService = default!;
         private RegressionData _regressionData = default!;
+
+        private string _expectedAppDataRoaming = default!;
+        private string _expectedAppDirectory = default!;
+        private string _expectedProjectsDirectory = default!;
+
+
 
         [TestInitialize]
         public void TestSetup()
         {
-            _fileDataService = new FileDataService(new FileSystem());
+            _mockfileSystem = new MockFileSystem();
+            _fileDataService = new FileDataService(_mockfileSystem);
             _regressionData = SetupRegressionData();
+
+            _expectedAppDataRoaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            _expectedAppDirectory = Path.Combine(_expectedAppDataRoaming, "LIMS");
+            _expectedProjectsDirectory = Path.Combine(_expectedAppDirectory, "Projects");
         }
 
         private RegressionData SetupRegressionData()
@@ -68,21 +80,85 @@ namespace LIMS.Data.Tests
         }
 
         [TestMethod()]
-        public void CreateApplicationStorage_Setups()
+        public void SetupApplicationStorage_WhenNotSetup_CreatesNewFolders()
         {
-            Assert.Fail();
+            _mockfileSystem.AddDirectory(_expectedAppDataRoaming);
+
+            _fileDataService.SetupApplicationStorage();
+
+            Assert.IsTrue(_mockfileSystem.Directory.Exists(_expectedAppDirectory));
+            Assert.IsTrue(_mockfileSystem.Directory.Exists(_expectedProjectsDirectory));
         }
 
         [TestMethod()]
-        public void IsApplicationStorageSetupTest()
+        public void SetupApplicationStorage_WhenAlreadySetup_KeepsDirectoriesAsIs()
         {
-            Assert.Fail();
+            _mockfileSystem.AddDirectory(_expectedAppDataRoaming);
+            _mockfileSystem.AddDirectory(_expectedAppDirectory);
+            _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
+
+            _fileDataService.SetupApplicationStorage();
+
+            Assert.IsTrue(_mockfileSystem.Directory.Exists(_expectedAppDirectory));
+            Assert.IsTrue(_mockfileSystem.Directory.Exists(_expectedProjectsDirectory));
         }
 
         [TestMethod()]
-        public void LoadProjectsTest()
+        public void ApplicationDirectory_Returns_CorrectDirectory()
         {
-            Assert.Fail();
+            string actualAppDirectory = _fileDataService.ApplicationDirectory;
+
+            Assert.AreEqual(_expectedAppDirectory, actualAppDirectory);
+        }
+
+        [TestMethod()]
+        public void ProjectsDirectory_Returns_CorrectDirectory()
+        {
+            string actualProjectsDirectory = _fileDataService.ProjectsDirectory;
+
+            Assert.AreEqual(_expectedProjectsDirectory, actualProjectsDirectory);
+        }
+
+        [TestMethod()]
+        public void LoadProjects_WhenNoProjects_ReturnsEmptyList()
+        {
+            _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
+            
+            var loadedProjects = _fileDataService.LoadProjects();
+
+            Assert.IsFalse(loadedProjects.Any());
+        }
+
+        [TestMethod()]
+        public void LoadProjects_WhenProjectsExist_ReturnsLoadedProject()
+        {
+            var expectedProject = new Project("Test");
+            _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
+            _mockfileSystem.AddDirectory(Path.Combine(_expectedProjectsDirectory, "Test"));
+
+            var loadedProjects = _fileDataService.LoadProjects();
+
+            Assert.IsTrue(loadedProjects.Count == 1);
+            Assert.IsTrue(expectedProject.ProjectID == loadedProjects.First().ProjectID);
+        }
+
+        [TestMethod()]
+        public void LoadProjects_WhenProjectsWithRunsExist_ReturnsLoadedProject()
+        {
+            var expectedProject = new Project("Test");
+            expectedProject.AnalyticalRuns.Add("TestRun", new AnalyticalRun("TestRun", "Test"));
+
+            _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
+            _mockfileSystem.AddDirectory(Path.Combine(_expectedProjectsDirectory, "Test"));
+            _mockfileSystem.AddDirectory(Path.Combine(_expectedProjectsDirectory, "Test\\TestRun"));
+
+            var loadedProjects = _fileDataService.LoadProjects();
+            var actualProject = loadedProjects.First();
+            var actualAnalyticalRun = actualProject.AnalyticalRuns.First();
+
+            Assert.IsTrue(actualProject.AnalyticalRuns.Count == 1);
+            Assert.IsTrue(actualAnalyticalRun.Key == expectedProject.AnalyticalRuns.First().Value.AnalyticalRunID);
+            Assert.IsTrue(actualAnalyticalRun.Value.ParentProjectID == expectedProject.ProjectID);
         }
 
         [TestMethod()]
@@ -99,12 +175,6 @@ namespace LIMS.Data.Tests
 
         [TestMethod()]
         public void ValidateFilePathTest1()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void GetRawDataTest1()
         {
             Assert.Fail();
         }
