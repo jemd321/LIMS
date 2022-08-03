@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.IO.Abstractions;
 
 namespace LIMS.Data
 {
@@ -23,6 +24,13 @@ namespace LIMS.Data
 
     public class FileDataService : IFileDataService
     {
+        private readonly IFileSystem _fileSystem;
+
+        public FileDataService(IFileSystem fileSystem)
+        {
+            _fileSystem = fileSystem;
+        }
+
         public string ApplicationDirectory => GetApplicationDirectory();
         public string ProjectsDirectory => GetProjectsDirectory();
 

@@ -1,5 +1,10 @@
-﻿using LIMS.Model.RegressionModels;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using LIMS.Data;
+using LIMS.Model.RegressionModels;
 using LIMS.Model;
+using System.IO;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
 
 namespace LIMS.Data.Tests
 {
@@ -12,7 +17,7 @@ namespace LIMS.Data.Tests
         [TestInitialize]
         public void TestSetup()
         {
-            _fileDataService = new FileDataService();
+            _fileDataService = new FileDataService(new FileSystem());
             _regressionData = SetupRegressionData();
         }
 
@@ -48,18 +53,6 @@ namespace LIMS.Data.Tests
         }
 
         [TestMethod()]
-        public void ValidateFilePathTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void GetRawDataTest()
-        {
-            Assert.Fail();
-        }
-
-        [TestMethod()]
         public void LoadRun_GivenRunInfo_GetsRegressionData()
         {
             Assert.Fail();
@@ -72,6 +65,48 @@ namespace LIMS.Data.Tests
 
             Assert.Fail();
 
+        }
+
+        [TestMethod()]
+        public void CreateApplicationStorage_Setups()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void IsApplicationStorageSetupTest()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void LoadProjectsTest()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void LoadRunTest()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void SaveRunTest()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void ValidateFilePathTest1()
+        {
+            Assert.Fail();
+        }
+
+        [TestMethod()]
+        public void GetRawDataTest1()
+        {
+            Assert.Fail();
         }
     }
 }
