@@ -6,19 +6,16 @@ namespace LIMS.Dialog
 {
     public class MessageDialogService : IMessageDialogService
     {
-        public Project ShowProjectCreationDialog(ObservableCollection<Project> projects)
+        public Project ShowProjectCreationDialog()
         {
-            var projectDialog = new ProjectCreationDialog(projects)
-            {
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                Owner = App.Current.MainWindow
-            };
-            bool projectCreated = projectDialog.ShowDialog().GetValueOrDefault();
-            if (projectCreated)
-            {
-                return new Project(projectDialog.SelectedProjectID);
-            }
-            else return null;
+            return new Project("Temp");
+            //var projectDialog = new ProjectCreationDialog();
+            //bool projectCreated = projectDialog.ShowDialog().GetValueOrDefault();
+            //if (projectCreated)
+            //{
+            //    return new Project(projectDialog.SelectedProjectID);
+            //}
+            //else return null;
         }
     }
 }

@@ -6,6 +6,8 @@ using LIMSTests.Extensions;
 using LIMS.Factory;
 using LIMS.Model;
 using System.IO.Abstractions.TestingHelpers;
+using LIMS.Dialog;
+using System.Collections.ObjectModel;
 
 namespace LIMS.ViewModel.Tests
 {
@@ -16,6 +18,7 @@ namespace LIMS.ViewModel.Tests
         private RegressionViewModel _regressionViewModel = default!;
         private FileDataService _fileDataService = default!;
         private MockFileSystem _mockfileSystem = default!;
+        private Mock<IMessageDialogService> _messageDialogService = default!;
 
         [TestInitialize]
         public void SetupTest()
@@ -23,7 +26,8 @@ namespace LIMS.ViewModel.Tests
             _regressionViewModel = SetupRegressionViewModel();
             _mockfileSystem = new MockFileSystem();
             _fileDataService = new FileDataService(_mockfileSystem);
-            _mainViewModel = new MainViewModel(_regressionViewModel, _fileDataService);
+            _messageDialogService = new Mock<IMessageDialogService>();
+            _mainViewModel = new MainViewModel(_regressionViewModel, _fileDataService, _messageDialogService.Object);
         }
 
         private RegressionViewModel SetupRegressionViewModel()
@@ -68,6 +72,31 @@ namespace LIMS.ViewModel.Tests
 
             Assert.IsTrue(_mainViewModel.Projects.Count == 1);
             Assert.AreEqual(expectedProject.ProjectID, actualProjectsList.Single().ProjectID);
+        }
+
+        [TestMethod()]
+        public void CreateNewProjectCommand_WhenDialogCancelled_ReturnsNull()
+        {
+            _mainViewModel.Load();
+            _mainViewModel.Projects.Clear();
+            _messageDialogService.Setup(m => m.ShowProjectCreationDialog(It.IsAny<ObservableCollection<Project>>())).Returns(() => null);
+
+            _mainViewModel.CreateNewProjectCommand.Execute(null);
+            Assert.IsTrue(_mainViewModel.Projects.Count == 0);
+        }
+
+        [TestMethod()]
+        public void CreateNewProjectCommand_WhenProjectIDEntered_ReturnsProject()
+        {
+            _mainViewModel.Load();
+            _mainViewModel.Projects.Clear();
+            var expectedProject = new Project("Test");
+            _messageDialogService.Setup(m => m.ShowProjectCreationDialog(It.IsAny<ObservableCollection<Project>>())).Returns(expectedProject);
+
+            _mainViewModel.CreateNewProjectCommand.Execute(null);
+            Assert.AreEqual(expectedProject.ProjectID, _mainViewModel.Projects.SingleOrDefault().ProjectID);
+
+
         }
     }
 }

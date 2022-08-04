@@ -1,15 +1,16 @@
 ﻿using LIMS.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace LIMS.Dialog
 {
     /// <summary>
     /// Interaction logic for ProjectCreationDialog.xaml
     /// </summary>
-    public partial class ProjectCreationDialog : Window
+    public partial class ProjectCreationDialog : UserControl
     {
-        public ProjectCreationDialog(ObservableCollection<Project> projects)
+        public ProjectCreationDialog()
         {
             InitializeComponent();
         }
@@ -19,12 +20,12 @@ namespace LIMS.Dialog
         private void ButtonCreate_Click(object sender, RoutedEventArgs e)
         {
             SelectedProjectID = ProjectID.Text;
-            DialogResult = true;
+            //DialogResult = true;
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false;
+            //DialogResult = false;
         }
     }
 }

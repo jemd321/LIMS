@@ -30,6 +30,7 @@ namespace LIMS
             services.AddTransient<IRegressionFactory, RegressionFactory>();
             services.AddTransient<IFileDataService, FileDataService>();
             services.AddTransient<IMessageDialogService, MessageDialogService>();
+            services.AddTransient<IDialogService, DialogService>();
             services.AddTransient<IFileSystem, FileSystem>();
         }
 

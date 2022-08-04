@@ -5,6 +5,6 @@ namespace LIMS.Dialog
 {
     public interface IMessageDialogService
     {
-        Project ShowProjectCreationDialog(ObservableCollection<Project> projects);
+        Project ShowProjectCreationDialog();
     }
 }

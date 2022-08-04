@@ -16,12 +16,20 @@ namespace LIMS.ViewModel
         private ViewModelBase _selectedRegressionViewModel;
         private readonly IFileDataService _fileDataService;
         private readonly IMessageDialogService _messageDialogService;
+        private readonly IDialogService _dialogService;
 
-        public MainViewModel(RegressionViewModel regressionViewModel, IFileDataService fileDataService, IMessageDialogService messageDialogService)
+        public MainViewModel(
+            RegressionViewModel regressionViewModel,
+            IFileDataService fileDataService, 
+            IMessageDialogService messageDialogService, 
+            IDialogService dialogService)
         {
             _fileDataService = fileDataService;
             _messageDialogService = messageDialogService;
+            _dialogService = dialogService;
             RegressionViewModel = regressionViewModel;
+
+            DialogService.RegisterDialog<ProjectCreationDialog, ProjectCreationDialogViewModel>();
 
             CreateNewProjectCommand = new DelegateCommand(CreateNewProject);
             OpenAnalyticalRunCommand = new DelegateCommand(OpenAnalyticalRun);
@@ -54,7 +62,19 @@ namespace LIMS.ViewModel
 
         private void CreateNewProject(object parameter)
         {
-            Project project = _messageDialogService.ShowProjectCreationDialog(Projects);
+            _dialogService.ShowDialog<ProjectCreationDialogViewModel>(result =>
+            {
+                var test = result;
+            });
+            //Project project = _messageDialogService.ShowProjectCreationDialog(Projects);
+            //if (project is null)
+            //{
+            //    return;
+            //}
+            //if (!Projects.Select(p => p.ProjectID).Contains(project.ProjectID))
+            //{
+            //    Projects.Add(project);
+            //}
         }
 
         private void OpenAnalyticalRun(object parameter)
