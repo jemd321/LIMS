@@ -1,4 +1,5 @@
 ﻿using LIMS.Data;
+using LIMS.Dialog;
 using LIMS.Factory;
 using LIMS.Model;
 using LIMS.ViewModel;
@@ -28,6 +29,7 @@ namespace LIMS
             services.AddTransient<IRegressionDataProvider, AnalystDataProvider>();
             services.AddTransient<IRegressionFactory, RegressionFactory>();
             services.AddTransient<IFileDataService, FileDataService>();
+            services.AddTransient<IMessageDialogService, MessageDialogService>();
             services.AddTransient<IFileSystem, FileSystem>();
         }
 

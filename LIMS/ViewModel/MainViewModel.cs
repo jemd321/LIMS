@@ -1,5 +1,6 @@
 ﻿using LIMS.Command;
 using LIMS.Data;
+using LIMS.Dialog;
 using LIMS.Model;
 using Microsoft.Win32;
 using System;
@@ -14,10 +15,12 @@ namespace LIMS.ViewModel
     {
         private ViewModelBase _selectedRegressionViewModel;
         private readonly IFileDataService _fileDataService;
+        private readonly IMessageDialogService _messageDialogService;
 
-        public MainViewModel(RegressionViewModel regressionViewModel, IFileDataService fileDataService)
+        public MainViewModel(RegressionViewModel regressionViewModel, IFileDataService fileDataService, IMessageDialogService messageDialogService)
         {
             _fileDataService = fileDataService;
+            _messageDialogService = messageDialogService;
             RegressionViewModel = regressionViewModel;
 
             CreateNewProjectCommand = new DelegateCommand(CreateNewProject);
@@ -51,7 +54,7 @@ namespace LIMS.ViewModel
 
         private void CreateNewProject(object parameter)
         {
-            throw new NotImplementedException();
+            Project project = _messageDialogService.ShowProjectCreationDialog(Projects);
         }
 
         private void OpenAnalyticalRun(object parameter)

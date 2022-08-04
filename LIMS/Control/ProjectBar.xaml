@@ -13,14 +13,15 @@
                    VerticalAlignment="Center" />
         <Button Padding="2"
                 Margin="3 0 3 0"
-                Height="25">
+                Height="25"
+                Command="{Binding CreateNewProjectCommand}">
             <iconPacks:Modern Kind="Add" />
         </Button>
         <ComboBox MinWidth="90"
                   Margin="0 3 5 3"
                   Height="20"
                   MinHeight="20"
-                  ItemsSource="{Binding Projects}"/>
+                  ItemsSource="{Binding Projects}" />
         <TextBlock Text="Analytical Run:"
                    Margin="3 2 3 3"
                    VerticalAlignment="Center" />

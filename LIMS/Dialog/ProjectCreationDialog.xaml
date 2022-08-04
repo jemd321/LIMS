@@ -1,0 +1,49 @@
+﻿<Window x:Class="LIMS.Dialog.ProjectCreationDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:LIMS.Dialog"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        MaxWidth="300"
+        Title="Create Project">
+    <Border BorderBrush="White"
+            BorderThickness="2"
+            Padding="5">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock Text="Enter a project name:"
+                       Margin="5" />
+            <TextBox x:Name="ProjectID"
+                     Grid.Row="1"
+                     TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal"
+                        Grid.Row="2"
+                        HorizontalAlignment="Center">
+                <StackPanel.Resources>
+                    <Style TargetType="Button"
+                           BasedOn="{StaticResource {x:Type Button}}">
+                        <Setter Property="Margin"
+                                Value="5" />
+                        <Setter Property="Width"
+                                Value="75" />
+                    </Style>
+                </StackPanel.Resources>
+                <Button Content="Create"
+                        Click="ButtonCreate_Click"
+                        IsDefault="True" />
+                <Button Content="Cancel"
+                        Click="ButtonCancel_Click"
+                        IsCancel="True" />
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>
