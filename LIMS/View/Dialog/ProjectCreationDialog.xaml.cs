@@ -15,17 +15,16 @@ namespace LIMS.Dialog
             InitializeComponent();
         }
 
-        public string SelectedProjectID { get; set; }
-
         private void ButtonCreate_Click(object sender, RoutedEventArgs e)
         {
-            SelectedProjectID = ProjectID.Text;
-            //DialogResult = true;
+        }
+
+        private void ButtonDelete_Click(object sender, RoutedEventArgs e)
+        {
         }
 
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
-            //DialogResult = false;
         }
     }
 }

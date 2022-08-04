@@ -15,17 +15,14 @@ namespace LIMS.ViewModel
     {
         private ViewModelBase _selectedRegressionViewModel;
         private readonly IFileDataService _fileDataService;
-        private readonly IMessageDialogService _messageDialogService;
         private readonly IDialogService _dialogService;
 
         public MainViewModel(
             RegressionViewModel regressionViewModel,
             IFileDataService fileDataService, 
-            IMessageDialogService messageDialogService, 
             IDialogService dialogService)
         {
             _fileDataService = fileDataService;
-            _messageDialogService = messageDialogService;
             _dialogService = dialogService;
             RegressionViewModel = regressionViewModel;
 
@@ -40,7 +37,7 @@ namespace LIMS.ViewModel
         public new void Load()
         {
             _fileDataService.SetupApplicationStorage();
-            Projects = LoadProjectsList();
+            Projects = _fileDataService.LoadProjects();
         }
 
         public ViewModelBase SelectedViewModel
@@ -106,13 +103,6 @@ namespace LIMS.ViewModel
                 SelectedViewModel = (ViewModelBase)RegressionViewModel;
                 await SelectedViewModel.Load(rawData);
             }
-        }
-
-        private ObservableCollection<Project> LoadProjectsList()
-        {
-            var observableProjects = new ObservableCollection<Project>();
-            _fileDataService.LoadProjects().ForEach(observableProjects.Add);
-            return observableProjects;
         }
     }
 }

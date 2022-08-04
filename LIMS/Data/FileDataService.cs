@@ -6,6 +6,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.IO.Abstractions;
+using System.Collections.ObjectModel;
 
 namespace LIMS.Data
 {
@@ -14,7 +15,7 @@ namespace LIMS.Data
         string ApplicationDirectory { get; }
         string ProjectsDirectory { get; }
         void SetupApplicationStorage();
-        List<Project> LoadProjects();
+        ObservableCollection<Project> LoadProjects();
         AnalyticalRun LoadAnalyticalRun(Project project, string analyticalRunID);
         void SaveAnalyticalRun(AnalyticalRun analyticalRun);
         FileInfo ValidateFilePath(string filePath);
@@ -86,9 +87,9 @@ namespace LIMS.Data
             else return false;
         }
 
-        public List<Project> LoadProjects()
+        public ObservableCollection<Project> LoadProjects()
         {
-            var projects = new List<Project>();
+            var projects = new ObservableCollection<Project>();
             string[] projectDirectories = _fileSystem.Directory.GetDirectories(ProjectsDirectory);
             foreach (var projectDirectory in projectDirectories)
             {

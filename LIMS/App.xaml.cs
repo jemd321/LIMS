@@ -11,7 +11,7 @@ namespace LIMS
 {
     public partial class App : Application
     {
-        private readonly ServiceProvider _serviceProvider;
+        public readonly ServiceProvider _serviceProvider;
         public App()
         {
             var services = new ServiceCollection();
@@ -29,9 +29,10 @@ namespace LIMS
             services.AddTransient<IRegressionDataProvider, AnalystDataProvider>();
             services.AddTransient<IRegressionFactory, RegressionFactory>();
             services.AddTransient<IFileDataService, FileDataService>();
-            services.AddTransient<IMessageDialogService, MessageDialogService>();
-            services.AddTransient<IDialogService, DialogService>();
+            services.AddSingleton<IDialogService, DialogService>();
             services.AddTransient<IFileSystem, FileSystem>();
+
+            services.AddTransient<ProjectCreationDialogViewModel>();
         }
 
         protected override void OnStartup(StartupEventArgs e)
