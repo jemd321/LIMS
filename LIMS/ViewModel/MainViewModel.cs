@@ -32,7 +32,7 @@ namespace LIMS.ViewModel
             SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun);
         }
 
-        public new void Load()
+        public override void Load()
         {
             _fileDataService.SetupApplicationStorage();
             Projects = _fileDataService.LoadProjects();

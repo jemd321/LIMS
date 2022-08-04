@@ -15,6 +15,8 @@ namespace LIMS.Data
         string ApplicationDirectory { get; }
         string ProjectsDirectory { get; }
         void SetupApplicationStorage();
+
+        void CreateProject(Project newProject);
         ObservableCollection<Project> LoadProjects();
         AnalyticalRun LoadAnalyticalRun(Project project, string analyticalRunID);
         void SaveAnalyticalRun(AnalyticalRun analyticalRun);
@@ -85,6 +87,11 @@ namespace LIMS.Data
                 return true;
             }
             else return false;
+        }
+
+        public void CreateProject(Project newProject)
+        {
+            // TODO
         }
 
         public ObservableCollection<Project> LoadProjects()

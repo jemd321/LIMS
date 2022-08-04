@@ -13,7 +13,7 @@ namespace LIMS.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public virtual Task Load() => Task.CompletedTask;
+        public virtual void Load() { }
 
         public virtual Task Load(string rawData) => Task.CompletedTask;
     }
