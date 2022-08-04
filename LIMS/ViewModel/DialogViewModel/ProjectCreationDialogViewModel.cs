@@ -9,8 +9,8 @@ namespace LIMS.ViewModel
     public class ProjectCreationDialogViewModel : ViewModelBase
     {
         private readonly IFileDataService _fileDataService;
-        private string _selectedProjectName;
         private ObservableCollection<Project> _loadedProjects;
+        private string _selectedProjectName;
 
         public ProjectCreationDialogViewModel(IFileDataService fileDataService)
         {
