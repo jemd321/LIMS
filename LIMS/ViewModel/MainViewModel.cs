@@ -26,8 +26,6 @@ namespace LIMS.ViewModel
             _dialogService = dialogService;
             RegressionViewModel = regressionViewModel;
 
-            DialogService.RegisterDialog<ProjectCreationDialog, ProjectCreationDialogViewModel>();
-
             CreateNewProjectCommand = new DelegateCommand(CreateNewProject);
             OpenAnalyticalRunCommand = new DelegateCommand(OpenAnalyticalRun);
             ImportAnalystFileCommand = new DelegateCommand(ImportAnalystFile);

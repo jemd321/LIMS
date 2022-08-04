@@ -4,6 +4,7 @@ using LIMS.Factory;
 using LIMS.Model;
 using LIMS.ViewModel;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.IO.Abstractions;
 using System.Windows;
 
@@ -17,6 +18,7 @@ namespace LIMS
             var services = new ServiceCollection();
             ConfigureServices(services);
             _serviceProvider = services.BuildServiceProvider();
+            ConfigureDialogService();
         }
 
         private void ConfigureServices(ServiceCollection services)
@@ -26,6 +28,8 @@ namespace LIMS
             services.AddTransient<MainViewModel>();
             services.AddTransient<RegressionViewModel>();
 
+            services.AddSingleton<IDialogService, DialogService>();
+
             services.AddTransient<IRegressionDataProvider, AnalystDataProvider>();
             services.AddTransient<IRegressionFactory, RegressionFactory>();
             services.AddTransient<IFileDataService, FileDataService>();
@@ -33,12 +37,19 @@ namespace LIMS
             services.AddTransient<IFileSystem, FileSystem>();
 
             services.AddTransient<ProjectCreationDialogViewModel>();
+            services.AddTransient<ProjectCreationDialog>();
+        }
+
+        private void ConfigureDialogService()
+        {
+            DialogService.ServiceProvider = _serviceProvider;
+            DialogService.RegisterDialog<ProjectCreationDialog, ProjectCreationDialogViewModel>();
         }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-
+            
             var mainWindow = _serviceProvider.GetService<MainWindow>();
             mainWindow.Show();
         }

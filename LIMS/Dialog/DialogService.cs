@@ -11,7 +11,9 @@ namespace LIMS.Dialog
     }
     public class DialogService : IDialogService
     {
-        static Dictionary<Type, Type> _mappings = new();
+        private static Dictionary<Type, Type> _mappings = new();
+
+        public static IServiceProvider ServiceProvider { get; set; }
 
         public static void RegisterDialog<TView, TViewModel>()
         {
@@ -24,7 +26,7 @@ namespace LIMS.Dialog
             ShowDialogInternal(viewType, callback, typeof(TViewModel));
         }
 
-        private static void ShowDialogInternal(Type viewType, Action<string> callback, Type viewModelType)
+        private void ShowDialogInternal(Type viewType, Action<string> callback, Type viewModelType)
         {
             var dialog = new DialogWindow();
             EventHandler closeEventHandler = null;
@@ -35,12 +37,12 @@ namespace LIMS.Dialog
             };
             dialog.Closed += closeEventHandler;
 
-            var content = Activator.CreateInstance(viewType);
+            var content = ServiceProvider.GetService(viewType);
             
 
             if (viewModelType != null)
             {
-                var viewModel = Activator.CreateInstance(viewModelType);
+                var viewModel = ServiceProvider.GetService(viewModelType);
                 (content as FrameworkElement).DataContext = viewModel;
             }
 
