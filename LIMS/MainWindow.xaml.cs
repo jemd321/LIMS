@@ -11,6 +11,7 @@ namespace LIMS
             InitializeComponent();
             _viewModel = mainViewModel;
             DataContext = _viewModel;
+            mainViewModel.Load();
         }
     }
 }
