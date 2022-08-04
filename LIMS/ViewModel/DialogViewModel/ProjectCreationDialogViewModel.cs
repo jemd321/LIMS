@@ -10,6 +10,7 @@ namespace LIMS.ViewModel
     {
         private readonly IFileDataService _fileDataService;
         private int _selectedProjectName;
+        private ObservableCollection<Project> _loadedProjects;
 
         public ProjectCreationDialogViewModel(IFileDataService fileDataService)
         {
@@ -23,16 +24,26 @@ namespace LIMS.ViewModel
         public DelegateCommand CreateProjectCommand { get; }
         public DelegateCommand DeleteProjectCommand { get; }
 
-        public ObservableCollection<Project> LoadedProjects { get; private set; }
+        public ObservableCollection<Project> LoadedProjects
+        {
+            get { return _loadedProjects; }
+            set { _loadedProjects = value; RaisePropertyChanged(); }
+        }
 
         public int SelectedProjectName
         {
             get { return _selectedProjectName; }
             set { _selectedProjectName = value; RaisePropertyChanged(); }
         }
-        private void CreateProject(object parameter)
+
+        public new void Load()
         {
             LoadedProjects = _fileDataService.LoadProjects();
+        }
+
+        private void CreateProject(object parameter)
+        {
+
         }
 
         private void DeleteProject(object parameter)

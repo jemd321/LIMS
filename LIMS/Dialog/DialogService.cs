@@ -1,4 +1,5 @@
 ﻿using LIMS.View.Dialog;
+using LIMS.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -39,11 +40,13 @@ namespace LIMS.Dialog
 
             var content = ServiceProvider.GetService(viewType);
             
-
             if (viewModelType != null)
             {
-                var viewModel = ServiceProvider.GetService(viewModelType);
-                (content as FrameworkElement).DataContext = viewModel;
+                var viewModel = ServiceProvider.GetService(viewModelType) as ViewModelBase;
+                viewModel.Load();
+                var viewContent = content as FrameworkElement;
+                viewContent.DataContext = viewModel;
+
             }
 
             dialog.Content = content;

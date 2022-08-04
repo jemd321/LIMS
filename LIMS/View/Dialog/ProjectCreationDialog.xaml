@@ -20,7 +20,8 @@
             <TextBlock Text="Existing Projects"
                        Margin="5" />
             <ListBox Grid.Row="1"
-                     Height="100"/>
+                     Height="100"
+                     ItemsSource="{Binding LoadedProjects}"/>
             <TextBlock Text="Enter a new project name:"
                        Grid.Row="2"
                        Margin="5" />
@@ -40,7 +41,8 @@
                     </Style>
                 </StackPanel.Resources>
                 <Button Content="Create"
-                        IsDefault="True" />
+                        IsDefault="True"
+                        Command="{Binding CreateProjectCommand}"/>
                 <Button Content="Delete"/>
                 <Button Content="Cancel"
                         Click="ButtonCancel_Click"
