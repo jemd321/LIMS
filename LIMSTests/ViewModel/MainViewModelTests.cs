@@ -5,6 +5,7 @@ using LIMS.Data;
 using LIMSTests.Extensions;
 using LIMS.Factory;
 using LIMS.Model;
+using System.IO.Abstractions.TestingHelpers;
 
 namespace LIMS.ViewModel.Tests
 {
@@ -13,14 +14,16 @@ namespace LIMS.ViewModel.Tests
     {
         private MainViewModel _mainViewModel = default!;
         private RegressionViewModel _regressionViewModel = default!;
-        private Mock<IFileDataService> _fileDataService = default!;
+        private FileDataService _fileDataService = default!;
+        private MockFileSystem _mockfileSystem = default!;
 
         [TestInitialize]
         public void SetupTest()
         {
             _regressionViewModel = SetupRegressionViewModel();
-            _fileDataService = new Mock<IFileDataService>();
-            _mainViewModel = new MainViewModel(_regressionViewModel, _fileDataService.Object);
+            _mockfileSystem = new MockFileSystem();
+            _fileDataService = new FileDataService(_mockfileSystem);
+            _mainViewModel = new MainViewModel(_regressionViewModel, _fileDataService);
         }
 
         private RegressionViewModel SetupRegressionViewModel()
@@ -42,12 +45,29 @@ namespace LIMS.ViewModel.Tests
         }
 
         [TestMethod()]
-        public void Load_WhenCalled_LoadsProjectList()
+        public void Load_WhenNoProjects_LoadsEmptyProjectList()
         {
-            
-            
-            
-            Assert.Fail();
+            _mainViewModel.Load();
+
+            Assert.IsTrue(_mainViewModel.Projects.Count == 0);
+        }
+
+        [TestMethod()]
+        public void Load_WhenProjectsExist_LoadsProjectList()
+        {
+            var expectedProject = new Project("Test");
+            var expectedAppDataRoaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var expectedAppDirectory = Path.Combine(expectedAppDataRoaming, "LIMS");
+            var expectedProjectsDirectory = Path.Combine(expectedAppDirectory, "Projects");
+
+            _mockfileSystem.AddDirectory(expectedProjectsDirectory);
+            _mockfileSystem.AddDirectory(Path.Combine(expectedProjectsDirectory, "Test"));
+
+            _mainViewModel.Load();
+            var actualProjectsList = _mainViewModel.Projects;
+
+            Assert.IsTrue(_mainViewModel.Projects.Count == 1);
+            Assert.AreEqual(expectedProject.ProjectID, actualProjectsList.Single().ProjectID);
         }
     }
 }

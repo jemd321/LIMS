@@ -34,11 +34,5 @@ namespace LIMS.ViewModel.Tests
 
             Assert.IsTrue(fired);
         }
-
-        [TestMethod()]
-        public void LoadTest()
-        {
-            Assert.Fail();
-        }
     }
 }
