@@ -45,6 +45,7 @@ namespace LIMS.ViewModel
         {
             var newProject = new Project(SelectedProjectName);
             _fileDataService.CreateProject(newProject);
+            LoadedProjects = _fileDataService.LoadProjects();
         }
 
         private void DeleteProject(object parameter)

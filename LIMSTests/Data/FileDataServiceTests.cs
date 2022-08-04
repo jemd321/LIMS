@@ -177,7 +177,7 @@ namespace LIMS.Data.Tests
         public void LoadProjects_WhenNoProjects_ReturnsEmptyList()
         {
             _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
-            
+
             var loadedProjects = _fileDataService.LoadProjects();
 
             Assert.IsFalse(loadedProjects.Any());
@@ -212,6 +212,33 @@ namespace LIMS.Data.Tests
 
             Assert.IsTrue(actualProject.AnalyticalRunIDs.Count == 1);
             Assert.IsTrue(actualAnalyticalRun == expectedProject.AnalyticalRunIDs.First());
+        }
+
+        [TestMethod()]
+        public void CreateProject_WhenGivenNewProject_CreatesProject()
+        {
+            var testProject = new Project("Test");
+            _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
+            var expectedProjectDirectory = _mockfileSystem.Path.Combine(_expectedProjectsDirectory, testProject.ProjectID);
+
+            _fileDataService.CreateProject(testProject);
+
+            Assert.IsTrue(_mockfileSystem.Directory.Exists(expectedProjectDirectory));
+        }
+
+        [TestMethod()]
+        public void CreateProject_WhenGivenExistingProject_DoesNothing()
+        {
+            var testProject = new Project("Test");
+            var expectedProjectDirectory = _mockfileSystem.Path.Combine(_expectedProjectsDirectory, testProject.ProjectID);
+            _mockfileSystem.AddDirectory(expectedProjectDirectory);
+            var expectedDirectoryCount = _mockfileSystem.AllDirectories.Count();
+
+            _fileDataService.CreateProject(testProject);
+            var actualDirectoryCount = _mockfileSystem.AllDirectories.Count();
+
+            Assert.AreEqual(expectedDirectoryCount, actualDirectoryCount);
+
         }
     }
 }

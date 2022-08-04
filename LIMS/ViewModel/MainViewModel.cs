@@ -59,17 +59,8 @@ namespace LIMS.ViewModel
         {
             _dialogService.ShowDialog<ProjectCreationDialogViewModel>(result =>
             {
-                var test = result;
+                // Dialog result not needed as changes are made directly on the filesystem by dialog
             });
-            //Project project = _messageDialogService.ShowProjectCreationDialog(Projects);
-            //if (project is null)
-            //{
-            //    return;
-            //}
-            //if (!Projects.Select(p => p.ProjectID).Contains(project.ProjectID))
-            //{
-            //    Projects.Add(project);
-            //}
         }
 
         private void OpenAnalyticalRun(object parameter)

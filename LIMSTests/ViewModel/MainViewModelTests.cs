@@ -75,29 +75,12 @@ namespace LIMS.ViewModel.Tests
         }
 
         [TestMethod()]
-        public void CreateNewProjectCommand_WhenDialogCancelled_ReturnsNull()
+        public void CreateNewProjectCommand_WhenInvoked_ShowsDialog()
         {
-            //_mainViewModel.Load();
-            //_mainViewModel.Projects.Clear();
-            //_messageDialogService.Setup(m => m.ShowDialog<ProjectCreationDialogViewModel>(It.IsAny<ObservableCollection<Project>>())).Returns(() => null);
+            _mainViewModel.Load();
 
-            //_mainViewModel.CreateNewProjectCommand.Execute(null);
-            //Assert.IsTrue(_mainViewModel.Projects.Count == 0);
-            Assert.Fail();
-        }
-
-        [TestMethod()]
-        public void CreateNewProjectCommand_WhenProjectIDEntered_ReturnsProject()
-        {
-            //_mainViewModel.Load();
-            //_mainViewModel.Projects.Clear();
-            //var expectedProject = new Project("Test");
-            //_messageDialogService.Setup(m => m.ShowProjectCreationDialog(It.IsAny<ObservableCollection<Project>>())).Returns(expectedProject);
-
-            //_mainViewModel.CreateNewProjectCommand.Execute(null);
-            //Assert.AreEqual(expectedProject.ProjectID, _mainViewModel.Projects.SingleOrDefault().ProjectID);
-            Assert.Fail();
-
+            _mainViewModel.CreateNewProjectCommand.Execute(null);
+            _dialogService.Verify(m => m.ShowDialog<ProjectCreationDialogViewModel>(It.IsAny<Action<string>>()), Times.Once);
         }
     }
 }

@@ -27,7 +27,8 @@
                        Margin="5" />
             <TextBox x:Name="ProjectID"
                      Grid.Row="3"
-                     TextWrapping="Wrap" />
+                     TextWrapping="Wrap"
+                     Text="{Binding SelectedProjectName}"/>
             <StackPanel Orientation="Horizontal"
                         Grid.Row="4"
                         HorizontalAlignment="Center">

@@ -91,7 +91,12 @@ namespace LIMS.Data
 
         public void CreateProject(Project newProject)
         {
-            // TODO
+            string newProjectDirectory = _fileSystem.Path.Combine(ProjectsDirectory, newProject.ProjectID);
+            if (_fileSystem.Directory.Exists(newProjectDirectory))
+            {
+                return;
+            }
+            _fileSystem.Directory.CreateDirectory(newProjectDirectory);
         }
 
         public ObservableCollection<Project> LoadProjects()
