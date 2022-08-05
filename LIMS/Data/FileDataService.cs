@@ -103,7 +103,7 @@ namespace LIMS.Data
             string existingProjectDirectory = _fileSystem.Path.Combine(ProjectsDirectory, existingProject.ProjectID);
             if (_fileSystem.Directory.Exists(existingProjectDirectory))
             {
-                _fileSystem.Directory.Delete(existingProjectDirectory);
+                _fileSystem.Directory.Delete(existingProjectDirectory, true);
             }
             else return;
         }

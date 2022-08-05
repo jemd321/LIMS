@@ -45,6 +45,20 @@ namespace LIMS.ViewModel.Tests
         }
 
         [TestMethod()]
+        public void Load_WhenVMLoaded_GetsProjects()
+        {
+            const string TESTPROJECTNAME = "test";
+            SetupTestForMockFileSystem();
+            Project expectedProject = SetupTestProject(TESTPROJECTNAME);
+
+            _viewModel.Load();
+            var actualProjectsList = _viewModel.LoadedProjects;
+
+            Assert.IsTrue(_viewModel.LoadedProjects.Count == 1);
+            Assert.AreEqual(expectedProject.ProjectID, actualProjectsList.Single().ProjectID);
+        }
+
+        [TestMethod()]
         public void NewProjectName_RaisesPropertyChanged_WhenPropertyChanged()
         {
             _viewModel.Load();
@@ -102,7 +116,7 @@ namespace LIMS.ViewModel.Tests
         {
             _viewModel.Load();
             _viewModel.NewProjectName = "valid";
-            Assert.IsTrue(_viewModel.CreateProjectCommand.CanExecute(new object()));
+            Assert.IsTrue(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 
         [TestMethod()]
@@ -110,7 +124,7 @@ namespace LIMS.ViewModel.Tests
         {
             _viewModel.Load();
             _viewModel.NewProjectName = "";
-            Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(new object()));
+            Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 
         [TestMethod()]
@@ -118,7 +132,7 @@ namespace LIMS.ViewModel.Tests
         {
             _viewModel.Load();
             _viewModel.NewProjectName = "?";
-            Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(new object()));
+            Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 
         [TestMethod()]
@@ -127,21 +141,45 @@ namespace LIMS.ViewModel.Tests
             _viewModel.Load();
             _viewModel.LoadedProjects.Add(new Project("test"));
             _viewModel.NewProjectName = "test";
-            Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(new object()));
+            Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 
         [TestMethod()]
-        public void Load_WhenVMLoaded_GetsProjects()
+        public void SelectedProject_RaisesPropertyChanged_WhenPropertyChanged()
         {
-            const string TESTPROJECTNAME = "test";
-            SetupTestForMockFileSystem();
-            Project expectedProject = SetupTestProject(TESTPROJECTNAME);
-
             _viewModel.Load();
-            var actualProjectsList = _viewModel.LoadedProjects;
+            var fired = _viewModel.IsPropertyChangedFired(() =>
+            {
+                _viewModel.SelectedProject = null;
+            }, nameof(_viewModel.SelectedProject));
 
-            Assert.IsTrue(_viewModel.LoadedProjects.Count == 1);
-            Assert.AreEqual(expectedProject.ProjectID, actualProjectsList.Single().ProjectID);
+            Assert.IsTrue(fired);
+        }
+
+        [TestMethod()]
+        public void DeleteProjectCommand_WhenExecuted_MakesCallToFileDataService()
+        {
+            _viewModel.Load();
+            _viewModel.SelectedProject = new Project("test");
+            _viewModel.DeleteProjectCommand.Execute(null);
+
+            _mockFileDataService.Verify(fds => fds.DeleteProject(It.IsAny<Project>()), Times.Once());
+        }
+
+        [TestMethod()]
+        public void DeleteProjectCommand_CanExecute_WhenProjectSelected()
+        {
+            _viewModel.Load();
+            _viewModel.SelectedProject = new Project("test");
+            Assert.IsTrue(_viewModel.DeleteProjectCommand.CanExecute(null));
+        }
+
+        [TestMethod()]
+        public void DeleteProjectCommand_CannotExecute_WhenNoProjectSelected()
+        {
+            _viewModel.Load();
+            _viewModel.SelectedProject = null;
+            Assert.IsFalse(_viewModel.DeleteProjectCommand.CanExecute(null));
         }
     }
 }

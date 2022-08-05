@@ -13,13 +13,14 @@ namespace LIMS.ViewModel
         private readonly IFileDataService _fileDataService;
         private ObservableCollection<Project> _loadedProjects;
         private string _newProjectName;
+        private Project _selectedProject;
 
         public ProjectCreationDialogViewModel(IFileDataService fileDataService)
         {
             _fileDataService = fileDataService;
 
             CreateProjectCommand = new DelegateCommand(CreateProject, CanCreateProject);
-            DeleteProjectCommand = new DelegateCommand(DeleteProject);
+            DeleteProjectCommand = new DelegateCommand(DeleteProject, CanDeleteProject);
         }
 
         public DelegateCommand CreateProjectCommand { get; }
@@ -57,6 +58,17 @@ namespace LIMS.ViewModel
             }
         }
 
+        public Project SelectedProject
+        {
+            get { return _selectedProject; }
+            set
+            {
+                _selectedProject = value;
+                RaisePropertyChanged();
+                DeleteProjectCommand.RaiseCanExecuteChanged();
+            }
+        }
+
         public override void Load()
         {
             LoadedProjects = _fileDataService.LoadProjects();
@@ -68,6 +80,11 @@ namespace LIMS.ViewModel
             var newProject = new Project(NewProjectName);
             _fileDataService.CreateProject(newProject);
             LoadedProjects = _fileDataService.LoadProjects();
+        }
+
+        private bool CanCreateProject(object parameter)
+        {
+            return !string.IsNullOrEmpty(NewProjectName) && !SelectedProjectAlreadyExists() && !SelectedProjectContainsIllegalCharacter();
         }
 
         private bool SelectedProjectAlreadyExists()
@@ -82,14 +99,17 @@ namespace LIMS.ViewModel
             return Regex.Match(NewProjectName, illegalCharactersPattern).Success;
         }
 
-        private bool CanCreateProject(object parameter)
-        {
-            return !string.IsNullOrEmpty(NewProjectName) && !SelectedProjectAlreadyExists() && !SelectedProjectContainsIllegalCharacter();
-        }
 
         private void DeleteProject(object parameter)
         {
-            throw new NotImplementedException();
+            _fileDataService.DeleteProject(SelectedProject);
+            LoadedProjects = _fileDataService.LoadProjects();
+            SelectedProject = null;
+        }
+
+        private bool CanDeleteProject(object parameter)
+        {
+            return SelectedProject is not null;
         }
 
     }
