@@ -45,7 +45,7 @@ namespace LIMS.ViewModel.Tests
         }
 
         [TestMethod()]
-        public void NewProjcetName_RaisesPropertyChanged_WhenPropertyChanged()
+        public void NewProjectName_RaisesPropertyChanged_WhenPropertyChanged()
         {
             _viewModel.Load();
             var fired = _viewModel.IsPropertyChangedFired(() =>

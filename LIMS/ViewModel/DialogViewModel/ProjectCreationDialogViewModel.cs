@@ -36,15 +36,16 @@ namespace LIMS.ViewModel
             get { return _newProjectName; }
             set
             {
+                // convert to lower case to avoid problems with case sensitive directory names
                 _newProjectName = value.ToLower();
                 RaisePropertyChanged();
 
                 ClearErrors();
-                if (DoesSelectedProjectAlreadyExist())
+                if (SelectedProjectAlreadyExists())
                 {
                     AddError("Project already exists");
                 }
-                else if (DoesSelectedProjectContainIllegalCharacter())
+                else if (SelectedProjectContainsIllegalCharacter())
                 {
                     AddError("Project name cannot contain: < > \\ / \" : | ? * .");
                 }
@@ -69,13 +70,13 @@ namespace LIMS.ViewModel
             LoadedProjects = _fileDataService.LoadProjects();
         }
 
-        private bool DoesSelectedProjectAlreadyExist()
+        private bool SelectedProjectAlreadyExists()
         {
             var existingProjectNames = LoadedProjects.Select(p => p.ProjectID);
             return existingProjectNames.Contains(NewProjectName);
         }
 
-        private bool DoesSelectedProjectContainIllegalCharacter()
+        private bool SelectedProjectContainsIllegalCharacter()
         {
             var illegalCharactersPattern = "[<>\\/\":|?*.]+";
             return Regex.Match(NewProjectName, illegalCharactersPattern).Success;
@@ -83,7 +84,7 @@ namespace LIMS.ViewModel
 
         private bool CanCreateProject(object parameter)
         {
-            return !string.IsNullOrEmpty(NewProjectName) && !DoesSelectedProjectAlreadyExist() && !DoesSelectedProjectContainIllegalCharacter();
+            return !string.IsNullOrEmpty(NewProjectName) && !SelectedProjectAlreadyExists() && !SelectedProjectContainsIllegalCharacter();
         }
 
         private void DeleteProject(object parameter)
