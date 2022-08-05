@@ -13,9 +13,9 @@ namespace LIMS.ViewModel.DialogViewModel
         private const int MAXPROJECTNAMELENGTH = 36;
 
         private readonly IFileDataService _fileDataService;
-        private ObservableCollection<Project> _loadedAnalyticalRuns;
+        private ObservableCollection<string> _loadedAnalyticalRunIDs;
         private string _newProjectName;
-        private Project _selectedAnalyticalRun;
+        private string _selectedAnalyticalRun;
 
         public AnalyticalRunDialogViewModel(IFileDataService fileDataService)
         {
@@ -28,19 +28,17 @@ namespace LIMS.ViewModel.DialogViewModel
         public DelegateCommand OpenAnalyticalRunCommand { get; }
         public DelegateCommand DeleteAnalyticalRunCommand { get; }
 
-        public ObservableCollection<Project> LoadedAnalyticalRuns
+        public ObservableCollection<string> LoadedAnalyticalRunIDs
         {
-            get { return _loadedAnalyticalRuns; }
-            set { _loadedAnalyticalRuns = value; RaisePropertyChanged(); }
+            get { return _loadedAnalyticalRunIDs; }
+            set { _loadedAnalyticalRunIDs = value; RaisePropertyChanged(); }
         }
 
         // In this dialog, the calling viewModel should supply the currently open ProjectID
         public string OptionalMessage { get; set; }
         public string OpenProjectID { get; private set; }
-
         public Project OpenProject { get; private set; }
-
-        public Project SelectedAnalyticalRun
+        public string SelectedAnalyticalRun
         {
             get { return _selectedAnalyticalRun; }
             set
@@ -53,20 +51,22 @@ namespace LIMS.ViewModel.DialogViewModel
 
         public override void Load()
         {
-            LoadedAnalyticalRuns = _fileDataService.LoadProjects();
             OpenProjectID = OptionalMessage;
             var openProject = _fileDataService
                 .LoadProjects()
-                .Select(p => p.ProjectID)
-                .Where(pID => pID == OpenProjectID);
-            OpenProject = OpenProject;
+                .Where(p => p.ProjectID == OpenProjectID)
+                .SingleOrDefault();
+            OpenProject = openProject;
+            foreach (string analyticalRunID in OpenProject.AnalyticalRunIDs)
+            {
+                LoadedAnalyticalRunIDs.Add(analyticalRunID);
+            }
         }
 
         private void OpenAnalyticalRun(object parameter)
         {
 
 
-            LoadedAnalyticalRuns = _fileDataService.LoadProjects();
         }
 
         private bool CanOpenAnalyticalRun(object parameter)
@@ -79,7 +79,7 @@ namespace LIMS.ViewModel.DialogViewModel
 
         private bool SelectedProjectAlreadyExists()
         {
-            var existingProjectNames = LoadedAnalyticalRuns.Select(p => p.ProjectID);
+            var existingProjectNames = LoadedAnalyticalRunIDs.Select(p => p.ProjectID);
             return existingProjectNames.Contains(NewProjectName);
         }
 
@@ -93,7 +93,7 @@ namespace LIMS.ViewModel.DialogViewModel
         private void DeleteAnalyticalRun(object parameter)
         {
             _fileDataService.DeleteProject(SelectedAnalyticalRun);
-            LoadedAnalyticalRuns = _fileDataService.LoadProjects();
+            LoadedAnalyticalRunIDs = _fileDataService.LoadProjects();
             SelectedAnalyticalRun = null;
         }
 
