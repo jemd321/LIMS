@@ -50,6 +50,7 @@ namespace LIMS.Dialog
             }
 
             dialog.Content = content;
+            dialog.Owner = Application.Current.MainWindow;
 
             dialog.ShowDialog();
         }
