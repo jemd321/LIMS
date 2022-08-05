@@ -1,5 +1,6 @@
 ﻿using LIMS.View.Dialog;
 using LIMS.ViewModel;
+using LIMS.ViewModel.DialogViewModel;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -8,7 +9,7 @@ namespace LIMS.Dialog
 {
     public interface IDialogService
     {
-        void ShowDialog<TViewModel>(Action<string> callback);
+        void ShowDialog<TViewModel>(Action<string> callback, string optionalMessage);
     }
     public class DialogService : IDialogService
     {
@@ -21,13 +22,13 @@ namespace LIMS.Dialog
             _mappings.Add(typeof(TViewModel), typeof(TView));
         }
 
-        public void ShowDialog<TViewModel>(Action<string> callback)
+        public void ShowDialog<TViewModel>(Action<string> callback, string optionalMessage = null)
         {
             var viewType = _mappings[typeof(TViewModel)];
-            ShowDialogInternal(viewType, callback, typeof(TViewModel));
+            ShowDialogInternal(viewType, callback, typeof(TViewModel), optionalMessage);
         }
 
-        private void ShowDialogInternal(Type viewType, Action<string> callback, Type viewModelType)
+        private void ShowDialogInternal(Type viewType, Action<string> callback, Type viewModelType, string optionalMessage = null)
         {
             var dialog = new DialogWindow();
             EventHandler closeEventHandler = null;
@@ -42,8 +43,12 @@ namespace LIMS.Dialog
             
             if (viewModelType != null)
             {
-                var viewModel = ServiceProvider.GetService(viewModelType) as ViewModelBase;
+                var viewModel = ServiceProvider.GetService(viewModelType) as IDialogViewModel;
                 viewModel.Load();
+                if (optionalMessage is not null)
+                {
+                    viewModel.OptionalMessage = optionalMessage;
+                }
                 var viewContent = content as FrameworkElement;
                 viewContent.DataContext = viewModel;
 

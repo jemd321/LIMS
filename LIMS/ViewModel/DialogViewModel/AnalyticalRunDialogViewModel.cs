@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace LIMS.ViewModel.DialogViewModel
 {
-    public class AnalyticalRunDialogViewModel : ValidationViewModelBase
+    public class AnalyticalRunDialogViewModel : ValidationViewModelBase, IDialogViewModel
     {
         private const int MAXPROJECTNAMELENGTH = 36;
 
@@ -34,35 +34,11 @@ namespace LIMS.ViewModel.DialogViewModel
             set { _loadedAnalyticalRuns = value; RaisePropertyChanged(); }
         }
 
-        public string NewProjectName
-        {
-            get { return _newProjectName; }
-            set
-            {
-                // convert to lower case to avoid problems with case sensitive directory names
-                _newProjectName = value.ToLower();
-                RaisePropertyChanged();
+        // In this dialog, the calling viewModel should supply the currently open ProjectID
+        public string OptionalMessage { get; set; }
+        public string OpenProjectID { get; private set; }
 
-                ClearErrors();
-                if (NewProjectName.Length > MAXPROJECTNAMELENGTH)
-                {
-                    AddError("Project name is too long");
-                }
-                else if (SelectedProjectAlreadyExists())
-                {
-                    AddError("Project already exists");
-                }
-                else if (SelectedProjectContainsIllegalCharacter())
-                {
-                    AddError("Project name cannot contain: < > \\ / \" : | ? * .");
-                }
-                else
-                {
-                    ClearErrors();
-                }
-                OpenAnalyticalRunCommand.RaiseCanExecuteChanged();
-            }
-        }
+        public Project OpenProject { get; private set; }
 
         public Project SelectedAnalyticalRun
         {
@@ -75,18 +51,21 @@ namespace LIMS.ViewModel.DialogViewModel
             }
         }
 
-
-
         public override void Load()
         {
             LoadedAnalyticalRuns = _fileDataService.LoadProjects();
-            NewProjectName = "";
+            OpenProjectID = OptionalMessage;
+            var openProject = _fileDataService
+                .LoadProjects()
+                .Select(p => p.ProjectID)
+                .Where(pID => pID == OpenProjectID);
+            OpenProject = OpenProject;
         }
 
         private void OpenAnalyticalRun(object parameter)
         {
-            var newProject = new Project(NewProjectName);
-            _fileDataService.CreateProject(newProject);
+
+
             LoadedAnalyticalRuns = _fileDataService.LoadProjects();
         }
 

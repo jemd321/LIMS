@@ -23,6 +23,12 @@ namespace LIMS.View.Dialog
         public AnalyticalRunDialog()
         {
             InitializeComponent();
+
+            
+        }
+
+        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
+        {
         }
     }
 }

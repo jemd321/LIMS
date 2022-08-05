@@ -15,14 +15,6 @@ namespace LIMS.Dialog
             InitializeComponent();
         }
 
-        private void ButtonCreate_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void ButtonDelete_Click(object sender, RoutedEventArgs e)
-        {
-        }
-
         private void ButtonCancel_Click(object sender, RoutedEventArgs e)
         {
         }

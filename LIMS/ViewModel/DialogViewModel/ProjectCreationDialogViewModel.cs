@@ -1,6 +1,7 @@
 ﻿using LIMS.Command;
 using LIMS.Data;
 using LIMS.Model;
+using LIMS.ViewModel.DialogViewModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace LIMS.ViewModel
 {
-    public class ProjectCreationDialogViewModel : ValidationViewModelBase
+    public class ProjectCreationDialogViewModel : ValidationViewModelBase, IDialogViewModel
     {
         private const int MAXPROJECTNAMELENGTH = 36;
         
@@ -33,7 +34,7 @@ namespace LIMS.ViewModel
             get { return _loadedProjects; }
             set { _loadedProjects = value; RaisePropertyChanged(); }
         }
-
+        public string OptionalMessage { get; set; }
         public string NewProjectName
         {
             get { return _newProjectName; }
@@ -63,7 +64,6 @@ namespace LIMS.ViewModel
                 CreateProjectCommand.RaiseCanExecuteChanged();
             }
         }
-
         public Project SelectedProject
         {
             get { return _selectedProject; }
