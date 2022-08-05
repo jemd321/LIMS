@@ -28,7 +28,7 @@
             <TextBox x:Name="ProjectID"
                      Grid.Row="3"
                      TextWrapping="Wrap"
-                     Text="{Binding SelectedProjectName, UpdateSourceTrigger=PropertyChanged}" />
+                     Text="{Binding NewProjectName, UpdateSourceTrigger=PropertyChanged}" />
             <StackPanel Orientation="Horizontal"
                         Grid.Row="4"
                         HorizontalAlignment="Center">

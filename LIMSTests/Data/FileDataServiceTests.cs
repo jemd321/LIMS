@@ -186,9 +186,9 @@ namespace LIMS.Data.Tests
         [TestMethod()]
         public void LoadProjects_WhenProjectsExist_ReturnsLoadedProject()
         {
-            var expectedProject = new Project("Test");
+            var expectedProject = new Project("test");
             _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
-            _mockfileSystem.AddDirectory(Path.Combine(_expectedProjectsDirectory, "Test"));
+            _mockfileSystem.AddDirectory(Path.Combine(_expectedProjectsDirectory, "test"));
 
             var loadedProjects = _fileDataService.LoadProjects();
 
@@ -199,12 +199,12 @@ namespace LIMS.Data.Tests
         [TestMethod()]
         public void LoadProjects_WhenProjectsWithRunsExist_ReturnsLoadedProject()
         {
-            var expectedProject = new Project("Test");
-            expectedProject.AnalyticalRunIDs.Add("TestRun");
+            var expectedProject = new Project("test");
+            expectedProject.AnalyticalRunIDs.Add("testrun");
 
             _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
-            _mockfileSystem.AddDirectory(Path.Combine(_expectedProjectsDirectory, "Test"));
-            _mockfileSystem.AddDirectory(Path.Combine(_expectedProjectsDirectory, "Test\\TestRun"));
+            _mockfileSystem.AddDirectory(Path.Combine(_expectedProjectsDirectory, "test"));
+            _mockfileSystem.AddDirectory(Path.Combine(_expectedProjectsDirectory, "test\\testrun"));
 
             var loadedProjects = _fileDataService.LoadProjects();
             var actualProject = loadedProjects.First();
@@ -217,7 +217,7 @@ namespace LIMS.Data.Tests
         [TestMethod()]
         public void CreateProject_WhenGivenNewProject_CreatesProject()
         {
-            var testProject = new Project("Test");
+            var testProject = new Project("test");
             _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
             var expectedProjectDirectory = _mockfileSystem.Path.Combine(_expectedProjectsDirectory, testProject.ProjectID);
 
@@ -229,7 +229,7 @@ namespace LIMS.Data.Tests
         [TestMethod()]
         public void CreateProject_WhenGivenExistingProject_DoesNothing()
         {
-            var testProject = new Project("Test");
+            var testProject = new Project("test");
             var expectedProjectDirectory = _mockfileSystem.Path.Combine(_expectedProjectsDirectory, testProject.ProjectID);
             _mockfileSystem.AddDirectory(expectedProjectDirectory);
             var expectedDirectoryCount = _mockfileSystem.AllDirectories.Count();

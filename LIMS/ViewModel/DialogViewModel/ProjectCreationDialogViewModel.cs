@@ -3,6 +3,8 @@ using LIMS.Data;
 using LIMS.Model;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace LIMS.ViewModel
 {
@@ -10,7 +12,7 @@ namespace LIMS.ViewModel
     {
         private readonly IFileDataService _fileDataService;
         private ObservableCollection<Project> _loadedProjects;
-        private string _selectedProjectName;
+        private string _newProjectName;
 
         public ProjectCreationDialogViewModel(IFileDataService fileDataService)
         {
@@ -29,38 +31,60 @@ namespace LIMS.ViewModel
             set { _loadedProjects = value; RaisePropertyChanged(); }
         }
 
-        public string SelectedProjectName
+        public string NewProjectName
         {
-            get { return _selectedProjectName; }
+            get { return _newProjectName; }
             set
             {
-                _selectedProjectName = value;
+                _newProjectName = value.ToLower();
                 RaisePropertyChanged();
-                CreateProjectCommand.RaiseCanExecuteChanged();
-                if (string.IsNullOrEmpty(_selectedProjectName))
+
+                ClearErrors();
+                if (DoesSelectedProjectAlreadyExist())
                 {
-                    AddError("Project Name is required");
+                    AddError("Project already exists");
+                }
+                else if (DoesSelectedProjectContainIllegalCharacter())
+                {
+                    AddError("Project name cannot contain: < > \\ / \" : | ? * .");
                 }
                 else
                 {
                     ClearErrors();
                 }
+                CreateProjectCommand.RaiseCanExecuteChanged();
             }
         }
 
         public override void Load()
         {
             LoadedProjects = _fileDataService.LoadProjects();
+            NewProjectName = "";
         }
 
         private void CreateProject(object parameter)
         {
-            var newProject = new Project(SelectedProjectName);
+            var newProject = new Project(NewProjectName);
             _fileDataService.CreateProject(newProject);
             LoadedProjects = _fileDataService.LoadProjects();
         }
 
-        private bool CanCreateProject(object parameter) => !string.IsNullOrEmpty(SelectedProjectName);
+        private bool DoesSelectedProjectAlreadyExist()
+        {
+            var existingProjectNames = LoadedProjects.Select(p => p.ProjectID);
+            return existingProjectNames.Contains(NewProjectName);
+        }
+
+        private bool DoesSelectedProjectContainIllegalCharacter()
+        {
+            var illegalCharactersPattern = "[<>\\/\":|?*.]+";
+            return Regex.Match(NewProjectName, illegalCharactersPattern).Success;
+        }
+
+        private bool CanCreateProject(object parameter)
+        {
+            return !string.IsNullOrEmpty(NewProjectName) && !DoesSelectedProjectAlreadyExist() && !DoesSelectedProjectContainIllegalCharacter();
+        }
 
         private void DeleteProject(object parameter)
         {

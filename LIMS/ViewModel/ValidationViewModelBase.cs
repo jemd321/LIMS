@@ -22,6 +22,18 @@ namespace LIMS.ViewModel
             : Enumerable.Empty<string>();
         }
 
+        public List<string> GetErrorsAsList(string propertyName)
+        {
+            var errors = GetErrors(propertyName);
+            // Enumerate through GetErrors collection and cast to string
+            var errorList = new List<string>();
+            foreach (string error in errors)
+            {
+                errorList.Add(error);
+            }
+            return errorList;
+        }
+
         protected virtual void OnErrorsChanged(DataErrorsChangedEventArgs e)
         {
             ErrorsChanged?.Invoke(this, e);
