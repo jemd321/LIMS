@@ -240,5 +240,30 @@ namespace LIMS.Data.Tests
             Assert.AreEqual(expectedDirectoryCount, actualDirectoryCount);
 
         }
+
+        [TestMethod()]
+        public void DeleteProject_GivenExistingProject_DeletesIt()
+        {
+            var testProject = new Project("test");
+            var expectedProjectDirectory = _mockfileSystem.Path.Combine(_expectedProjectsDirectory, testProject.ProjectID);
+            _mockfileSystem.AddDirectory(expectedProjectDirectory);
+
+            _fileDataService.DeleteProject(testProject);
+
+            Assert.IsFalse(_mockfileSystem.Directory.Exists(expectedProjectDirectory));
+        }
+
+        [TestMethod()]
+        public void DeleteProject_ProjectNotFound_DoesNothing()
+        {
+            var testProject = new Project("test");
+            _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
+            var expectedDirectoryCount = _mockfileSystem.AllDirectories.Count();
+
+            _fileDataService.DeleteProject(testProject);
+            var actualDirectoryCount = _mockfileSystem.AllDirectories.Count();
+
+            Assert.AreEqual(expectedDirectoryCount, actualDirectoryCount);
+        }
     }
 }

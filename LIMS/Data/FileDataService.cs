@@ -14,10 +14,10 @@ namespace LIMS.Data
     {
         string ApplicationDirectory { get; }
         string ProjectsDirectory { get; }
-        void SetupApplicationStorage();
-
-        void CreateProject(Project newProject);
         ObservableCollection<Project> LoadProjects();
+        void SetupApplicationStorage();
+        void CreateProject(Project newProject);
+        void DeleteProject(Project existingProject);
         AnalyticalRun LoadAnalyticalRun(Project project, string analyticalRunID);
         void SaveAnalyticalRun(AnalyticalRun analyticalRun);
         FileInfo ValidateFilePath(string filePath);
@@ -97,6 +97,15 @@ namespace LIMS.Data
                 return;
             }
             _fileSystem.Directory.CreateDirectory(newProjectDirectory);
+        }
+        public void DeleteProject(Project existingProject)
+        {
+            string existingProjectDirectory = _fileSystem.Path.Combine(ProjectsDirectory, existingProject.ProjectID);
+            if (_fileSystem.Directory.Exists(existingProjectDirectory))
+            {
+                _fileSystem.Directory.Delete(existingProjectDirectory);
+            }
+            else return;
         }
 
         public ObservableCollection<Project> LoadProjects()
