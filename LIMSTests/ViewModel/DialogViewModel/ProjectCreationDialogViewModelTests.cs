@@ -71,6 +71,31 @@ namespace LIMS.ViewModel.Tests
         }
 
         [TestMethod()]
+        public void NewProjectName_WhenTooLong_AddsValidationError()
+        {
+            _viewModel.Load();
+            _viewModel.NewProjectName = "thisstringisalittlemorethan36characterslong";
+            List<string> errorList = _viewModel.GetErrorsAsList(nameof(_viewModel.NewProjectName));
+            const string EXPECTEDERRORMESSAGE = "Project name is too long";
+
+            Assert.IsTrue(_viewModel.HasErrors);
+            Assert.IsTrue(errorList.Count() == 1);
+            Assert.AreEqual(EXPECTEDERRORMESSAGE, errorList.SingleOrDefault());
+        }
+
+        [TestMethod()]
+        public void NewProjectName_WhenNoLongerTooLong_ClearsError()
+        {
+            _viewModel.Load();
+            _viewModel.NewProjectName = "thisstringisalittlemorethan36characterslong";
+            _viewModel.NewProjectName = "nowvalid";
+            List<string> errorList = _viewModel.GetErrorsAsList(nameof(_viewModel.NewProjectName));
+
+            Assert.IsFalse(_viewModel.HasErrors);
+            Assert.IsFalse(errorList.Any());
+        }
+
+        [TestMethod()]
         public void NewProjectName_WhenInvalidCharacter_AddsValidationError()
         {
             _viewModel.Load();
@@ -124,6 +149,14 @@ namespace LIMS.ViewModel.Tests
         {
             _viewModel.Load();
             _viewModel.NewProjectName = "";
+            Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(null));
+        }
+
+        [TestMethod()]
+        public void CreateProjectCommand_CannotExecute_WhenNewProjectNameIsTooLong()
+        {
+            _viewModel.Load();
+            _viewModel.NewProjectName = "thisstringisalittlemorethan36characterslong";
             Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 

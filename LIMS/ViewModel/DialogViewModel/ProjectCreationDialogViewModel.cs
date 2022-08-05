@@ -10,6 +10,8 @@ namespace LIMS.ViewModel
 {
     public class ProjectCreationDialogViewModel : ValidationViewModelBase
     {
+        private const int MAXPROJECTNAMELENGTH = 36;
+        
         private readonly IFileDataService _fileDataService;
         private ObservableCollection<Project> _loadedProjects;
         private string _newProjectName;
@@ -42,7 +44,11 @@ namespace LIMS.ViewModel
                 RaisePropertyChanged();
 
                 ClearErrors();
-                if (SelectedProjectAlreadyExists())
+                if(NewProjectName.Length > MAXPROJECTNAMELENGTH)
+                {
+                    AddError("Project name is too long");
+                }
+                else if (SelectedProjectAlreadyExists())
                 {
                     AddError("Project already exists");
                 }
@@ -69,6 +75,8 @@ namespace LIMS.ViewModel
             }
         }
 
+    
+
         public override void Load()
         {
             LoadedProjects = _fileDataService.LoadProjects();
@@ -84,7 +92,10 @@ namespace LIMS.ViewModel
 
         private bool CanCreateProject(object parameter)
         {
-            return !string.IsNullOrEmpty(NewProjectName) && !SelectedProjectAlreadyExists() && !SelectedProjectContainsIllegalCharacter();
+            return !string.IsNullOrEmpty(NewProjectName)
+                && NewProjectName.Length <= MAXPROJECTNAMELENGTH
+                && !SelectedProjectAlreadyExists()
+                && !SelectedProjectContainsIllegalCharacter();
         }
 
         private bool SelectedProjectAlreadyExists()
