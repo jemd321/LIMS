@@ -80,7 +80,7 @@ namespace LIMS.ViewModel.Tests
             _mainViewModel.Load();
 
             _mainViewModel.CreateNewProjectCommand.Execute(null);
-            _dialogService.Verify(m => m.ShowDialog<ProjectCreationDialogViewModel>(It.IsAny<Action<string>>()), Times.Once);
+            _dialogService.Verify(m => m.ShowActionDialog<ProjectCreationDialogViewModel>(It.IsAny<Action<bool>>()), Times.Once);
         }
     }
 }

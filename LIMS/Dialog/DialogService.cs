@@ -9,7 +9,8 @@ namespace LIMS.Dialog
 {
     public interface IDialogService
     {
-        void ShowDialog<TViewModel>(Action<string> callback, string optionalMessage);
+        void ShowActionDialog<TViewModel>(Action<bool> dialogResultCallback);
+        void ShowStringIODialog<TViewModel>(Action<bool> dialogResultCallback, Action<string> dialogOutputCallback);
     }
     public class DialogService : IDialogService
     {
@@ -22,42 +23,73 @@ namespace LIMS.Dialog
             _mappings.Add(typeof(TViewModel), typeof(TView));
         }
 
-        public void ShowDialog<TViewModel>(Action<string> callback, string optionalMessage = null)
+        public void ShowActionDialog<TViewModel>(Action<bool> dialogResultCallback)
         {
             var viewType = _mappings[typeof(TViewModel)];
-            ShowDialogInternal(viewType, callback, typeof(TViewModel), optionalMessage);
+            ShowActionDialogInternal(viewType, typeof(TViewModel), dialogResultCallback);
         }
 
-        private void ShowDialogInternal(Type viewType, Action<string> callback, Type viewModelType, string optionalMessage = null)
+        public void ShowStringIODialog<TViewModel>(Action<bool> dialogResultCallback, Action<string> dialogOutputCallback)
+        {
+            var viewType = _mappings[typeof(TViewModel)];
+            ShowStringIODialogInternal(viewType, typeof(TViewModel), dialogResultCallback, dialogOutputCallback);
+        }
+
+        private void ShowActionDialogInternal(Type viewType, Type viewModelType, Action<bool> dialogResultCallback)
         {
             var dialog = new DialogWindow();
+
+            var content = ServiceProvider.GetService(viewType);
+            if (viewModelType != null)
+            {
+                // cast to ViewModelBase so we can call the load method to setup our VM before passing to the view.
+                var viewModel = ServiceProvider.GetService(viewModelType) as ViewModelBase;
+                viewModel.Load();
+                var viewContent = content as FrameworkElement;
+                viewContent.DataContext = viewModel;
+            }
             EventHandler closeEventHandler = null;
             closeEventHandler = (sender, e) =>
             {
-                callback(dialog.DialogResult.ToString());
+                dialogResultCallback(dialog.DialogResult.GetValueOrDefault());
                 dialog.Closed -= closeEventHandler;
             };
             dialog.Closed += closeEventHandler;
+            ShowDialog(dialog, content);
+        }
+
+        private void ShowStringIODialogInternal(Type viewType, Type viewModelType, Action<bool> dialogResultCallback, Action<string> dialogOutputCallback)
+        {
+            var dialog = new DialogWindow();
 
             var content = ServiceProvider.GetService(viewType);
-            
-            if (viewModelType != null)
+            // Requires cast to interface defining input and output string properties on the viewmodel that we can access here
+            var viewModel = ServiceProvider.GetService(viewModelType) as IStringIODialogViewModel;
+            viewModel.Load();
+            var viewContent = content as FrameworkElement;
+            viewContent.DataContext = viewModel;
+
+            EventHandler closeEventHandler = null;
+            closeEventHandler = (sender, e) =>
             {
-                var viewModel = ServiceProvider.GetService(viewModelType) as IDialogViewModel;
-                viewModel.Load();
-                if (optionalMessage is not null)
-                {
-                    viewModel.OptionalMessage = optionalMessage;
-                }
-                var viewContent = content as FrameworkElement;
-                viewContent.DataContext = viewModel;
+                dialogResultCallback(dialog.DialogResult.GetValueOrDefault());
+                dialogOutputCallback(viewModel.DialogOutput);
+                dialog.Closed -= closeEventHandler;
+            };
+            dialog.Closed += closeEventHandler;
+            ShowDialog(dialog, content);
+        }
 
-            }
-
+        private void ShowDialog(DialogWindow dialog, object content)
+        {
             dialog.Content = content;
             dialog.Owner = Application.Current.MainWindow;
-
             dialog.ShowDialog();
+        }
+
+        private void SetupClosedEvent(Action<string> callback, DialogWindow dialog)
+        {
+
         }
     }
 }

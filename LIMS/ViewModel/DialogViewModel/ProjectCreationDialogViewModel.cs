@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace LIMS.ViewModel
 {
-    public class ProjectCreationDialogViewModel : ValidationViewModelBase, IDialogViewModel
+    public class ProjectCreationDialogViewModel : ValidationViewModelBase
     {
         private const int MAXPROJECTNAMELENGTH = 36;
         
@@ -34,7 +34,7 @@ namespace LIMS.ViewModel
             get { return _loadedProjects; }
             set { _loadedProjects = value; RaisePropertyChanged(); }
         }
-        public string OptionalMessage { get; set; }
+
         public string NewProjectName
         {
             get { return _newProjectName; }

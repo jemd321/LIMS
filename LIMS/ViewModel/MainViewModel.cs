@@ -57,8 +57,11 @@ namespace LIMS.ViewModel
 
         private void CreateNewProject(object parameter)
         {
-            _dialogService.ShowDialog<ProjectCreationDialogViewModel>(result =>
+            _dialogService.ShowActionDialog<ProjectCreationDialogViewModel>(result =>
             {
+                // here we supply the function that will be executed when the closed event is fired, with the BOOL reslt of the dialog as a string?
+                // perhaps we should just have Action<Bool>
+                // we could create an accept event handler that exectues when the open but is clicked. THis assigns the VM string output property to a callback of Func
                 // Dialog result not needed as changes are made directly on the filesystem by dialog
             });
         }

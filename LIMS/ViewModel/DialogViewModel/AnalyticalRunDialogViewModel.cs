@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace LIMS.ViewModel.DialogViewModel
 {
-    public class AnalyticalRunDialogViewModel : ValidationViewModelBase, IDialogViewModel
+    public class AnalyticalRunDialogViewModel : ValidationViewModelBase, IStringIODialogViewModel
     {
         private const int MAXPROJECTNAMELENGTH = 36;
 
@@ -35,7 +35,8 @@ namespace LIMS.ViewModel.DialogViewModel
         }
 
         // In this dialog, the calling viewModel should supply the currently open ProjectID
-        public string OptionalMessage { get; set; }
+        public string DialogInput { get; set; }
+        public string DialogOutput { get; set; }
         public string OpenProjectID { get; private set; }
         public Project OpenProject { get; private set; }
         public string SelectedAnalyticalRun
@@ -51,7 +52,7 @@ namespace LIMS.ViewModel.DialogViewModel
 
         public override void Load()
         {
-            OpenProjectID = OptionalMessage;
+            OpenProjectID = DialogInput;
             var openProject = _fileDataService
                 .LoadProjects()
                 .Where(p => p.ProjectID == OpenProjectID)
@@ -71,30 +72,23 @@ namespace LIMS.ViewModel.DialogViewModel
 
         private bool CanOpenAnalyticalRun(object parameter)
         {
-            return !string.IsNullOrEmpty(NewProjectName)
-                && NewProjectName.Length <= MAXPROJECTNAMELENGTH
-                && !SelectedProjectAlreadyExists()
-                && !SelectedProjectContainsIllegalCharacter();
+            return true;
         }
 
         private bool SelectedProjectAlreadyExists()
         {
-            var existingProjectNames = LoadedAnalyticalRunIDs.Select(p => p.ProjectID);
-            return existingProjectNames.Contains(NewProjectName);
+            return true;
         }
 
         private bool SelectedProjectContainsIllegalCharacter()
         {
-            var illegalCharactersPattern = "[<>\\/\":|?*.]+";
-            return Regex.Match(NewProjectName, illegalCharactersPattern).Success;
+            return true;
         }
 
 
         private void DeleteAnalyticalRun(object parameter)
         {
-            _fileDataService.DeleteProject(SelectedAnalyticalRun);
-            LoadedAnalyticalRunIDs = _fileDataService.LoadProjects();
-            SelectedAnalyticalRun = null;
+            throw new NotImplementedException();
         }
 
         private bool CanDeleteAnalyticalRun(object parameter)
