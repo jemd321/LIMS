@@ -35,10 +35,7 @@ namespace LIMS.ViewModel
             SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun);
         }
 
-        private bool CanOpenAnalyticalRunExecute(object parameter)
-        {
-            return SelectedProject is not null;
-        }
+        private bool CanOpenAnalyticalRunExecute(object parameter) => SelectedProject is not null;
 
         public override void Load()
         {

@@ -8,14 +8,15 @@ using System.Text.RegularExpressions;
 
 namespace LIMS.ViewModel.DialogViewModel
 {
-    public class AnalyticalRunDialogViewModel : ValidationViewModelBase, IStringIODialogViewModel
+    public class AnalyticalRunDialogViewModel : ViewModelBase, IStringIODialogViewModel
     {
         private const int MAXPROJECTNAMELENGTH = 36;
 
         private readonly IFileDataService _fileDataService;
         private ObservableCollection<string> _loadedAnalyticalRunIDs;
-        private string _newProjectName;
         private string _selectedAnalyticalRun;
+
+        public event EventHandler DialogAccepted;
 
         public AnalyticalRunDialogViewModel(IFileDataService fileDataService)
         {
@@ -66,8 +67,13 @@ namespace LIMS.ViewModel.DialogViewModel
 
         private void OpenAnalyticalRun(object parameter)
         {
+            DialogOutput = SelectedAnalyticalRun;
+            OnDialogAccepted(EventArgs.Empty);
+        }
 
-
+        protected virtual void OnDialogAccepted(EventArgs e)
+        {
+            DialogAccepted?.Invoke(this, e);
         }
 
         private bool CanOpenAnalyticalRun(object parameter)

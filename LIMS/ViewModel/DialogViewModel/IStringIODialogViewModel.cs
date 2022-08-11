@@ -1,8 +1,7 @@
 ﻿namespace LIMS.ViewModel.DialogViewModel
 {
-    public interface IStringIODialogViewModel
+    public interface IStringIODialogViewModel : IDialogViewModel
     {
-        void Load();
         string DialogInput { get; set; }
         string DialogOutput { get; set; }
     }

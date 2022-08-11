@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace LIMS.ViewModel.DialogViewModel
 {
-    public class ProjectCreationDialogViewModel : ValidationViewModelBase
+    public class ProjectCreationDialogViewModel : ValidationViewModelBase, IDialogViewModel
     {
         private const int MAXPROJECTNAMELENGTH = 36;
 
@@ -16,6 +16,8 @@ namespace LIMS.ViewModel.DialogViewModel
         private ObservableCollection<Project> _loadedProjects;
         private string _newProjectName;
         private Project _selectedProject;
+
+        public event EventHandler DialogAccepted;
 
         public ProjectCreationDialogViewModel(IFileDataService fileDataService)
         {

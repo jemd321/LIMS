@@ -43,7 +43,7 @@ namespace LIMS.Dialog
             if (viewModelType != null)
             {
                 // cast to ViewModelBase so we can call the load method to setup our VM before passing to the view.
-                var viewModel = ServiceProvider.GetService(viewModelType) as ViewModelBase;
+                var viewModel = ServiceProvider.GetService(viewModelType) as IDialogViewModel;
                 viewModel.Load();
                 var viewContent = content as FrameworkElement;
                 viewContent.DataContext = viewModel;
@@ -71,6 +71,11 @@ namespace LIMS.Dialog
             var viewContent = content as FrameworkElement;
             viewContent.DataContext = viewModel;
 
+            viewModel.DialogAccepted += (sender, e) =>
+            {
+                dialog.DialogResult = true;
+                dialog.Close();
+            };
             EventHandler closeEventHandler = null;
             closeEventHandler = (sender, e) =>
             {

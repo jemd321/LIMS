@@ -5,9 +5,14 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIMS", "LIMS\LIMS.csproj", "{41BA853E-B9FC-4AD4-8592-794BDB2FC41E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LIMSTests", "LIMSTests\LIMSTests.csproj", "{A9295C32-248B-4D77-8D87-6F97F2DACD38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LIMSTests", "LIMSTests\LIMSTests.csproj", "{A9295C32-248B-4D77-8D87-6F97F2DACD38}"
 	ProjectSection(ProjectDependencies) = postProject
 		{41BA853E-B9FC-4AD4-8592-794BDB2FC41E} = {41BA853E-B9FC-4AD4-8592-794BDB2FC41E}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DAE32F4F-7431-462D-899C-6E3436025263}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
 Global
