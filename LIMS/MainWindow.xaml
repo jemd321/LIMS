@@ -19,7 +19,7 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
+            <RowDefinition Height="40" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 

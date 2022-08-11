@@ -10,7 +10,7 @@ namespace LIMS.Dialog
     public interface IDialogService
     {
         void ShowActionDialog<TViewModel>(Action<bool> dialogResultCallback);
-        void ShowStringIODialog<TViewModel>(Action<bool> dialogResultCallback, Action<string> dialogOutputCallback);
+        void ShowStringIODialog<TViewModel>(Action<bool> dialogResultCallback, string dialogInput, Action<string> dialogOutputCallback);
     }
     public class DialogService : IDialogService
     {
@@ -29,10 +29,10 @@ namespace LIMS.Dialog
             ShowActionDialogInternal(viewType, typeof(TViewModel), dialogResultCallback);
         }
 
-        public void ShowStringIODialog<TViewModel>(Action<bool> dialogResultCallback, Action<string> dialogOutputCallback)
+        public void ShowStringIODialog<TViewModel>(Action<bool> dialogResultCallback, string dialogInput, Action<string> dialogOutputCallback)
         {
             var viewType = _mappings[typeof(TViewModel)];
-            ShowStringIODialogInternal(viewType, typeof(TViewModel), dialogResultCallback, dialogOutputCallback);
+            ShowStringIODialogInternal(viewType, typeof(TViewModel), dialogResultCallback, dialogInput, dialogOutputCallback);
         }
 
         private void ShowActionDialogInternal(Type viewType, Type viewModelType, Action<bool> dialogResultCallback)
@@ -58,14 +58,16 @@ namespace LIMS.Dialog
             ShowDialog(dialog, content);
         }
 
-        private void ShowStringIODialogInternal(Type viewType, Type viewModelType, Action<bool> dialogResultCallback, Action<string> dialogOutputCallback)
+        private void ShowStringIODialogInternal(Type viewType, Type viewModelType, Action<bool> dialogResultCallback, string dialogInput, Action<string> dialogOutputCallback)
         {
             var dialog = new DialogWindow();
 
             var content = ServiceProvider.GetService(viewType);
             // Requires cast to interface defining input and output string properties on the viewmodel that we can access here
             var viewModel = ServiceProvider.GetService(viewModelType) as IStringIODialogViewModel;
+            viewModel.DialogInput = dialogInput;
             viewModel.Load();
+
             var viewContent = content as FrameworkElement;
             viewContent.DataContext = viewModel;
 

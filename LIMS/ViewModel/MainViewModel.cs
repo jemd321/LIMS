@@ -15,12 +15,14 @@ namespace LIMS.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private ViewModelBase _selectedRegressionViewModel;
+        private Project _selectedProject;
+        private ObservableCollection<Project> _projects;
         private readonly IFileDataService _fileDataService;
         private readonly IDialogService _dialogService;
 
         public MainViewModel(
             RegressionViewModel regressionViewModel,
-            IFileDataService fileDataService, 
+            IFileDataService fileDataService,
             IDialogService dialogService)
         {
             _fileDataService = fileDataService;
@@ -28,9 +30,14 @@ namespace LIMS.ViewModel
             RegressionViewModel = regressionViewModel;
 
             CreateNewProjectCommand = new DelegateCommand(CreateNewProject);
-            OpenAnalyticalRunCommand = new DelegateCommand(OpenAnalyticalRun);
+            OpenAnalyticalRunCommand = new DelegateCommand(OpenAnalyticalRun, CanOpenAnalyticalRunExecute);
             ImportAnalystFileCommand = new DelegateCommand(ImportAnalystFile);
             SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun);
+        }
+
+        private bool CanOpenAnalyticalRunExecute(object parameter)
+        {
+            return SelectedProject is not null;
         }
 
         public override void Load()
@@ -48,9 +55,26 @@ namespace LIMS.ViewModel
                 RaisePropertyChanged();
             }
         }
+        public Project SelectedProject
+        {
+            get => _selectedProject;
+            set
+            {
+                _selectedProject = value;
+                RaisePropertyChanged();
+                OpenAnalyticalRunCommand.RaiseCanExecuteChanged();
+            }
+        }
 
         public RegressionViewModel RegressionViewModel { get; }
-        public ObservableCollection<Project> Projects { get; private set; }
+        public ObservableCollection<Project> Projects
+        {
+            get => _projects;
+            private set
+            {
+                _projects = value; RaisePropertyChanged();
+            }
+        }
         public DelegateCommand CreateNewProjectCommand { get; }
         public DelegateCommand OpenAnalyticalRunCommand { get; }
         public DelegateCommand ImportAnalystFileCommand { get; }
@@ -65,11 +89,18 @@ namespace LIMS.ViewModel
                 // we could create an accept event handler that exectues when the open but is clicked. THis assigns the VM string output property to a callback of Func
                 // Dialog result not needed as changes are made directly on the filesystem by dialog
             });
+            Projects = _fileDataService.LoadProjects();
         }
 
         private void OpenAnalyticalRun(object parameter)
         {
-            throw new NotImplementedException();
+            _dialogService.ShowStringIODialog<AnalyticalRunDialogViewModel>(result =>
+            {
+
+            }, SelectedProject.ProjectID, output =>
+            {
+                var outputTest = output;
+            });
         }
 
         private void SaveAnalyticalRun(object parameter)

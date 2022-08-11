@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              mc:Ignorable="d"
-             d:DesignHeight="30"
+             d:DesignHeight="40"
              d:DesignWidth="800">
     <StackPanel Orientation="Horizontal">
         <TextBlock Text="Project:"
@@ -13,32 +13,41 @@
                    VerticalAlignment="Center" />
         <Button Padding="2"
                 Margin="3 0 3 0"
-                Height="25"
-                Command="{Binding CreateNewProjectCommand}">
+                Command="{Binding CreateNewProjectCommand}"
+                Height="27">
             <iconPacks:Modern Kind="Add" />
         </Button>
         <ComboBox MinWidth="90"
                   Margin="0 3 5 3"
-                  Height="20"
-                  MinHeight="20"
-                  ItemsSource="{Binding Projects}" />
+                  Height="30"
+                  MinHeight="30"
+                  ItemsSource="{Binding Projects}"
+                  SelectedItem="{Binding SelectedProject}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Path=ProjectID}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
         <TextBlock Text="Analytical Run:"
                    Margin="3 2 3 3"
                    VerticalAlignment="Center" />
         <Button Padding="2"
                 Margin="3 0 3 0"
-                Height="25">
+                HorizontalAlignment="Center"
+                Height="30"
+                Command="{Binding OpenAnalyticalRunCommand}">
             <iconPacks:Modern Kind="FolderOpen" />
         </Button>
         <Button Padding="2"
                 Margin="3 0 3 0"
-                Height="25"
+                Height="30"
                 Command="{Binding ImportAnalystFileCommand}">
             <iconPacks:Modern Kind="CabinetIn" />
         </Button>
         <Button Padding="2"
                 Margin="3 0 3 0"
-                Height="25">
+                Height="30">
             <iconPacks:Modern Kind="Save" />
         </Button>
     </StackPanel>
