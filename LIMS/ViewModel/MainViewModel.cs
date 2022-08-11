@@ -2,6 +2,7 @@
 using LIMS.Data;
 using LIMS.Dialog;
 using LIMS.Model;
+using LIMS.ViewModel.DialogViewModel;
 using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;

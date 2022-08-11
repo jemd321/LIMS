@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LIMS.ViewModel;
 using Moq;
 using LIMS.Data;
 using LIMSTests.Extensions;
@@ -8,6 +7,7 @@ using LIMS.Model;
 using System.IO.Abstractions.TestingHelpers;
 using LIMS.Dialog;
 using System.Collections.ObjectModel;
+using LIMS.ViewModel.DialogViewModel;
 
 namespace LIMS.ViewModel.Tests
 {

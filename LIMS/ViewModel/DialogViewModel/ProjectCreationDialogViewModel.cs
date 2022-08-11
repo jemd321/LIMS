@@ -1,18 +1,17 @@
 ﻿using LIMS.Command;
 using LIMS.Data;
 using LIMS.Model;
-using LIMS.ViewModel.DialogViewModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace LIMS.ViewModel
+namespace LIMS.ViewModel.DialogViewModel
 {
     public class ProjectCreationDialogViewModel : ValidationViewModelBase
     {
         private const int MAXPROJECTNAMELENGTH = 36;
-        
+
         private readonly IFileDataService _fileDataService;
         private ObservableCollection<Project> _loadedProjects;
         private string _newProjectName;
@@ -45,7 +44,7 @@ namespace LIMS.ViewModel
                 RaisePropertyChanged();
 
                 ClearErrors();
-                if(NewProjectName.Length > MAXPROJECTNAMELENGTH)
+                if (NewProjectName.Length > MAXPROJECTNAMELENGTH)
                 {
                     AddError("Project name is too long");
                 }
@@ -75,7 +74,7 @@ namespace LIMS.ViewModel
             }
         }
 
-    
+
 
         public override void Load()
         {

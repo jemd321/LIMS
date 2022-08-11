@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace LIMS.Dialog
+namespace LIMS.View.Dialog
 {
     /// <summary>
     /// Interaction logic for ProjectCreationDialog.xaml

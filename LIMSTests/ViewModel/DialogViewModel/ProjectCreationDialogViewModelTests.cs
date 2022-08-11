@@ -4,6 +4,7 @@ using LIMS.Model;
 using Moq;
 using System.Linq;
 using LIMSTests.Extensions;
+using LIMS.ViewModel.DialogViewModel;
 
 namespace LIMS.ViewModel.Tests
 {

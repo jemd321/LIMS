@@ -1,8 +1,10 @@
 ﻿using LIMS.Data;
 using LIMS.Dialog;
+using LIMS.View.Dialog;
 using LIMS.Factory;
 using LIMS.Model;
 using LIMS.ViewModel;
+using LIMS.ViewModel.DialogViewModel;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO.Abstractions;
@@ -38,12 +40,16 @@ namespace LIMS
 
             services.AddTransient<ProjectCreationDialogViewModel>();
             services.AddTransient<ProjectCreationDialog>();
+            services.AddTransient<AnalyticalRunDialogViewModel>();
+            services.AddTransient<AnalyticalRunDialog>();
         }
 
         private void ConfigureDialogService()
         {
             DialogService.ServiceProvider = _serviceProvider;
             DialogService.RegisterDialog<ProjectCreationDialog, ProjectCreationDialogViewModel>();
+            DialogService.RegisterDialog<AnalyticalRunDialog, AnalyticalRunDialogViewModel>();
+
         }
 
         protected override void OnStartup(StartupEventArgs e)
