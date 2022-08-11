@@ -13,7 +13,7 @@ namespace LIMS.ViewModel.DialogViewModel
         private const int MAXPROJECTNAMELENGTH = 36;
 
         private readonly IFileDataService _fileDataService;
-        private ObservableCollection<string> _loadedAnalyticalRunIDs;
+        private ObservableCollection<string> _loadedAnalyticalRunIDs = new();
         private string _selectedAnalyticalRun;
 
         public event EventHandler DialogAccepted;
@@ -47,6 +47,7 @@ namespace LIMS.ViewModel.DialogViewModel
             {
                 _selectedAnalyticalRun = value;
                 RaisePropertyChanged();
+                OpenAnalyticalRunCommand.RaiseCanExecuteChanged();
                 DeleteAnalyticalRunCommand.RaiseCanExecuteChanged();
             }
         }
@@ -59,6 +60,11 @@ namespace LIMS.ViewModel.DialogViewModel
                 .Where(p => p.ProjectID == OpenProjectID)
                 .SingleOrDefault();
             OpenProject = openProject;
+            LoadAnalyticalRuns();
+        }
+
+        private void LoadAnalyticalRuns()
+        {
             foreach (string analyticalRunID in OpenProject.AnalyticalRunIDs)
             {
                 LoadedAnalyticalRunIDs.Add(analyticalRunID);
@@ -68,33 +74,23 @@ namespace LIMS.ViewModel.DialogViewModel
         private void OpenAnalyticalRun(object parameter)
         {
             DialogOutput = SelectedAnalyticalRun;
-            OnDialogAccepted(EventArgs.Empty);
+            RaiseDialogAccepted(EventArgs.Empty);
         }
 
-        protected virtual void OnDialogAccepted(EventArgs e)
+        protected virtual void RaiseDialogAccepted(EventArgs e)
         {
             DialogAccepted?.Invoke(this, e);
         }
 
         private bool CanOpenAnalyticalRun(object parameter)
         {
-            return true;
+            return !string.IsNullOrEmpty(SelectedAnalyticalRun);
         }
-
-        private bool SelectedProjectAlreadyExists()
-        {
-            return true;
-        }
-
-        private bool SelectedProjectContainsIllegalCharacter()
-        {
-            return true;
-        }
-
 
         private void DeleteAnalyticalRun(object parameter)
         {
-            throw new NotImplementedException();
+            _fileDataService.DeleteAnalyticalRun(OpenProject, SelectedAnalyticalRun);
+            LoadedAnalyticalRunIDs.Remove(SelectedAnalyticalRun);
         }
 
         private bool CanDeleteAnalyticalRun(object parameter)

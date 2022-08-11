@@ -19,6 +19,7 @@ namespace LIMS.Data
         void CreateProject(Project newProject);
         void DeleteProject(Project existingProject);
         AnalyticalRun LoadAnalyticalRun(Project project, string analyticalRunID);
+        void DeleteAnalyticalRun(Project project, string analyticalRunID);
         void SaveAnalyticalRun(AnalyticalRun analyticalRun);
         FileInfo ValidateFilePath(string filePath);
         Task<string> GetRawData(FileInfo fileInfo);
@@ -36,7 +37,7 @@ namespace LIMS.Data
         public string ApplicationDirectory => GetApplicationDirectory();
         public string ProjectsDirectory => GetProjectsDirectory();
 
-        private string GetApplicationDirectory()
+        private static string GetApplicationDirectory()
         {
             const string APPLICATIONDIRECTORYNAME = "LIMS";
             var appDataRoaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -151,11 +152,21 @@ namespace LIMS.Data
                 throw new DirectoryNotFoundException("No project exists for this analytical run");
             }
 
-            string projectDirectory = _fileSystem.Path.Combine(ProjectsDirectory, analyticalRun.ParentProjectID, analyticalRun.AnalyticalRunID);
-            string filePath = _fileSystem.Path.Combine(projectDirectory, analyticalRun.AnalyticalRunID + ".json");
+            string analyticalRunDirectory = _fileSystem.Path.Combine(ProjectsDirectory, analyticalRun.ParentProjectID, analyticalRun.AnalyticalRunID);
+            string filePath = _fileSystem.Path.Combine(analyticalRunDirectory, analyticalRun.AnalyticalRunID + ".json");
 
             string jsonDoc = JsonSerializer.Serialize(analyticalRun.RegressionData);
             _fileSystem.File.WriteAllText(filePath, jsonDoc);
+        }
+
+        public void DeleteAnalyticalRun(Project project, string analyticalRunID)
+        {
+            string analyticalRunDirectory = _fileSystem.Path.Combine(ProjectsDirectory, project.ProjectID, analyticalRunID);
+            if (_fileSystem.Directory.Exists(analyticalRunDirectory))
+            {
+                _fileSystem.Directory.Delete(analyticalRunDirectory, true);
+            }
+            else return;
         }
 
         // TODO add file validation
@@ -168,5 +179,7 @@ namespace LIMS.Data
         {
             return Task.Run(() => File.ReadAllText(fileInfo.FullName));
         }
+
+
     }
 }
