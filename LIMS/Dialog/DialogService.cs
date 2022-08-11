@@ -14,8 +14,7 @@ namespace LIMS.Dialog
     }
     public class DialogService : IDialogService
     {
-        private static Dictionary<Type, Type> _mappings = new();
-
+        private static readonly Dictionary<Type, Type> _mappings = new();
         public static IServiceProvider ServiceProvider { get; set; }
 
         public static void RegisterDialog<TView, TViewModel>()
@@ -35,68 +34,73 @@ namespace LIMS.Dialog
             ShowStringIODialogInternal(viewType, typeof(TViewModel), dialogResultCallback, dialogInput, dialogOutputCallback);
         }
 
-        private void ShowActionDialogInternal(Type viewType, Type viewModelType, Action<bool> dialogResultCallback)
+        private static void ShowActionDialogInternal(Type viewType, Type viewModelType, Action<bool> dialogResultCallback)
         {
+            // Container window for the dialog view
             var dialog = new DialogWindow();
 
-            var content = ServiceProvider.GetService(viewType);
-            if (viewModelType != null)
+            // Resolve view and viewModel. VM is cast to interface so load method can be called.
+            var view = ServiceProvider.GetService(viewType);
+            if (view is null || ServiceProvider.GetService(viewModelType) is not IDialogViewModel viewModel) return;
+
+            viewModel.Load();
+
+            // Assign viewModel to View
+            var viewContent = view as FrameworkElement;
+            viewContent.DataContext = viewModel;
+
+            void dialogClosedEventHandler(object sender, EventArgs e)
             {
-                // cast to ViewModelBase so we can call the load method to setup our VM before passing to the view.
-                var viewModel = ServiceProvider.GetService(viewModelType) as IDialogViewModel;
-                viewModel.Load();
-                var viewContent = content as FrameworkElement;
-                viewContent.DataContext = viewModel;
-            }
-            EventHandler closeEventHandler = null;
-            closeEventHandler = (sender, e) =>
-            {
+                // callback to get true or false result (accept or cancel) from dialog when closed
                 dialogResultCallback(dialog.DialogResult.GetValueOrDefault());
-                dialog.Closed -= closeEventHandler;
-            };
-            dialog.Closed += closeEventHandler;
-            ShowDialog(dialog, content);
+                dialog.Closed -= dialogClosedEventHandler;
+            }
+            dialog.Closed += dialogClosedEventHandler;
+
+            ShowDialog(dialog, view);
         }
 
-        private void ShowStringIODialogInternal(Type viewType, Type viewModelType, Action<bool> dialogResultCallback, string dialogInput, Action<string> dialogOutputCallback)
+        private static void ShowStringIODialogInternal(Type viewType, Type viewModelType, Action<bool> dialogResultCallback, string dialogInput, Action<string> dialogOutputCallback)
         {
+            // Container window for the dialog view
             var dialog = new DialogWindow();
 
-            var content = ServiceProvider.GetService(viewType);
-            // Requires cast to interface defining input and output string properties on the viewmodel that we can access here
-            var viewModel = ServiceProvider.GetService(viewModelType) as IStringIODialogViewModel;
+            // Resolve view and viewModel. VM is cast to interface so load method and input/output string properties can be accessed here.
+            var view = ServiceProvider.GetService(viewType);
+            if (view is null || ServiceProvider.GetService(viewModelType) is not IStringIODialogViewModel viewModel) return;
+
             viewModel.DialogInput = dialogInput;
             viewModel.Load();
 
-            var viewContent = content as FrameworkElement;
+            var viewContent = view as FrameworkElement;
             viewContent.DataContext = viewModel;
 
-            viewModel.DialogAccepted += (sender, e) =>
+            // Handle dialog accepted event, indicating an output string is available from the dialog.
+            void DialogAcceptedEventHandler (object sender, EventArgs e)
             {
                 dialog.DialogResult = true;
                 dialog.Close();
-            };
-            EventHandler closeEventHandler = null;
-            closeEventHandler = (sender, e) =>
+                viewModel.DialogAccepted -= DialogAcceptedEventHandler;
+            }
+            viewModel.DialogAccepted += DialogAcceptedEventHandler;
+
+            void DialogClosedEventHandler(object sender, EventArgs e)
             {
+                // Callback to return true or false result (accept or cancel) from dialog when closed, then return string output.
                 dialogResultCallback(dialog.DialogResult.GetValueOrDefault());
                 dialogOutputCallback(viewModel.DialogOutput);
-                dialog.Closed -= closeEventHandler;
-            };
-            dialog.Closed += closeEventHandler;
-            ShowDialog(dialog, content);
+                dialog.Closed -= DialogClosedEventHandler;
+            }
+            dialog.Closed += DialogClosedEventHandler;
+
+            ShowDialog(dialog, view);
         }
 
-        private void ShowDialog(DialogWindow dialog, object content)
+        private static void ShowDialog(DialogWindow dialog, object content)
         {
             dialog.Content = content;
             dialog.Owner = Application.Current.MainWindow;
             dialog.ShowDialog();
-        }
-
-        private void SetupClosedEvent(Action<string> callback, DialogWindow dialog)
-        {
-
         }
     }
 }
