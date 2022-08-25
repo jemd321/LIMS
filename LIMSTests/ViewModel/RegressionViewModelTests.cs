@@ -1,8 +1,7 @@
-﻿using LIMS.Model;
-using LIMS.Factory;
+﻿using LIMS.Factory;
+using LIMS.Model.RegressionModels;
 using LIMSTests.Extensions;
 using Moq;
-using LIMS.Model.RegressionModels;
 
 namespace LIMS.ViewModel.Tests
 {
@@ -11,7 +10,7 @@ namespace LIMS.ViewModel.Tests
     {
         RegressionViewModel _regressionViewModel = default!;
         Mock<IRegressionDataViewModel> _regressionDataViewModel = default!;
-        Mock<IRegressionFactory> _regressionFactoryMock = default!;
+        readonly Mock<IRegressionFactory> _regressionFactoryMock = default!;
         Mock<Regression> _regression = default!;
 
         [TestInitialize]
@@ -21,6 +20,7 @@ namespace LIMS.ViewModel.Tests
             _regressionDataViewModel = new Mock<IRegressionDataViewModel>();
             _regression = new Mock<Regression>();
         }
+
         [TestMethod()]
         public void Load_WhenRegressionDataViewModelCreated_FiresPropertyChangedEvent()
         {

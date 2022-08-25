@@ -1,8 +1,6 @@
 using LIMS.Data;
-using LIMS.Model;
 using LIMS.Enums;
-using LIMS.Factory;
-using Moq;
+using LIMS.Model;
 
 namespace LIMSTests.Data
 {
@@ -21,6 +19,7 @@ namespace LIMSTests.Data
         public void ReadAnalystExport_GivenFilePath_ReturnsParsedExport()
         {
             string sampleAnalystExport = Properties.Resources.SampleAnalystExport;
+
             // to add expected object
             var peakInfo = new List<AnalystExportHeaderPeakInfo>();
             var internalStandardPeakInfo = new AnalystExportHeaderPeakInfo()
@@ -64,7 +63,7 @@ namespace LIMSTests.Data
                 SampleName = "166 001 996183 SST-LLOQ 1",
                 SampleID = 1,
                 SampleType = SampleType.Unknown,
-                SampleDescription = "",
+                SampleDescription = string.Empty,
                 SetNumber = 0,
                 AcquisitonMethod = "996183-S15-2022-04-25 A2B2C2.dam",
                 AcquisitionDate = new DateTime(2022, 4, 26, 3, 47, 28),
@@ -76,13 +75,13 @@ namespace LIMSTests.Data
                 FileName = @"Run 166\996183-S15-166-001.wiff",
                 DilutionFactor = 1,
                 WeightToVolumeRatio = 0,
-                SampleAnnotation1 = "",
-                SampleAnnotation2 = "",
+                SampleAnnotation1 = string.Empty,
+                SampleAnnotation2 = string.Empty,
                 PeakName = "Itraconazole",
                 Units = Units.ng_mL,
                 Area = 153.4,
                 Height = 86.7,
-                AnalyteAnnotation = "",
+                AnalyteAnnotation = string.Empty,
                 NominalConcentration = 0d,
                 RetentionTime = 1.78,
                 ExpectedRetentionTime = 1.78,
@@ -95,7 +94,7 @@ namespace LIMSTests.Data
                 IntegrationType = "Base To Base",
                 SignalToNoiseRatio = null,
                 PeakWidth = 0.0945,
-                StandardQueryStatus = "",
+                StandardQueryStatus = string.Empty,
                 AnalyteTransitionMRM = new TransitionMRM()
                 {
                     Q1 = 705.200,
@@ -156,7 +155,6 @@ namespace LIMSTests.Data
             Assert.AreEqual(expected.Peaks[1], actual.Peaks[1]);
             Assert.AreEqual(expected.RegressionInfo, actual.RegressionInfo);
             Assert.AreEqual(expected.DataRows[0], actual.DataRows[0]);
-
         }
     }
 }

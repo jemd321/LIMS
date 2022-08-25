@@ -25,12 +25,14 @@ namespace LIMS.ViewModel
         public List<string> GetErrorsAsList(string propertyName)
         {
             var errors = GetErrors(propertyName);
+
             // Enumerate through GetErrors collection and cast to string
             var errorList = new List<string>();
             foreach (string error in errors)
             {
                 errorList.Add(error);
             }
+
             return errorList;
         }
 
@@ -45,10 +47,12 @@ namespace LIMS.ViewModel
             {
                 return;
             }
+
             if (!_errorsByPropertyName.ContainsKey(propertyName))
             {
                 _errorsByPropertyName[propertyName] = new List<string>();
             }
+
             if (!_errorsByPropertyName[propertyName].Contains(error))
             {
                 _errorsByPropertyName[propertyName].Add(error);
@@ -63,6 +67,7 @@ namespace LIMS.ViewModel
             {
                 return;
             }
+
             if (_errorsByPropertyName.ContainsKey(propertyName))
             {
                 _errorsByPropertyName.Remove(propertyName);

@@ -1,22 +1,16 @@
-﻿using LIMS.View.Dialog;
-using LIMS.ViewModel;
-using LIMS.ViewModel.DialogViewModel;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using LIMS.View.Dialog;
+using LIMS.ViewModel.DialogViewModel;
+using Microsoft.Win32;
 
 namespace LIMS.Dialog
 {
-    public interface IDialogService
-    {
-        string ShowOpenFileDialog();
-        void ShowActionDialog<TViewModel>(Action<bool> dialogResultCallback);
-        void ShowStringIODialog<TViewModel>(Action<bool> dialogResultCallback, string dialogInput, Action<string> dialogOutputCallback);
-    }
     public class DialogService : IDialogService
     {
         private static readonly Dictionary<Type, Type> _mappings = new();
+
         public static IServiceProvider ServiceProvider { get; set; }
 
         public static void RegisterDialog<TView, TViewModel>()
@@ -28,11 +22,11 @@ namespace LIMS.Dialog
         {
             var fileDialog = new OpenFileDialog
             {
-                Filter = "Text documents (.txt)|*.txt"
+                Filter = "Text documents (.txt)|*.txt",
             };
 
             bool fileSelected = fileDialog.ShowDialog().GetValueOrDefault();
-            return fileSelected ? fileDialog.FileName : "";
+            return fileSelected ? fileDialog.FileName : string.Empty;
         }
 
         public void ShowActionDialog<TViewModel>(Action<bool> dialogResultCallback)
@@ -54,7 +48,10 @@ namespace LIMS.Dialog
 
             // Resolve view and viewModel. VM is cast to interface so load method can be called.
             var view = ServiceProvider.GetService(viewType);
-            if (view is null || ServiceProvider.GetService(viewModelType) is not IDialogViewModel viewModel) return;
+            if (view is null || ServiceProvider.GetService(viewModelType) is not IDialogViewModel viewModel)
+            {
+                return;
+            }
 
             viewModel.Load();
 
@@ -62,13 +59,14 @@ namespace LIMS.Dialog
             var viewContent = view as FrameworkElement;
             viewContent.DataContext = viewModel;
 
-            void dialogClosedEventHandler(object sender, EventArgs e)
+            void DialogClosedEventHandler(object sender, EventArgs e)
             {
                 // callback to get true or false result (accept or cancel) from dialog when closed
                 dialogResultCallback(dialog.DialogResult.GetValueOrDefault());
-                dialog.Closed -= dialogClosedEventHandler;
+                dialog.Closed -= DialogClosedEventHandler;
             }
-            dialog.Closed += dialogClosedEventHandler;
+
+            dialog.Closed += DialogClosedEventHandler;
 
             ShowDialog(dialog, view);
         }
@@ -80,7 +78,10 @@ namespace LIMS.Dialog
 
             // Resolve view and viewModel. VM is cast to interface so load method and input/output string properties can be accessed here.
             var view = ServiceProvider.GetService(viewType);
-            if (view is null || ServiceProvider.GetService(viewModelType) is not IStringIODialogViewModel viewModel) return;
+            if (view is null || ServiceProvider.GetService(viewModelType) is not IStringIODialogViewModel viewModel)
+            {
+                return;
+            }
 
             viewModel.DialogInput = dialogInput;
             viewModel.Load();
@@ -89,12 +90,13 @@ namespace LIMS.Dialog
             viewContent.DataContext = viewModel;
 
             // Handle dialog accepted event, indicating an output string is available from the dialog.
-            void DialogAcceptedEventHandler (object sender, EventArgs e)
+            void DialogAcceptedEventHandler(object sender, EventArgs e)
             {
                 dialog.DialogResult = true;
                 dialog.Close();
                 viewModel.DialogAccepted -= DialogAcceptedEventHandler;
             }
+
             viewModel.DialogAccepted += DialogAcceptedEventHandler;
 
             void DialogClosedEventHandler(object sender, EventArgs e)
@@ -104,6 +106,7 @@ namespace LIMS.Dialog
                 dialogOutputCallback(viewModel.DialogOutput);
                 dialog.Closed -= DialogClosedEventHandler;
             }
+
             dialog.Closed += DialogClosedEventHandler;
 
             ShowDialog(dialog, view);

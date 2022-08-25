@@ -1,11 +1,10 @@
-﻿using LIMS.Enums;
-using LIMS.Factory;
-using LIMS.Model;
-using LIMS.Model.RegressionModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using LIMS.Enums;
+using LIMS.Model;
+using LIMS.Model.RegressionModels;
 
 namespace LIMS.Data
 {
@@ -93,12 +92,14 @@ namespace LIMS.Data
                                 headerPeakInfo.Add(ProcessPeakInfo(headerBuffer));
                                 headerBuffer.Clear();
                             }
+
                             continue;
                         case AnalystExportSections.DataRows:
                             dataRowHeaderSeparatorCount++;
                             continue;
                     }
                 }
+
                 if (currentSection == AnalystExportSections.DataRows)
                 {
                     if (dataRowHeaderSeparatorCount == 3)
@@ -107,11 +108,14 @@ namespace LIMS.Data
                         dataRowHeaderSeparatorCount = 0;
                         continue;
                     }
+
                     dataRows.Add(ProcessDataRow(line));
                     continue;
                 }
+
                 headerBuffer.Add(line);
             }
+
             return new AnalystExport()
             {
                 Peaks = headerPeakInfo,
@@ -134,6 +138,7 @@ namespace LIMS.Data
             {
                 internalStandard = headerBuffer[1].Split(' ')[2];
             }
+
             var transitionMRM = ParseTransition(headerBuffer[2].Split(' ')[2]);
             return new AnalystExportHeaderPeakInfo()
             {
@@ -175,7 +180,7 @@ namespace LIMS.Data
                 SampleName = data[0],
                 SampleID = int.Parse(data[1]),
                 SampleType = ParseSampleType(data[2]),
-                SampleDescription = data[3] == "none" ? "" : data[3],
+                SampleDescription = data[3] == "none" ? string.Empty : data[3],
                 SetNumber = int.Parse(data[4]),
                 AcquisitonMethod = data[5],
                 AcquisitionDate = DateTime.Parse(data[6]),
@@ -193,7 +198,7 @@ namespace LIMS.Data
                 Units = ParseUnits(data[18]),
                 Area = double.Parse(data[19]),
                 Height = double.Parse(data[21]),
-                AnalyteAnnotation = data[22] == "N/A" ? "" : data[22],
+                AnalyteAnnotation = data[22] == "N/A" ? string.Empty : data[22],
                 NominalConcentration = data[23] == "N/A" ? 0d : double.Parse(data[23]),
                 RetentionTime = double.Parse(data[24]),
                 ExpectedRetentionTime = double.Parse(data[25]),
@@ -206,7 +211,7 @@ namespace LIMS.Data
                 IntegrationType = data[32],
                 SignalToNoiseRatio = data[33] == "N/A" ? null : double.Parse(data[33]),
                 PeakWidth = double.Parse(data[34]),
-                StandardQueryStatus = data[35] == "N/A" ? "" : data[35],
+                StandardQueryStatus = data[35] == "N/A" ? string.Empty : data[35],
                 AnalyteTransitionMRM = ParseTransition(data[36].Split(' ')[0]),
                 AnalyteToISAreaRatio = data[38] == "#DIV/0!" ? null : double.Parse(data[38]),
                 AnalyteToISHeightRatio = data[39] == "#DIV/0!" ? null : double.Parse(data[39]),
@@ -268,6 +273,7 @@ namespace LIMS.Data
                 default:
                     throw new FileFormatException("unrecognised regression type in analyst result table export");
             }
+
             return regression;
         }
 
@@ -291,6 +297,7 @@ namespace LIMS.Data
                 default:
                     throw new FileFormatException("unrecognised weighting factor in analyst result table export");
             }
+
             return weightingFactor;
         }
 
@@ -405,7 +412,7 @@ namespace LIMS.Data
                 "Resp.Factor",
                 "Resp.Factor",
                 "Resp.Factor",
-                ""
+                string.Empty
             };
             if (headers.SequenceEqual(validHeaderFormat))
             {

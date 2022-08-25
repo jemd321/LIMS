@@ -2,7 +2,7 @@
 {
     public enum RegressionType
     {
-        Linear, 
+        Linear,
         Quadratic
     }
 }

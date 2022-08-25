@@ -1,11 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LIMS.Data;
-using LIMS.Model.RegressionModels;
+﻿using System.IO.Abstractions.TestingHelpers;
 using LIMS.Model;
-using System.IO;
-using System.IO.Abstractions;
-using System.IO.Abstractions.TestingHelpers;
-using Moq;
+using LIMS.Model.RegressionModels;
 
 namespace LIMS.Data.Tests
 {
@@ -121,7 +116,7 @@ namespace LIMS.Data.Tests
             string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
             string expectedSaveFilePath = Path.Combine(testProjectDirectory, "TestRun.json");
             _mockfileSystem.AddDirectory(testProjectDirectory);
-            _mockfileSystem.AddFile(expectedSaveFilePath, new MockFileData(""));
+            _mockfileSystem.AddFile(expectedSaveFilePath, new MockFileData(string.Empty));
             _fileDataService = new FileDataProvider(_mockfileSystem);
 
 
@@ -238,7 +233,6 @@ namespace LIMS.Data.Tests
             var actualDirectoryCount = _mockfileSystem.AllDirectories.Count();
 
             Assert.AreEqual(expectedDirectoryCount, actualDirectoryCount);
-
         }
 
         [TestMethod()]

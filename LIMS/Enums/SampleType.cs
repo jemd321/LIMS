@@ -2,7 +2,7 @@
 {
     public enum SampleType
     {
-        Unknown, 
+        Unknown,
         Standard,
         QualityControl,
     }

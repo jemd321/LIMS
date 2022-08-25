@@ -2,7 +2,5 @@
 {
     public class RegressionStatisticsViewModel : ViewModelBase
     {
-
     }
-
 }

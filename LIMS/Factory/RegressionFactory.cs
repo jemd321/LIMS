@@ -1,7 +1,7 @@
-﻿using LIMS.Enums;
+﻿using System;
+using LIMS.Enums;
 using LIMS.Model;
 using LIMS.Model.RegressionModels;
-using System;
 
 namespace LIMS.Factory
 {

@@ -1,10 +1,9 @@
-﻿using LIMS.Data;
-using System.IO.Abstractions.TestingHelpers;
+﻿using System.IO.Abstractions.TestingHelpers;
+using LIMS.Data;
 using LIMS.Model;
-using Moq;
-using System.Linq;
-using LIMSTests.Extensions;
 using LIMS.ViewModel.DialogViewModel;
+using LIMSTests.Extensions;
+using Moq;
 
 namespace LIMS.ViewModel.Tests
 {
@@ -149,7 +148,7 @@ namespace LIMS.ViewModel.Tests
         public void CreateProjectCommand_CannotExecute_WhenNewProjectNameIsNullOrEmpty()
         {
             _viewModel.Load();
-            _viewModel.NewProjectName = "";
+            _viewModel.NewProjectName = string.Empty;
             Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 

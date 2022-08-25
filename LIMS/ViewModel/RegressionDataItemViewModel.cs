@@ -63,6 +63,7 @@ namespace LIMS.ViewModel
                 RaisePropertyChanged();
             }
         }
+
         public double? NominalConcentration
         {
             get => _nominalConcentration;
@@ -92,10 +93,5 @@ namespace LIMS.ViewModel
                 RaisePropertyChanged();
             }
         }
-
-
-
-
-
     }
 }

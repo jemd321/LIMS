@@ -1,13 +1,15 @@
-﻿using LIMS.Model.RegressionModels;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+using LIMS.Model.RegressionModels;
 
 namespace LIMS.ViewModel
 {
     public interface IRegressionDataViewModel
     {
-        public ObservableCollection<RegressionDataItemViewModel> Standards { get;}
-        public ObservableCollection<RegressionDataItemViewModel> QualityControls { get;}
+        public ObservableCollection<RegressionDataItemViewModel> Standards { get; }
+
+        public ObservableCollection<RegressionDataItemViewModel> QualityControls { get; }
     }
+
     public class RegressionDataViewModel : ViewModelBase, IRegressionDataViewModel
     {
         private readonly Regression _currentRegression;
@@ -32,8 +34,9 @@ namespace LIMS.ViewModel
                         CalculatedConcentration = standard.CalculatedConcentration,
                         NominalConcentration = standard.NominalConcentration,
                         IsActive = standard.IsActive
-                    }) ;
+                    });
             }
+
             foreach (var qualityControl in _currentRegression.RegressionData.QualityControls)
             {
                 QualityControls.Add(
@@ -51,9 +54,7 @@ namespace LIMS.ViewModel
         }
 
         public ObservableCollection<RegressionDataItemViewModel> Standards { get; } = new();
+
         public ObservableCollection<RegressionDataItemViewModel> QualityControls { get; } = new();
-
-
-
     }
 }

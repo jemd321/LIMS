@@ -1,5 +1,4 @@
 ﻿using LIMS.Enums;
-using LIMS.Model.RegressionModels;
 
 namespace LIMS.Model
 {
@@ -19,10 +18,13 @@ namespace LIMS.Model
         }
 
         public string AnalyticalRunID { get; set; }
-        public string ParentProjectID { get; }
-        public RegressionData RegressionData { get; }
-        public RegressionType RegressionType { get; }
-        public WeightingFactor WeightingFactor { get; }
 
+        public string ParentProjectID { get; }
+
+        public RegressionData RegressionData { get; }
+
+        public RegressionType RegressionType { get; }
+
+        public WeightingFactor WeightingFactor { get; }
     }
 }

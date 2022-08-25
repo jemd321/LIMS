@@ -1,10 +1,10 @@
-﻿using Moq;
+﻿using System.IO.Abstractions.TestingHelpers;
 using LIMS.Data;
-using LIMSTests.Extensions;
-using LIMS.Model;
-using System.IO.Abstractions.TestingHelpers;
 using LIMS.Dialog;
+using LIMS.Model;
 using LIMS.ViewModel.DialogViewModel;
+using LIMSTests.Extensions;
+using Moq;
 
 namespace LIMS.ViewModel.Tests
 {

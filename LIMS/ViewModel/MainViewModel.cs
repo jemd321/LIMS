@@ -1,25 +1,22 @@
-﻿using LIMS.Command;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using LIMS.Command;
 using LIMS.Data;
 using LIMS.Dialog;
 using LIMS.Model;
 using LIMS.ViewModel.DialogViewModel;
-using Microsoft.Win32;
-using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace LIMS.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        private ViewModelBase _selectedRegressionViewModel;
-        private Project _selectedProject;
-        private ObservableCollection<Project> _projects;
         private readonly IDataProvider _fileDataService;
         private readonly IDataImporter _dataImporter;
         private readonly IDialogService _dialogService;
+        private ViewModelBase _selectedRegressionViewModel;
+        private Project _selectedProject;
+        private ObservableCollection<Project> _projects;
 
         public MainViewModel(
             IRegressionViewModel regressionViewModel,
@@ -38,14 +35,6 @@ namespace LIMS.ViewModel
             SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun);
         }
 
-        private bool CanOpenAnalyticalRunExecute(object parameter) => SelectedProject is not null;
-
-        public override void Load()
-        {
-            _fileDataService.SetupApplicationStorage();
-            Projects = _fileDataService.LoadProjects();
-        }
-
         public ViewModelBase SelectedViewModel
         {
             get => _selectedRegressionViewModel;
@@ -55,6 +44,7 @@ namespace LIMS.ViewModel
                 RaisePropertyChanged();
             }
         }
+
         public Project SelectedProject
         {
             get => _selectedProject;
@@ -67,32 +57,49 @@ namespace LIMS.ViewModel
         }
 
         public IRegressionViewModel RegressionViewModel { get; }
+
         public ObservableCollection<Project> Projects
         {
             get => _projects;
             private set
             {
-                _projects = value; RaisePropertyChanged();
+                _projects = value;
+                RaisePropertyChanged();
             }
         }
+
         public DelegateCommand CreateNewProjectCommand { get; }
+
         public DelegateCommand OpenAnalyticalRunCommand { get; }
+
         public DelegateCommand ImportAnalystFileCommand { get; }
+
         public DelegateCommand SaveAnalyticalRunCommand { get; }
+
+        public override void Load()
+        {
+            _fileDataService.SetupApplicationStorage();
+            Projects = _fileDataService.LoadProjects();
+        }
+
+        private bool CanOpenAnalyticalRunExecute(object parameter)
+        {
+            return SelectedProject is not null;
+        }
 
         private void CreateNewProject(object parameter)
         {
-            _dialogService.ShowActionDialog<ProjectCreationDialogViewModel>(result => {});
+            _dialogService.ShowActionDialog<ProjectCreationDialogViewModel>(result => { });
             Projects = _fileDataService.LoadProjects();
         }
 
         private void OpenAnalyticalRun(object parameter)
         {
-            string selectedAnalyticalRunID = "";
-            _dialogService.ShowStringIODialog<OpenAnalyticalRunDialogViewModel>(result => {}, dialogInput: SelectedProject.ProjectID, output =>
-            {
-                selectedAnalyticalRunID = output;
-            });
+            string selectedAnalyticalRunID = string.Empty;
+            _dialogService.ShowStringIODialog<OpenAnalyticalRunDialogViewModel>(result => { }, dialogInput: SelectedProject.ProjectID, output =>
+             {
+                 selectedAnalyticalRunID = output;
+             });
             var openedAnalyticalRun = _fileDataService.LoadAnalyticalRun(SelectedProject, selectedAnalyticalRunID);
             SelectedViewModel = (ViewModelBase)RegressionViewModel;
             SelectedViewModel.Load(openedAnalyticalRun);
@@ -101,14 +108,14 @@ namespace LIMS.ViewModel
         private void SaveAnalyticalRun(object parameter)
         {
             AnalyticalRun currentlyOpenRun = RegressionViewModel.OpenAnalyticalRun;
-            if (currentlyOpenRun.AnalyticalRunID == "")
+            if (currentlyOpenRun.AnalyticalRunID == string.Empty)
             {
-                string userSelectedAnalyticalRunID = "";
-                _dialogService.ShowStringIODialog<SaveAnalyticalRunDialogViewModel>(result => {}, dialogInput: SelectedProject.ProjectID, output =>
-                {
-                    userSelectedAnalyticalRunID = output;
-                    currentlyOpenRun.AnalyticalRunID = userSelectedAnalyticalRunID;
-                });
+                string userSelectedAnalyticalRunID = string.Empty;
+                _dialogService.ShowStringIODialog<SaveAnalyticalRunDialogViewModel>(result => { }, dialogInput: SelectedProject.ProjectID, output =>
+                 {
+                     userSelectedAnalyticalRunID = output;
+                     currentlyOpenRun.AnalyticalRunID = userSelectedAnalyticalRunID;
+                 });
                 _fileDataService.SaveAnalyticalRun(currentlyOpenRun);
             }
             else
@@ -123,14 +130,14 @@ namespace LIMS.ViewModel
             if (string.IsNullOrEmpty(selectedFile))
             {
                 throw new NotImplementedException();
+
                 // Handle gracefully with message box
-                return;
             }
 
             FileInfo validFilePath = _fileDataService.ValidateFilePath(selectedFile);
             string rawData = _fileDataService.GetRawData(validFilePath);
             var regressionData = _dataImporter.ParseImportedRawData(rawData);
-            var analyticalRun = new AnalyticalRun(analyticalRunID: "", SelectedProject.ProjectID, regressionData);
+            var analyticalRun = new AnalyticalRun(analyticalRunID: string.Empty, SelectedProject.ProjectID, regressionData);
             SelectedViewModel = (ViewModelBase)RegressionViewModel;
             SelectedViewModel.Load(analyticalRun);
         }

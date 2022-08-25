@@ -1,10 +1,10 @@
-﻿using LIMS.Command;
-using LIMS.Data;
-using LIMS.Model;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using LIMS.Command;
+using LIMS.Data;
+using LIMS.Model;
 
 namespace LIMS.ViewModel.DialogViewModel
 {
@@ -28,17 +28,18 @@ namespace LIMS.ViewModel.DialogViewModel
         }
 
         public DelegateCommand CreateProjectCommand { get; }
+
         public DelegateCommand DeleteProjectCommand { get; }
 
         public ObservableCollection<Project> LoadedProjects
         {
-            get { return _loadedProjects; }
+            get => _loadedProjects;
             set { _loadedProjects = value; RaisePropertyChanged(); }
         }
 
         public string NewProjectName
         {
-            get { return _newProjectName; }
+            get => _newProjectName;
             set
             {
                 // convert to lower case to avoid problems with case sensitive directory names
@@ -62,12 +63,14 @@ namespace LIMS.ViewModel.DialogViewModel
                 {
                     ClearErrors();
                 }
+
                 CreateProjectCommand.RaiseCanExecuteChanged();
             }
         }
+
         public Project SelectedProject
         {
-            get { return _selectedProject; }
+            get => _selectedProject;
             set
             {
                 _selectedProject = value;
@@ -79,7 +82,7 @@ namespace LIMS.ViewModel.DialogViewModel
         public override void Load()
         {
             LoadedProjects = _fileDataService.LoadProjects();
-            NewProjectName = "";
+            NewProjectName = string.Empty;
         }
 
         private void CreateProject(object parameter)
@@ -121,6 +124,5 @@ namespace LIMS.ViewModel.DialogViewModel
         {
             return SelectedProject is not null;
         }
-
     }
 }

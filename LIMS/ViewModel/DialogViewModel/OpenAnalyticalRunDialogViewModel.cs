@@ -1,9 +1,9 @@
-﻿using LIMS.Command;
-using LIMS.Data;
-using LIMS.Model;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using LIMS.Command;
+using LIMS.Data;
+using LIMS.Model;
 
 namespace LIMS.ViewModel.DialogViewModel
 {
@@ -24,22 +24,27 @@ namespace LIMS.ViewModel.DialogViewModel
         }
 
         public DelegateCommand OpenAnalyticalRunCommand { get; }
+
         public DelegateCommand DeleteAnalyticalRunCommand { get; }
 
         public ObservableCollection<string> LoadedAnalyticalRunIDs
         {
-            get { return _loadedAnalyticalRunIDs; }
+            get => _loadedAnalyticalRunIDs;
             set { _loadedAnalyticalRunIDs = value; RaisePropertyChanged(); }
         }
 
         // In this dialog, the calling viewModel should supply the currently open ProjectID
         public string DialogInput { get; set; }
+
         public string DialogOutput { get; set; }
+
         public string OpenProjectID { get; private set; }
+
         public Project OpenProject { get; private set; }
+
         public string SelectedAnalyticalRun
         {
-            get { return _selectedAnalyticalRun; }
+            get => _selectedAnalyticalRun;
             set
             {
                 _selectedAnalyticalRun = value;
@@ -94,6 +99,5 @@ namespace LIMS.ViewModel.DialogViewModel
         {
             return SelectedAnalyticalRun is not null;
         }
-
     }
 }

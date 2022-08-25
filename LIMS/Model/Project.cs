@@ -10,6 +10,7 @@ namespace LIMS.Model
         }
 
         public string ProjectID { get; }
+
         public HashSet<string> AnalyticalRunIDs { get; } = new();
     }
 }

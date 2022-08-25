@@ -1,7 +1,4 @@
-﻿using LIMS.Model.RegressionModels;
-using System.Threading.Tasks;
-
-namespace LIMS.Model
+﻿namespace LIMS.Model
 {
     public interface IDataImporter
     {

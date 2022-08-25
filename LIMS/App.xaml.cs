@@ -1,20 +1,20 @@
-﻿using LIMS.Data;
+﻿using System.IO.Abstractions;
+using System.Windows;
+using LIMS.Data;
 using LIMS.Dialog;
-using LIMS.View.Dialog;
 using LIMS.Factory;
 using LIMS.Model;
+using LIMS.View.Dialog;
 using LIMS.ViewModel;
 using LIMS.ViewModel.DialogViewModel;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.IO.Abstractions;
-using System.Windows;
 
 namespace LIMS
 {
     public partial class App : Application
     {
         public readonly ServiceProvider _serviceProvider;
+
         public App()
         {
             var services = new ServiceCollection();
@@ -57,7 +57,7 @@ namespace LIMS
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            
+
             var mainWindow = _serviceProvider.GetService<MainWindow>();
             mainWindow.Show();
         }

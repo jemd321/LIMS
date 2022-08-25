@@ -1,6 +1,4 @@
-﻿using LIMS.Model;
-using System.Collections.ObjectModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 
 namespace LIMS.View.Dialog

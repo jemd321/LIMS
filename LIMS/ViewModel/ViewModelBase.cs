@@ -1,7 +1,6 @@
-﻿using LIMS.Model;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
+using LIMS.Model;
 
 namespace LIMS.ViewModel
 {

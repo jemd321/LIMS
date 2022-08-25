@@ -1,5 +1,5 @@
-﻿using LIMS.Enums;
-using System;
+﻿using System;
+using LIMS.Enums;
 
 namespace LIMS.Model.RegressionModels
 {
@@ -46,6 +46,7 @@ namespace LIMS.Model.RegressionModels
                 {
                     continue;
                 }
+
                 ++activeStandards;
                 double? x = standard.NominalConcentration;
                 double? y = standard.InstrumentResponse;
@@ -54,6 +55,7 @@ namespace LIMS.Model.RegressionModels
                 xySum += x * y;
                 xSquaredSum += x * x;
             }
+
             CalculateUnweightedGradient(xSum, ySum, xySum, xSquaredSum, activeStandards);
             CalculateUnweightedYIntercept(xSum, ySum, activeStandards);
         }
@@ -88,6 +90,7 @@ namespace LIMS.Model.RegressionModels
                 {
                     continue;
                 }
+
                 double? x = standard.NominalConcentration;
                 double? y = standard.InstrumentResponse;
                 w = wFactorEquation(x);
@@ -97,9 +100,11 @@ namespace LIMS.Model.RegressionModels
                 wxSquaredSum += (w * (x * x));
                 wSum += w;
             }
+
             CalculateWeightedGradient(wxSum, wySum, wxySum, wxSquaredSum, wSum);
             CalculateWeightedYIntercept(wxSum, wySum, wSum);
         }
+
         private void PerformYWeightedRegression()
         {
             Func<double?, double?> wFactorEquation;
@@ -130,6 +135,7 @@ namespace LIMS.Model.RegressionModels
                 {
                     continue;
                 }
+
                 double? x = standard.NominalConcentration;
                 double? y = standard.InstrumentResponse;
                 w = wFactorEquation(y);
@@ -139,6 +145,7 @@ namespace LIMS.Model.RegressionModels
                 wxSquaredSum += (w * (x * x));
                 wSum += w;
             }
+
             CalculateWeightedGradient(wxSum, wySum, wxySum, wxSquaredSum, wSum);
             CalculateWeightedYIntercept(wxSum, wySum, wSum);
         }
@@ -176,10 +183,12 @@ namespace LIMS.Model.RegressionModels
             {
                 standard.CalculatedConcentration = CalculateConcentration(standard.InstrumentResponse);
             }
+
             foreach (var qualityControl in RegressionData.QualityControls)
             {
                 qualityControl.CalculatedConcentration = CalculateConcentration(qualityControl.InstrumentResponse);
             }
+
             foreach (var unknown in RegressionData.Unknowns)
             {
                 unknown.CalculatedConcentration = CalculateConcentration(unknown.InstrumentResponse);
@@ -197,6 +206,7 @@ namespace LIMS.Model.RegressionModels
             {
                 standard.Accuracy = CalculateAccuracy(standard.CalculatedConcentration, standard.NominalConcentration);
             }
+
             foreach (var qualityControl in RegressionData.QualityControls)
             {
                 qualityControl.Accuracy = CalculateAccuracy(qualityControl.CalculatedConcentration, qualityControl.NominalConcentration);
@@ -212,11 +222,5 @@ namespace LIMS.Model.RegressionModels
         {
             // TODO
         }
-
-
-
-
     }
-
-
 }

@@ -1,18 +1,19 @@
-﻿using LIMS.Command;
-using LIMS.Data;
-using LIMS.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using LIMS.Command;
+using LIMS.Data;
+using LIMS.Model;
 
 namespace LIMS.ViewModel.DialogViewModel
 {
     public class SaveAnalyticalRunDialogViewModel : ValidationViewModelBase, IStringIODialogViewModel
     {
-        const int MAXANALYTICALRUNIDLENGTH = 36;
-        private string _chosenAnalyticalRunID;
+        private const int MAXANALYTICALRUNIDLENGTH = 36;
         private readonly IDataProvider _fileDataProvider;
+        private readonly List<string> _loadedAnalyticalRunIDs = new();
+        private string _chosenAnalyticalRunID;
 
         public SaveAnalyticalRunDialogViewModel(IDataProvider fileDataService)
         {
@@ -21,29 +22,21 @@ namespace LIMS.ViewModel.DialogViewModel
             SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun, CanSaveAnalyticalRun);
         }
 
-        public DelegateCommand SaveAnalyticalRunCommand { get; }
-        public string DialogInput { get; set; }
-        public string DialogOutput { get; set; }
-        public string OpenProjectID { get; private set; }
-        public Project OpenProject { get; private set; }
-
         public event EventHandler DialogAccepted;
 
-        private bool CanSaveAnalyticalRun(object parameter)
-        {
-            return !string.IsNullOrEmpty(ChosenAnalyticalRunID);
-        }
+        public DelegateCommand SaveAnalyticalRunCommand { get; }
 
-        private void SaveAnalyticalRun(object obj)
-        {
-            DialogOutput = ChosenAnalyticalRunID;
-            RaiseDialogAccepted(EventArgs.Empty);
-            // Validation
-        }
+        public string DialogInput { get; set; }
+
+        public string DialogOutput { get; set; }
+
+        public string OpenProjectID { get; private set; }
+
+        public Project OpenProject { get; private set; }
 
         public string ChosenAnalyticalRunID
         {
-            get { return _chosenAnalyticalRunID; }
+            get => _chosenAnalyticalRunID;
             set
             {
                 _chosenAnalyticalRunID = value;
@@ -66,11 +59,10 @@ namespace LIMS.ViewModel.DialogViewModel
                 {
                     ClearErrors();
                 }
+
                 SaveAnalyticalRunCommand.RaiseCanExecuteChanged();
             }
         }
-
-        private readonly List<string> LoadedAnalyticalRunIDs = new();
 
         public override void Load()
         {
@@ -81,14 +73,6 @@ namespace LIMS.ViewModel.DialogViewModel
                 .SingleOrDefault();
             OpenProject = openProject;
             LoadAnalyticalRuns();
-        }
-
-        private void LoadAnalyticalRuns()
-        {
-            foreach (string analyticalRunID in OpenProject.AnalyticalRunIDs)
-            {
-                LoadedAnalyticalRunIDs.Add(analyticalRunID);
-            }
         }
 
         protected virtual void RaiseDialogAccepted(EventArgs e)
@@ -102,10 +86,30 @@ namespace LIMS.ViewModel.DialogViewModel
             return Regex.Match(chosenAnalyticalRunID, illegalCharactersPattern).Success;
         }
 
-        private bool SelectedAnalyticalRunIDAlreadyExists(string chosenAnalyticalRunID)
+        private void LoadAnalyticalRuns()
         {
-            return LoadedAnalyticalRunIDs.Contains(chosenAnalyticalRunID); 
+            foreach (string analyticalRunID in OpenProject.AnalyticalRunIDs)
+            {
+                _loadedAnalyticalRunIDs.Add(analyticalRunID);
+            }
         }
 
+        private bool CanSaveAnalyticalRun(object parameter)
+        {
+            return !string.IsNullOrEmpty(ChosenAnalyticalRunID);
+        }
+
+        private void SaveAnalyticalRun(object obj)
+        {
+            DialogOutput = ChosenAnalyticalRunID;
+            RaiseDialogAccepted(EventArgs.Empty);
+
+            // Validation
+        }
+
+        private bool SelectedAnalyticalRunIDAlreadyExists(string chosenAnalyticalRunID)
+        {
+            return _loadedAnalyticalRunIDs.Contains(chosenAnalyticalRunID);
+        }
     }
 }
