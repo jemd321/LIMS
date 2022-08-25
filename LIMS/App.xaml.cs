@@ -28,28 +28,30 @@ namespace LIMS
             services.AddTransient<MainWindow>();
 
             services.AddTransient<MainViewModel>();
-            services.AddTransient<RegressionViewModel>();
+            services.AddTransient<IRegressionViewModel, RegressionViewModel>();
 
             services.AddSingleton<IDialogService, DialogService>();
 
-            services.AddTransient<IRegressionDataProvider, AnalystDataProvider>();
+            services.AddTransient<IDataImporter, AnalystDataImporter>();
             services.AddTransient<IRegressionFactory, RegressionFactory>();
-            services.AddTransient<IFileDataService, FileDataService>();
+            services.AddTransient<IDataProvider, FileDataProvider>();
             services.AddSingleton<IDialogService, DialogService>();
             services.AddTransient<IFileSystem, FileSystem>();
 
             services.AddTransient<ProjectCreationDialogViewModel>();
             services.AddTransient<ProjectCreationDialog>();
-            services.AddTransient<AnalyticalRunDialogViewModel>();
-            services.AddTransient<AnalyticalRunDialog>();
+            services.AddTransient<OpenAnalyticalRunDialogViewModel>();
+            services.AddTransient<OpenAnalyticalRunDialog>();
+            services.AddTransient<SaveAnalyticalRunDialogViewModel>();
+            services.AddTransient<SaveAnalyticalRunDialog>();
         }
 
         private void ConfigureDialogService()
         {
             DialogService.ServiceProvider = _serviceProvider;
             DialogService.RegisterDialog<ProjectCreationDialog, ProjectCreationDialogViewModel>();
-            DialogService.RegisterDialog<AnalyticalRunDialog, AnalyticalRunDialogViewModel>();
-
+            DialogService.RegisterDialog<OpenAnalyticalRunDialog, OpenAnalyticalRunDialogViewModel>();
+            DialogService.RegisterDialog<SaveAnalyticalRunDialog, SaveAnalyticalRunDialogViewModel>();
         }
 
         protected override void OnStartup(StartupEventArgs e)

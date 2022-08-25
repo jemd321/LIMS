@@ -1,12 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+﻿using Moq;
 using LIMS.Data;
 using LIMSTests.Extensions;
-using LIMS.Factory;
 using LIMS.Model;
 using System.IO.Abstractions.TestingHelpers;
 using LIMS.Dialog;
-using System.Collections.ObjectModel;
 using LIMS.ViewModel.DialogViewModel;
 
 namespace LIMS.ViewModel.Tests
@@ -15,26 +12,21 @@ namespace LIMS.ViewModel.Tests
     public class MainViewModelTests
     {
         private MainViewModel _mainViewModel = default!;
-        private RegressionViewModel _regressionViewModel = default!;
-        private FileDataService _fileDataService = default!;
+        private Mock<IRegressionViewModel> _regressionViewModelMock = default!;
+        private FileDataProvider _fileDataService = default!;
         private MockFileSystem _mockfileSystem = default!;
-        private Mock<IDialogService> _dialogService = default!;
+        private Mock<IDataImporter> _dataImporterMock = default!;
+        private Mock<IDialogService> _dialogServiceMock = default!;
 
         [TestInitialize]
         public void SetupTest()
         {
-            _regressionViewModel = SetupRegressionViewModel();
+            _regressionViewModelMock = new Mock<IRegressionViewModel>();
             _mockfileSystem = new MockFileSystem();
-            _fileDataService = new FileDataService(_mockfileSystem);
-            _dialogService = new Mock<IDialogService>();
-            _mainViewModel = new MainViewModel(_regressionViewModel, _fileDataService, _dialogService.Object);
-        }
-
-        private RegressionViewModel SetupRegressionViewModel()
-        {
-            var mockRegressionDataProvider = new Mock<IRegressionDataProvider>();
-            var mockRegressionFactory = new Mock<IRegressionFactory>();
-            return new RegressionViewModel(mockRegressionDataProvider.Object, mockRegressionFactory.Object);
+            _fileDataService = new FileDataProvider(_mockfileSystem);
+            _dataImporterMock = new Mock<IDataImporter>();
+            _dialogServiceMock = new Mock<IDialogService>();
+            _mainViewModel = new MainViewModel(_regressionViewModelMock.Object, _fileDataService, _dataImporterMock.Object, _dialogServiceMock.Object);
         }
 
         [TestMethod()]
@@ -42,7 +34,7 @@ namespace LIMS.ViewModel.Tests
         {
             var fired = _mainViewModel.IsPropertyChangedFired(() =>
             {
-                _mainViewModel.SelectedViewModel = _regressionViewModel;
+                _mainViewModel.SelectedViewModel = _regressionViewModelMock.Object as ViewModelBase;
             }, nameof(_mainViewModel.SelectedViewModel));
 
             Assert.IsTrue(fired);
@@ -80,7 +72,7 @@ namespace LIMS.ViewModel.Tests
             _mainViewModel.Load();
 
             _mainViewModel.CreateNewProjectCommand.Execute(null);
-            _dialogService.Verify(m => m.ShowActionDialog<ProjectCreationDialogViewModel>(It.IsAny<Action<bool>>()), Times.Once);
+            _dialogServiceMock.Verify(m => m.ShowActionDialog<ProjectCreationDialogViewModel>(It.IsAny<Action<bool>>()), Times.Once);
         }
     }
 }

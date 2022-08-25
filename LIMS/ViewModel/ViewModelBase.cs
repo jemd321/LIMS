@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using LIMS.Model;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -15,6 +16,6 @@ namespace LIMS.ViewModel
 
         public virtual void Load() { }
 
-        public virtual Task Load(string rawData) => Task.CompletedTask;
+        public virtual void Load(AnalyticalRun analyticalRun) { }
     }
 }

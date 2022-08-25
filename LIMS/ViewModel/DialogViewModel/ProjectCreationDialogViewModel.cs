@@ -12,14 +12,14 @@ namespace LIMS.ViewModel.DialogViewModel
     {
         private const int MAXPROJECTNAMELENGTH = 36;
 
-        private readonly IFileDataService _fileDataService;
+        private readonly IDataProvider _fileDataService;
         private ObservableCollection<Project> _loadedProjects;
         private string _newProjectName;
         private Project _selectedProject;
 
         public event EventHandler DialogAccepted;
 
-        public ProjectCreationDialogViewModel(IFileDataService fileDataService)
+        public ProjectCreationDialogViewModel(IDataProvider fileDataService)
         {
             _fileDataService = fileDataService;
 
@@ -76,8 +76,6 @@ namespace LIMS.ViewModel.DialogViewModel
             }
         }
 
-
-
         public override void Load()
         {
             LoadedProjects = _fileDataService.LoadProjects();
@@ -107,7 +105,7 @@ namespace LIMS.ViewModel.DialogViewModel
 
         private bool SelectedProjectContainsIllegalCharacter()
         {
-            var illegalCharactersPattern = "[<>\\/\":|?*.]+";
+            var illegalCharactersPattern = @"[\\<>/"":|?*.]+";
             return Regex.Match(NewProjectName, illegalCharactersPattern).Success;
         }
 

@@ -1,35 +1,20 @@
 ﻿using LIMS.Model;
 using System;
 using System.Linq;
-using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.IO.Abstractions;
 using System.Collections.ObjectModel;
+using LIMS.Model.RegressionModels;
 
 namespace LIMS.Data
 {
-    public interface IFileDataService
-    {
-        string ApplicationDirectory { get; }
-        string ProjectsDirectory { get; }
-        ObservableCollection<Project> LoadProjects();
-        void SetupApplicationStorage();
-        void CreateProject(Project newProject);
-        void DeleteProject(Project existingProject);
-        AnalyticalRun LoadAnalyticalRun(Project project, string analyticalRunID);
-        void DeleteAnalyticalRun(Project project, string analyticalRunID);
-        void SaveAnalyticalRun(AnalyticalRun analyticalRun);
-        FileInfo ValidateFilePath(string filePath);
-        Task<string> GetRawData(FileInfo fileInfo);
-    }
-
-    public class FileDataService : IFileDataService
+    public class FileDataProvider : IDataProvider
     {
         private readonly IFileSystem _fileSystem;
 
-        public FileDataService(IFileSystem fileSystem)
+        public FileDataProvider(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
         }
@@ -153,6 +138,10 @@ namespace LIMS.Data
             }
 
             string analyticalRunDirectory = _fileSystem.Path.Combine(ProjectsDirectory, analyticalRun.ParentProjectID, analyticalRun.AnalyticalRunID);
+            if (!_fileSystem.Directory.Exists(analyticalRunDirectory))
+            {            
+                _fileSystem.Directory.CreateDirectory(analyticalRunDirectory);
+            }
             string filePath = _fileSystem.Path.Combine(analyticalRunDirectory, analyticalRun.AnalyticalRunID + ".json");
 
             string jsonDoc = JsonSerializer.Serialize(analyticalRun.RegressionData);
@@ -175,11 +164,9 @@ namespace LIMS.Data
             return new FileInfo(filePath);
         }
 
-        public Task<string> GetRawData(FileInfo fileInfo)
+        public string GetRawData(FileInfo fileInfo)
         {
-            return Task.Run(() => File.ReadAllText(fileInfo.FullName));
+            return File.ReadAllText(fileInfo.FullName);
         }
-
-
     }
 }

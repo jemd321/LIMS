@@ -5,14 +5,15 @@ using LIMS.Model;
 using System.IO;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
+using Moq;
 
 namespace LIMS.Data.Tests
 {
     [TestClass()]
-    public class FileDataServiceTests
+    public class FileDataProviderTests
     {
         private MockFileSystem _mockfileSystem = default!;
-        private FileDataService _fileDataService = default!;
+        private FileDataProvider _fileDataService = default!;
         private RegressionData _mockRegressionData = default!;
 
         private string _expectedAppDataRoaming = default!;
@@ -25,15 +26,15 @@ namespace LIMS.Data.Tests
         public void TestSetup()
         {
             _mockfileSystem = new MockFileSystem();
-            _fileDataService = new FileDataService(_mockfileSystem);
-            _mockRegressionData = SetupRegressionData();
+            _fileDataService = new FileDataProvider(_mockfileSystem);
+            _mockRegressionData = SetupMockRegressionData();
 
             _expectedAppDataRoaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             _expectedAppDirectory = Path.Combine(_expectedAppDataRoaming, "LIMS");
             _expectedProjectsDirectory = Path.Combine(_expectedAppDirectory, "Projects");
         }
 
-        private RegressionData SetupRegressionData()
+        public static RegressionData SetupMockRegressionData()
         {
 
             var testStandards = new List<Standard>()
@@ -69,7 +70,7 @@ namespace LIMS.Data.Tests
         {
             string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
             _mockfileSystem.AddDirectory(testProjectDirectory);
-            _fileDataService = new FileDataService(_mockfileSystem);
+            _fileDataService = new FileDataProvider(_mockfileSystem);
 
             var mockAnalyticalRun = new AnalyticalRun("TestRun", "Test", _mockRegressionData);
             _fileDataService.SaveAnalyticalRun(mockAnalyticalRun);
@@ -81,7 +82,6 @@ namespace LIMS.Data.Tests
 
             Assert.AreEqual(mockAnalyticalRun.AnalyticalRunID, actualLoadedRun.AnalyticalRunID);
             Assert.AreEqual(mockAnalyticalRun.ParentProjectID, actualLoadedRun.ParentProjectID);
-            Assert.IsTrue(actualLoadedRun.RegressionData.Standards.Any());
         }
 
         [TestMethod()]
@@ -89,7 +89,7 @@ namespace LIMS.Data.Tests
         {
             string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
             _mockfileSystem.AddDirectory(testProjectDirectory);
-            _fileDataService = new FileDataService(_mockfileSystem);
+            _fileDataService = new FileDataProvider(_mockfileSystem);
 
             var mockAnalyticalRun = new AnalyticalRun("TestRun", "Test", _mockRegressionData);
             _fileDataService.SaveAnalyticalRun(mockAnalyticalRun);
@@ -105,7 +105,7 @@ namespace LIMS.Data.Tests
         {
             string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
             _mockfileSystem.AddDirectory(testProjectDirectory);
-            _fileDataService = new FileDataService(_mockfileSystem);
+            _fileDataService = new FileDataProvider(_mockfileSystem);
 
             string expectedSaveFilePath = Path.Combine(testProjectDirectory, "TestRun.json");
             var mockAnalyticalRun = new AnalyticalRun("TestRun", "Test", _mockRegressionData);
@@ -122,7 +122,7 @@ namespace LIMS.Data.Tests
             string expectedSaveFilePath = Path.Combine(testProjectDirectory, "TestRun.json");
             _mockfileSystem.AddDirectory(testProjectDirectory);
             _mockfileSystem.AddFile(expectedSaveFilePath, new MockFileData(""));
-            _fileDataService = new FileDataService(_mockfileSystem);
+            _fileDataService = new FileDataProvider(_mockfileSystem);
 
 
             var mockAnalyticalRun = new AnalyticalRun("TestRun", "Test", _mockRegressionData);

@@ -8,19 +8,22 @@ using System.Threading.Tasks;
 
 namespace LIMS.ViewModel
 {
-    public class RegressionViewModel : ViewModelBase
+    public interface IRegressionViewModel
     {
+        IRegressionDataViewModel RegressionDataViewModel { get; }
+        AnalyticalRun OpenAnalyticalRun { get; }
+        Regression Regression { get; }
+    }
 
-        private readonly IRegressionDataProvider _regressionDataProvider;
+    public class RegressionViewModel : ViewModelBase, IRegressionViewModel
+    {
         private readonly IRegressionFactory _regressionFactory;
         private IRegressionDataViewModel _regressionDataViewModel;
 
-        public RegressionViewModel(IRegressionDataProvider regressionDataProvider, IRegressionFactory regressionFactory)
+        public RegressionViewModel(IRegressionFactory regressionFactory)
         {
-            _regressionDataProvider = regressionDataProvider;
             _regressionFactory = regressionFactory;
         }
-
         public IRegressionDataViewModel RegressionDataViewModel
         {
             get => _regressionDataViewModel;
@@ -30,16 +33,17 @@ namespace LIMS.ViewModel
             }
         }
 
+        public AnalyticalRun OpenAnalyticalRun { get; set; }
+        public Regression Regression { get; set; }
         public RegressionStatisticsViewModel RegressionStatisticsViewModel { get; private set; }
-        public RegressionGraphViewModel RegressionGraphViewModel { get; private set; }
-        public RegressionISPlotViewModel RegressionISPlotViewModel { get; private set; }
-        public Regression Regression { get; private set; }
 
-        public async override Task Load(string rawData)
+        public override void Load(AnalyticalRun analyticalRun)
         {
-            RegressionData regressionData = await _regressionDataProvider.GetRegressionData(rawData);
-            Regression = _regressionFactory.ConstructRegression(regressionData);
-
+            OpenAnalyticalRun = analyticalRun;
+            Regression = _regressionFactory.ConstructRegression(
+                analyticalRun.RegressionData,
+                analyticalRun.RegressionType,
+                analyticalRun.WeightingFactor);
             RegressionDataViewModel = new RegressionDataViewModel(Regression);
         }
     }

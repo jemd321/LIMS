@@ -16,19 +16,13 @@ using System.Windows.Shapes;
 namespace LIMS.View.Dialog
 {
     /// <summary>
-    /// Interaction logic for AnalyticalRunDialog.xaml
+    /// Interaction logic for SaveAnalyticalRunDialog.xaml
     /// </summary>
-    public partial class AnalyticalRunDialog : UserControl
+    public partial class SaveAnalyticalRunDialog : UserControl
     {
-        public AnalyticalRunDialog()
+        public SaveAnalyticalRunDialog()
         {
             InitializeComponent();
-
-            
-        }
-
-        private void ButtonCancel_Click(object sender, RoutedEventArgs e)
-        {
         }
     }
 }

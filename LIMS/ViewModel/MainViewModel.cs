@@ -17,15 +17,18 @@ namespace LIMS.ViewModel
         private ViewModelBase _selectedRegressionViewModel;
         private Project _selectedProject;
         private ObservableCollection<Project> _projects;
-        private readonly IFileDataService _fileDataService;
+        private readonly IDataProvider _fileDataService;
+        private readonly IDataImporter _dataImporter;
         private readonly IDialogService _dialogService;
 
         public MainViewModel(
-            RegressionViewModel regressionViewModel,
-            IFileDataService fileDataService,
+            IRegressionViewModel regressionViewModel,
+            IDataProvider fileDataService,
+            IDataImporter dataImporter,
             IDialogService dialogService)
         {
             _fileDataService = fileDataService;
+            _dataImporter = dataImporter;
             _dialogService = dialogService;
             RegressionViewModel = regressionViewModel;
 
@@ -63,7 +66,7 @@ namespace LIMS.ViewModel
             }
         }
 
-        public RegressionViewModel RegressionViewModel { get; }
+        public IRegressionViewModel RegressionViewModel { get; }
         public ObservableCollection<Project> Projects
         {
             get => _projects;
@@ -91,39 +94,51 @@ namespace LIMS.ViewModel
 
         private void OpenAnalyticalRun(object parameter)
         {
-            _dialogService.ShowStringIODialog<AnalyticalRunDialogViewModel>(result =>
+            string selectedAnalyticalRunID = "";
+            _dialogService.ShowStringIODialog<OpenAnalyticalRunDialogViewModel>(result => {}, dialogInput: SelectedProject.ProjectID, output =>
             {
-
-            }, SelectedProject.ProjectID, output =>
-            {
-                var outputTest = output;
+                selectedAnalyticalRunID = output;
             });
+            var openedAnalyticalRun = _fileDataService.LoadAnalyticalRun(SelectedProject, selectedAnalyticalRunID);
+            SelectedViewModel = (ViewModelBase)RegressionViewModel;
+            SelectedViewModel.Load(openedAnalyticalRun);
         }
 
         private void SaveAnalyticalRun(object parameter)
         {
-            throw new NotImplementedException();
+            AnalyticalRun currentlyOpenRun = RegressionViewModel.OpenAnalyticalRun;
+            if (currentlyOpenRun.AnalyticalRunID == "")
+            {
+                string userSelectedAnalyticalRunID = "";
+                _dialogService.ShowStringIODialog<SaveAnalyticalRunDialogViewModel>(result => {}, dialogInput: SelectedProject.ProjectID, output =>
+                {
+                    userSelectedAnalyticalRunID = output;
+                    currentlyOpenRun.AnalyticalRunID = userSelectedAnalyticalRunID;
+                });
+                _fileDataService.SaveAnalyticalRun(currentlyOpenRun);
+            }
+            else
+            {
+                _fileDataService.SaveAnalyticalRun(currentlyOpenRun);
+            }
         }
 
-        private async void ImportAnalystFile(object parameter)
+        private void ImportAnalystFile(object parameter)
         {
-            var fileDialog = new OpenFileDialog();
-            fileDialog.Filter = "Text documents (.txt)|*.txt";
-
-            bool? result = fileDialog.ShowDialog();
-            string selectedFile = "";
-            if (result == true)
+            string selectedFile = _dialogService.ShowOpenFileDialog();
+            if (string.IsNullOrEmpty(selectedFile))
             {
-                selectedFile = fileDialog.FileName;
+                throw new NotImplementedException();
+                // Handle gracefully with message box
+                return;
             }
-            if (!string.IsNullOrEmpty(selectedFile))
-            {
-                FileInfo validFilePath = _fileDataService.ValidateFilePath(selectedFile);
-                string rawData = await _fileDataService.GetRawData(validFilePath);
 
-                SelectedViewModel = (ViewModelBase)RegressionViewModel;
-                await SelectedViewModel.Load(rawData);
-            }
+            FileInfo validFilePath = _fileDataService.ValidateFilePath(selectedFile);
+            string rawData = _fileDataService.GetRawData(validFilePath);
+            var regressionData = _dataImporter.ParseImportedRawData(rawData);
+            var analyticalRun = new AnalyticalRun(analyticalRunID: "", SelectedProject.ProjectID, regressionData);
+            SelectedViewModel = (ViewModelBase)RegressionViewModel;
+            SelectedViewModel.Load(analyticalRun);
         }
     }
 }

@@ -4,21 +4,18 @@ using LIMS.Model;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace LIMS.ViewModel.DialogViewModel
 {
-    public class AnalyticalRunDialogViewModel : ViewModelBase, IStringIODialogViewModel
+    public class OpenAnalyticalRunDialogViewModel : ViewModelBase, IStringIODialogViewModel
     {
-        private const int MAXPROJECTNAMELENGTH = 36;
-
-        private readonly IFileDataService _fileDataService;
+        private readonly IDataProvider _fileDataService;
         private ObservableCollection<string> _loadedAnalyticalRunIDs = new();
         private string _selectedAnalyticalRun;
 
         public event EventHandler DialogAccepted;
 
-        public AnalyticalRunDialogViewModel(IFileDataService fileDataService)
+        public OpenAnalyticalRunDialogViewModel(IDataProvider fileDataService)
         {
             _fileDataService = fileDataService;
 

@@ -47,7 +47,8 @@
         </Button>
         <Button Padding="2"
                 Margin="3 0 3 0"
-                Height="30">
+                Height="30"
+                Command="{Binding SaveAnalyticalRunCommand}">
             <iconPacks:Modern Kind="Save" />
         </Button>
     </StackPanel>

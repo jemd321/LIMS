@@ -1,16 +1,25 @@
 using LIMS.Data;
 using LIMS.Model;
 using LIMS.Enums;
+using LIMS.Factory;
+using Moq;
 
 namespace LIMSTests.Data
 {
     [TestClass]
     public class AnalystExportParserTests
     {
+        AnalystDataImporter _analystDataImporter = default!;
+
+        [TestInitialize]
+        public void SetupTest()
+        {
+            _analystDataImporter = new AnalystDataImporter();
+        }
+
         [TestMethod]
         public void ReadAnalystExport_GivenFilePath_ReturnsParsedExport()
         {
-            var analystDataProvider = new AnalystDataProvider();
             string sampleAnalystExport = Properties.Resources.SampleAnalystExport;
             // to add expected object
             var peakInfo = new List<AnalystExportHeaderPeakInfo>();
@@ -141,7 +150,7 @@ namespace LIMSTests.Data
                 DataRows = dataRows
             };
 
-            var actual = analystDataProvider.ParseAnalystExport(ref sampleAnalystExport);
+            var actual = _analystDataImporter.ParseAnalystExport(ref sampleAnalystExport);
 
             Assert.AreEqual(expected.Peaks[0], actual.Peaks[0]);
             Assert.AreEqual(expected.Peaks[1], actual.Peaks[1]);

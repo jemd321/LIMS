@@ -1,6 +1,7 @@
 ﻿using LIMS.View.Dialog;
 using LIMS.ViewModel;
 using LIMS.ViewModel.DialogViewModel;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -9,6 +10,7 @@ namespace LIMS.Dialog
 {
     public interface IDialogService
     {
+        string ShowOpenFileDialog();
         void ShowActionDialog<TViewModel>(Action<bool> dialogResultCallback);
         void ShowStringIODialog<TViewModel>(Action<bool> dialogResultCallback, string dialogInput, Action<string> dialogOutputCallback);
     }
@@ -20,6 +22,17 @@ namespace LIMS.Dialog
         public static void RegisterDialog<TView, TViewModel>()
         {
             _mappings.Add(typeof(TViewModel), typeof(TView));
+        }
+
+        public string ShowOpenFileDialog()
+        {
+            var fileDialog = new OpenFileDialog
+            {
+                Filter = "Text documents (.txt)|*.txt"
+            };
+
+            bool fileSelected = fileDialog.ShowDialog().GetValueOrDefault();
+            return fileSelected ? fileDialog.FileName : "";
         }
 
         public void ShowActionDialog<TViewModel>(Action<bool> dialogResultCallback)

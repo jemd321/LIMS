@@ -1,59 +1,57 @@
 ﻿using LIMS.Enums;
+using LIMS.Factory;
 using LIMS.Model;
 using LIMS.Model.RegressionModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace LIMS.Data
 {
-    public class AnalystDataProvider : IRegressionDataProvider
+    public class AnalystDataImporter : IDataImporter
     {
-        public async Task<RegressionData> GetRegressionData(string rawAnalystData)
+        public RegressionData ParseImportedRawData(string rawAnalystData)
         {
             List<Standard> standards = new();
             List<QualityControl> qualityControls = new();
             List<Unknown> unknowns = new();
 
-            await Task.Run(() =>
-            {
-                AnalystExport analystExport = ParseAnalystExport(ref rawAnalystData);
+            AnalystExport analystExport = ParseAnalystExport(ref rawAnalystData);
 
-                foreach (var dataRow in analystExport.DataRows)
+            foreach (var dataRow in analystExport.DataRows)
+            {
+                SampleType sampleType = dataRow.SampleType;
+                switch (sampleType)
                 {
-                    SampleType sampleType = dataRow.SampleType;
-                    switch (sampleType)
-                    {
-                        case SampleType.Standard:
-                            standards.Add(new Standard
-                            {
-                                NominalConcentration = dataRow.NominalConcentration,
-                                InstrumentResponse = dataRow.Area,
-                                SampleName = dataRow.SampleName,
-                            });
-                            break;
-                        case SampleType.QualityControl:
-                            qualityControls.Add(new QualityControl
-                            {
-                                NominalConcentration = dataRow.NominalConcentration,
-                                InstrumentResponse = dataRow.Area,
-                                SampleName = dataRow.SampleName,
-                            });
-                            break;
-                        case SampleType.Unknown:
-                            unknowns.Add(new Unknown
-                            {
-                                InstrumentResponse = dataRow.Area,
-                                SampleName = dataRow.SampleName,
-                            });
-                            break;
-                        default:
-                            break;
-                    }
+                    case SampleType.Standard:
+                        standards.Add(new Standard
+                        {
+                            NominalConcentration = dataRow.NominalConcentration,
+                            InstrumentResponse = dataRow.Area,
+                            SampleName = dataRow.SampleName,
+                        });
+                        break;
+                    case SampleType.QualityControl:
+                        qualityControls.Add(new QualityControl
+                        {
+                            NominalConcentration = dataRow.NominalConcentration,
+                            InstrumentResponse = dataRow.Area,
+                            SampleName = dataRow.SampleName,
+                        });
+                        break;
+                    case SampleType.Unknown:
+                        unknowns.Add(new Unknown
+                        {
+                            InstrumentResponse = dataRow.Area,
+                            SampleName = dataRow.SampleName,
+                        });
+                        break;
+                    default:
+                        break;
                 }
-            });
+            }
+
             return new RegressionData
             {
                 Standards = standards,
@@ -413,6 +411,11 @@ namespace LIMS.Data
             {
                 throw new FileFormatException("Data Row headers in export do not match expected format");
             }
+        }
+
+        public Regression BuildRegressionFromImportedRawData(string rawData)
+        {
+            throw new NotImplementedException();
         }
     }
 }

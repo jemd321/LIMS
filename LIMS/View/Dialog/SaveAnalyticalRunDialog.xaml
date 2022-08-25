@@ -1,0 +1,45 @@
+﻿<UserControl x:Class="LIMS.View.Dialog.SaveAnalyticalRunDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LIMS.View.Dialog"
+             mc:Ignorable="d"
+             d:DesignHeight="150"
+             d:DesignWidth="300">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="5">
+            <TextBlock Text="Save Analytical Run"
+                       FontSize="14"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center" />
+            <TextBlock Text="Enter a name for the analytical run:"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Margin="5" />
+            <TextBox Text="{Binding ChosenAnalyticalRunID, UpdateSourceTrigger=PropertyChanged}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="1"
+                    HorizontalAlignment="Center">
+            <StackPanel.Resources>
+                <Style TargetType="Button"
+                       BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Margin"
+                            Value="5" />
+                    <Setter Property="Width"
+                            Value="75" />
+                </Style>
+            </StackPanel.Resources>
+            <Button Content="Save"
+                    IsDefault="True"
+                    Command="{Binding SaveAnalyticalRunCommand}" />
+            <Button Content="Cancel"
+                    IsCancel="True" />
+        </StackPanel>
+    </Grid>
+</UserControl>
