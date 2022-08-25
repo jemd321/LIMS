@@ -3,6 +3,9 @@ using System.Windows.Input;
 
 namespace LIMS.Command
 {
+    /// <summary>
+    /// Implementation of the WFP ICommand interface to provide delegate commands.
+    /// </summary>
     public class DelegateCommand : ICommand
     {
         private readonly Action<object> _execute;
@@ -22,26 +25,35 @@ namespace LIMS.Command
         }
 
         /// <summary>
-        /// Event for when the ability of the command to execute has been changed.
+        /// Fired when the executable state of the command changes. Call RaiseCanExecuteChanged to update listeners.
         /// </summary>
         public event EventHandler CanExecuteChanged;
 
         /// <summary>
-        /// Raise CanExecuteChanged event when the ability of the command to be executed may change.
+        /// Raise the CanExecuteChanged event, indicating that the executable state of the command has changed.
         /// </summary>
         public virtual void RaiseCanExecuteChanged()
         {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        public bool CanExecute(object parameter)
-        {
-            return _canExecute is null || _canExecute(parameter);
-        }
-
+        /// <summary>
+        /// Executes the command.
+        /// </summary>
+        /// <param name="parameter">A parameter to pass to the execute delegate.</param>
         public void Execute(object parameter)
         {
             _execute(parameter);
+        }
+
+        /// <summary>
+        /// Determines whether the command can execute.
+        /// </summary>
+        /// <param name="parameter">Optional parameter to pass to the canExecute delegate.</param>
+        /// <returns><c>true</c> if the command can execute or a null delegate was passed in the constructor; otherwise, <c>false</c>.</returns>
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute is null || _canExecute(parameter);
         }
     }
 }

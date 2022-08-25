@@ -13,7 +13,7 @@ namespace LIMS.ViewModel.Tests
     {
         private MainViewModel _mainViewModel = default!;
         private Mock<IRegressionViewModel> _regressionViewModelMock = default!;
-        private FileDataProvider _fileDataService = default!;
+        private FileDataService _fileDataService = default!;
         private MockFileSystem _mockfileSystem = default!;
         private Mock<IDataImporter> _dataImporterMock = default!;
         private Mock<IDialogService> _dialogServiceMock = default!;
@@ -23,7 +23,7 @@ namespace LIMS.ViewModel.Tests
         {
             _regressionViewModelMock = new Mock<IRegressionViewModel>();
             _mockfileSystem = new MockFileSystem();
-            _fileDataService = new FileDataProvider(_mockfileSystem);
+            _fileDataService = new FileDataService(_mockfileSystem);
             _dataImporterMock = new Mock<IDataImporter>();
             _dialogServiceMock = new Mock<IDialogService>();
             _mainViewModel = new MainViewModel(_regressionViewModelMock.Object, _fileDataService, _dataImporterMock.Object, _dialogServiceMock.Object);

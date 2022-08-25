@@ -11,8 +11,8 @@ namespace LIMS.ViewModel.Tests
     public class ProjectCreationDialogViewModelTests
     {
         ProjectCreationDialogViewModel _viewModel = default!;
-        Mock<IDataProvider> _mockFileDataService = default!;
-        FileDataProvider _fileDataService = default!;
+        Mock<IDataService> _mockFileDataService = default!;
+        FileDataService _fileDataService = default!;
         MockFileSystem _mockFileSystem = default!;
 
 
@@ -20,7 +20,7 @@ namespace LIMS.ViewModel.Tests
         public void SetupTestWithMockFileDataService()
         {
             _mockFileSystem = new MockFileSystem();
-            _mockFileDataService = new Mock<IDataProvider>();
+            _mockFileDataService = new Mock<IDataService>();
             _mockFileDataService.Setup(m => m.LoadProjects()).Returns(new System.Collections.ObjectModel.ObservableCollection<Project> { });
             _viewModel = new ProjectCreationDialogViewModel(_mockFileDataService.Object);
         }
@@ -28,7 +28,7 @@ namespace LIMS.ViewModel.Tests
         public void SetupTestForMockFileSystem()
         {
             _mockFileSystem = new MockFileSystem();
-            _fileDataService = new FileDataProvider(_mockFileSystem);
+            _fileDataService = new FileDataService(_mockFileSystem);
             _viewModel = new ProjectCreationDialogViewModel(_fileDataService);
         }
 

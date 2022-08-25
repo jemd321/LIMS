@@ -3,6 +3,6 @@
     public enum RegressionType
     {
         Linear,
-        Quadratic
+        Quadratic,
     }
 }

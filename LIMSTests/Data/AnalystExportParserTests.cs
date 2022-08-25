@@ -31,7 +31,7 @@ namespace LIMSTests.Data
                 {
                     Q1 = 714.50,
                     Q3 = 401.30
-                }
+                },
             };
             var analytePeakInfo = new AnalystExportHeaderPeakInfo()
             {
@@ -42,7 +42,7 @@ namespace LIMSTests.Data
                 {
                     Q1 = 705.20,
                     Q3 = 392.30
-                }
+                },
             };
             peakInfo.Add(internalStandardPeakInfo);
             peakInfo.Add(analytePeakInfo);
@@ -54,7 +54,7 @@ namespace LIMSTests.Data
                 A = 0.00117,
                 B = 0.0021,
                 C = 9.2e-008,
-                RSquared = 0.9967
+                RSquared = 0.9967,
             };
 
             var dataRows = new List<AnalystExportRow>();
@@ -98,7 +98,7 @@ namespace LIMSTests.Data
                 AnalyteTransitionMRM = new TransitionMRM()
                 {
                     Q1 = 705.200,
-                    Q3 = 392.300
+                    Q3 = 392.300,
                 },
                 AnalyteToISAreaRatio = 0.0102,
                 AnalyteToISHeightRatio = 0.0155,
@@ -125,7 +125,7 @@ namespace LIMSTests.Data
                 ISTransitionMRM = new TransitionMRM()
                 {
                     Q1 = 714.500,
-                    Q3 = 401.300
+                    Q3 = 401.300,
                 },
                 ISPeakWidthAtHalfHeight = 0.0399,
                 ISSlopeOfBaseline = 0d,
@@ -146,10 +146,10 @@ namespace LIMSTests.Data
             {
                 Peaks = peakInfo,
                 RegressionInfo = headerInfo,
-                DataRows = dataRows
+                DataRows = dataRows,
             };
 
-            var actual = _analystDataImporter.ParseAnalystExport(ref sampleAnalystExport);
+            var actual = AnalystDataImporter.ParseAnalystExport(ref sampleAnalystExport);
 
             Assert.AreEqual(expected.Peaks[0], actual.Peaks[0]);
             Assert.AreEqual(expected.Peaks[1], actual.Peaks[1]);

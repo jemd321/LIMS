@@ -11,7 +11,7 @@ namespace LIMS.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly IDataProvider _fileDataService;
+        private readonly IDataService _fileDataService;
         private readonly IDataImporter _dataImporter;
         private readonly IDialogService _dialogService;
         private ViewModelBase _selectedRegressionViewModel;
@@ -20,7 +20,7 @@ namespace LIMS.ViewModel
 
         public MainViewModel(
             IRegressionViewModel regressionViewModel,
-            IDataProvider fileDataService,
+            IDataService fileDataService,
             IDataImporter dataImporter,
             IDialogService dialogService)
         {

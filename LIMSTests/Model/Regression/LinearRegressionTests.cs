@@ -23,19 +23,19 @@
 
             var testQCs = new List<QualityControl>()
             {
-                new QualityControl { NominalConcentration = 0.35, InstrumentResponse = 40.0, SampleName="MQC" }
+                new QualityControl { NominalConcentration = 0.35, InstrumentResponse = 40.0, SampleName="MQC" },
             };
 
             var testUnknowns = new List<Unknown>()
             {
-                new Unknown {InstrumentResponse = 20.0, SampleName="001"}
+                new Unknown {InstrumentResponse = 20.0, SampleName="001"},
             };
 
             _regressionData = new RegressionData()
             {
                 Standards = testStandards,
                 QualityControls = testQCs,
-                Unknowns = testUnknowns
+                Unknowns = testUnknowns,
             };
         }
 

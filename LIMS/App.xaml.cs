@@ -34,7 +34,7 @@ namespace LIMS
 
             services.AddTransient<IDataImporter, AnalystDataImporter>();
             services.AddTransient<IRegressionFactory, RegressionFactory>();
-            services.AddTransient<IDataProvider, FileDataProvider>();
+            services.AddTransient<IDataService, FileDataService>();
             services.AddSingleton<IDialogService, DialogService>();
             services.AddTransient<IFileSystem, FileSystem>();
 

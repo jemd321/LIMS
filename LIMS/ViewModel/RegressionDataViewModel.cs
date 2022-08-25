@@ -33,7 +33,7 @@ namespace LIMS.ViewModel
                         Accuracy = standard.Accuracy,
                         CalculatedConcentration = standard.CalculatedConcentration,
                         NominalConcentration = standard.NominalConcentration,
-                        IsActive = standard.IsActive
+                        IsActive = standard.IsActive,
                     });
             }
 
@@ -48,7 +48,7 @@ namespace LIMS.ViewModel
                         Accuracy = qualityControl.Accuracy,
                         CalculatedConcentration = qualityControl.CalculatedConcentration,
                         NominalConcentration = qualityControl.NominalConcentration,
-                        IsActive = qualityControl.IsActive
+                        IsActive = qualityControl.IsActive,
                     });
             }
         }

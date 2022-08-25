@@ -9,13 +9,13 @@ namespace LIMS.ViewModel.DialogViewModel
 {
     public class OpenAnalyticalRunDialogViewModel : ViewModelBase, IStringIODialogViewModel
     {
-        private readonly IDataProvider _fileDataService;
+        private readonly IDataService _fileDataService;
         private ObservableCollection<string> _loadedAnalyticalRunIDs = new();
         private string _selectedAnalyticalRun;
 
         public event EventHandler DialogAccepted;
 
-        public OpenAnalyticalRunDialogViewModel(IDataProvider fileDataService)
+        public OpenAnalyticalRunDialogViewModel(IDataService fileDataService)
         {
             _fileDataService = fileDataService;
 

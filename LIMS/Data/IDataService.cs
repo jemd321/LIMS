@@ -4,12 +4,8 @@ using LIMS.Model;
 
 namespace LIMS.Data
 {
-    public interface IDataProvider
+    public interface IDataService
     {
-        string ApplicationDirectory { get; }
-
-        string ProjectsDirectory { get; }
-
         ObservableCollection<Project> LoadProjects();
 
         void SetupApplicationStorage();

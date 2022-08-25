@@ -8,19 +8,29 @@ using LIMS.Model;
 
 namespace LIMS.Data
 {
-    public class FileDataProvider : IDataProvider
+    /// <summary>
+    /// Provides CRUD services for storage of projects, runs and regression data on the local filesystem.
+    /// </summary>
+    public class FileDataService : IDataService
     {
         private readonly IFileSystem _fileSystem;
 
-        public FileDataProvider(IFileSystem fileSystem)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileDataService"/> class.
+        /// </summary>
+        /// <param name="fileSystem">IO.Abstractions wrapper of the Windows file system.</param>
+        public FileDataService(IFileSystem fileSystem)
         {
             _fileSystem = fileSystem;
         }
 
-        public string ApplicationDirectory => GetApplicationDirectory();
+        private static string ApplicationDirectory => GetApplicationDirectory();
 
-        public string ProjectsDirectory => GetProjectsDirectory();
+        private static string ProjectsDirectory => GetProjectsDirectory();
 
+        /// <summary>
+        /// Creates the required directory structure in the user's application data roaming folder, if it does not yet exist.
+        /// </summary>
         public void SetupApplicationStorage()
         {
             if (IsApplicationStorageSetup())
@@ -39,6 +49,10 @@ namespace LIMS.Data
             }
         }
 
+        /// <summary>
+        /// Creates a directory for a new <see cref="Project"/> in the application storage.
+        /// </summary>
+        /// <param name="newProject">A <see cref="Project"/> data object that the user wishes to create.</param>
         public void CreateProject(Project newProject)
         {
             string newProjectDirectory = _fileSystem.Path.Combine(ProjectsDirectory, newProject.ProjectID);
@@ -50,6 +64,10 @@ namespace LIMS.Data
             _fileSystem.Directory.CreateDirectory(newProjectDirectory);
         }
 
+        /// <summary>
+        /// Deletes the directory recursively for a project that the user no longer needs.
+        /// </summary>
+        /// <param name="existingProject">The project that should be deleted.</param>
         public void DeleteProject(Project existingProject)
         {
             string existingProjectDirectory = _fileSystem.Path.Combine(ProjectsDirectory, existingProject.ProjectID);
@@ -63,6 +81,10 @@ namespace LIMS.Data
             }
         }
 
+        /// <summary>
+        /// Finds all project directories, creates <see cref="Project"/> objects to represent the contents and returns them as a collection that can be observed by the UI.
+        /// </summary>
+        /// <returns>An <see cref="ObservableCollection{T}"/> of all the projects on the local file system.</returns>
         public ObservableCollection<Project> LoadProjects()
         {
             var projects = new ObservableCollection<Project>();
@@ -71,6 +93,8 @@ namespace LIMS.Data
             {
                 string projectID = projectDirectory.Split('\\').Last();
                 var project = new Project(projectID);
+
+                // Each project directory contains child directories for each analytical run the project contains.
                 string[] analyticalRunDirectories = _fileSystem.Directory.GetDirectories(projectDirectory);
                 foreach (var analyticalRunDirectory in analyticalRunDirectories)
                 {
@@ -84,6 +108,13 @@ namespace LIMS.Data
             return projects;
         }
 
+        /// <summary>
+        /// Loads the <see cref="RegressionData"/> for a requested analytical run into an <see cref="AnalyticalRun"/> object.
+        /// </summary>
+        /// <param name="project">The <see cref="Project"/> that contains the requested <see cref="AnalyticalRun"/>.</param>
+        /// <param name="analyticalRunID">The ID string representing the <see cref="AnalyticalRun"/>.</param>
+        /// <returns>The requested <see cref="AnalyticalRun"/> object with the <see cref="RegressionData"/> loaded.</returns>
+        /// <exception cref="FileNotFoundException">The analytical run with the passed ID could not be found on the file system.</exception>
         public AnalyticalRun LoadAnalyticalRun(Project project, string analyticalRunID)
         {
             string analyticalRunDirectory = _fileSystem.Path.Combine(ProjectsDirectory, project.ProjectID, analyticalRunID);
@@ -100,6 +131,11 @@ namespace LIMS.Data
             return new AnalyticalRun(analyticalRunID, project.ProjectID, regressionData);
         }
 
+        /// <summary>
+        /// Saves an <see cref="AnalyticalRun"/> by creating a new directory in the current <see cref="Project"/> and serialising the <see cref="RegressionData"/> into a json file.
+        /// </summary>
+        /// <param name="analyticalRun">The <see cref="AnalyticalRun"/> to be saved.</param>
+        /// <exception cref="DirectoryNotFoundException">The parent project (which the user should have selected, so should exist) was not found on the file system.</exception>
         public void SaveAnalyticalRun(AnalyticalRun analyticalRun)
         {
             var projects = from p in _fileSystem.Directory.GetDirectories(ProjectsDirectory)
@@ -121,6 +157,11 @@ namespace LIMS.Data
             _fileSystem.File.WriteAllText(filePath, jsonDoc);
         }
 
+        /// <summary>
+        /// Deletes the chosen <see cref="AnalyticalRun"/> from the file system.
+        /// </summary>
+        /// <param name="project">The <see cref="Project"/> that contains the <see cref="AnalyticalRun"/> to be deleted.</param>
+        /// <param name="analyticalRunID">The string ID of the analytical run to be deleted.</param>
         public void DeleteAnalyticalRun(Project project, string analyticalRunID)
         {
             string analyticalRunDirectory = _fileSystem.Path.Combine(ProjectsDirectory, project.ProjectID, analyticalRunID);
@@ -134,12 +175,13 @@ namespace LIMS.Data
             }
         }
 
-        // TODO add file validation
+        // TODO - refactor to be private
         public FileInfo ValidateFilePath(string filePath)
         {
             return new FileInfo(filePath);
         }
 
+        // TODO refactor to be private with public get filedata method.
         public string GetRawData(FileInfo fileInfo)
         {
             return File.ReadAllText(fileInfo.FullName);
@@ -159,7 +201,7 @@ namespace LIMS.Data
             return Path.Combine(appDataRoaming, APPLICATIONDIRECTORYNAME);
         }
 
-        private string GetProjectsDirectory()
+        private static string GetProjectsDirectory()
         {
             const string PROJECTSDIRECTORYNAME = "Projects";
             if (ApplicationDirectory == string.Empty)

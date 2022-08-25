@@ -11,11 +11,11 @@ namespace LIMS.ViewModel.DialogViewModel
     public class SaveAnalyticalRunDialogViewModel : ValidationViewModelBase, IStringIODialogViewModel
     {
         private const int MAXANALYTICALRUNIDLENGTH = 36;
-        private readonly IDataProvider _fileDataProvider;
+        private readonly IDataService _fileDataProvider;
         private readonly List<string> _loadedAnalyticalRunIDs = new();
         private string _chosenAnalyticalRunID;
 
-        public SaveAnalyticalRunDialogViewModel(IDataProvider fileDataService)
+        public SaveAnalyticalRunDialogViewModel(IDataService fileDataService)
         {
             _fileDataProvider = fileDataService;
 

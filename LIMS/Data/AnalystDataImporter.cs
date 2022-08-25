@@ -8,10 +8,19 @@ using LIMS.Model.RegressionModels;
 
 namespace LIMS.Data
 {
+    /// <summary>
+    /// Parses the string output of exported text files from Analyst LC-MS/MS data processing software into regression data.
+    /// </summary>
     public class AnalystDataImporter : IDataImporter
     {
+        /// <summary>
+        /// Parses the raw string data that has been read from an Analyst export .txt file into regression data.
+        /// </summary>
+        /// <param name="rawAnalystData">The entire contents of an Analyst export .txt file as a string.</param>
+        /// <returns>The parsed data, as <c>RegressionData</c> format which can be used in a regression.</returns>
         public RegressionData ParseImportedRawData(string rawAnalystData)
         {
+            // Each sample must be categorised as one of the following three types:
             List<Standard> standards = new();
             List<QualityControl> qualityControls = new();
             List<Unknown> unknowns = new();
@@ -42,6 +51,7 @@ namespace LIMS.Data
                     case SampleType.Unknown:
                         unknowns.Add(new Unknown
                         {
+                            // Unknown samples have no nominal concentration, unlike Standards or QC samples.
                             InstrumentResponse = dataRow.Area,
                             SampleName = dataRow.SampleName,
                         });
@@ -55,18 +65,21 @@ namespace LIMS.Data
             {
                 Standards = standards,
                 QualityControls = qualityControls,
-                Unknowns = unknowns
+                Unknowns = unknowns,
             };
         }
 
-        public AnalystExport ParseAnalystExport(ref string analystExport)
+        private static AnalystExport ParseAnalystExport(ref string analystExport)
         {
+            // Analyst files are split into a header and data rows. The header has two subsections, peak info and regression info.
+            // Regression information is calculated by Analyst separately and so can be discarded.
             var headerPeakInfo = new List<AnalystExportHeaderPeakInfo>();
             var headerRegressionInfo = new List<AnalystExportHeaderRegressionInfo>();
             var dataRows = new List<AnalystExportRow>();
 
             using var reader = new StringReader(analystExport);
 
+            // Token to keep track of which section of the export we are in.
             var currentSection = AnalystExportSections.Header;
             var headerBuffer = new List<string>();
 
@@ -75,6 +88,8 @@ namespace LIMS.Data
             while (reader.Peek() != ENDTOKEN)
             {
                 string line = reader.ReadLine();
+
+                // An empty line is used as a separator to tell the header sections apart.
                 if (string.IsNullOrEmpty(line))
                 {
                     switch (currentSection)
@@ -82,6 +97,7 @@ namespace LIMS.Data
                         case AnalystExportSections.Header:
                             if (BlockIsRegressionInfo(headerBuffer))
                             {
+                                // Process regression info header block and move on to data rows.
                                 headerRegressionInfo.Add(ProcessRegressionInfo(headerBuffer));
                                 currentSection = AnalystExportSections.DataRows;
                                 dataRowHeaderSeparatorCount++;
@@ -89,6 +105,7 @@ namespace LIMS.Data
                             }
                             else
                             {
+                                // Still further peak information to process in the header section.
                                 headerPeakInfo.Add(ProcessPeakInfo(headerBuffer));
                                 headerBuffer.Clear();
                             }
@@ -102,6 +119,7 @@ namespace LIMS.Data
 
                 if (currentSection == AnalystExportSections.DataRows)
                 {
+                    // Three empty lines indicates the start of the data row section, of which the first line is the column headers.
                     if (dataRowHeaderSeparatorCount == 3)
                     {
                         VerifyDataRowHeaders(line);
@@ -113,6 +131,7 @@ namespace LIMS.Data
                     continue;
                 }
 
+                // If we are not in the data row section or on an empty line we should collect the line as header information.
                 headerBuffer.Add(line);
             }
 
@@ -120,17 +139,19 @@ namespace LIMS.Data
             {
                 Peaks = headerPeakInfo,
                 RegressionInfo = headerRegressionInfo[0],
-                DataRows = dataRows
+                DataRows = dataRows,
             };
         }
 
-        private bool BlockIsRegressionInfo(List<string> buffer)
+        private static bool BlockIsRegressionInfo(List<string> buffer)
         {
+            // 'F' is always the first letter of this section.
             return buffer[0].StartsWith('F');
         }
 
-        private AnalystExportHeaderPeakInfo ProcessPeakInfo(List<string> headerBuffer)
+        private static AnalystExportHeaderPeakInfo ProcessPeakInfo(List<string> headerBuffer)
         {
+            // Tabs are used on some rows to pack information in one line, so splitting is required.
             string peakName = headerBuffer[0].Split(' ')[2];
             bool isInternalStandard = headerBuffer[1].TrimEnd() == "Use as Internal Standard";
             string internalStandard = null;
@@ -145,22 +166,22 @@ namespace LIMS.Data
                 PeakName = peakName,
                 IsInternalStandard = isInternalStandard,
                 InternalStandard = internalStandard,
-                TransitionMRM = transitionMRM
+                TransitionMRM = transitionMRM,
             };
         }
 
-        private AnalystExportHeaderRegressionInfo ProcessRegressionInfo(List<string> headerBuffer)
+        private static AnalystExportHeaderRegressionInfo ProcessRegressionInfo(List<string> headerBuffer)
         {
+            // Tabs are used on some rows to pack information in one line, so splitting is required.
             string[] firstLine = headerBuffer[0].Split('\t');
             RegressionType regression = ParseRegression(firstLine[1]);
             WeightingFactor weightingFactor = ParseWeightingFactor(firstLine[3]);
 
-            double? a, b, c = null;
-            a = double.Parse(headerBuffer[1].Split('\t')[1]);
-            b = double.Parse(headerBuffer[2].Split('\t')[1]);
-            c = double.Parse(headerBuffer[3].Split('\t')[1]);
-
+            double? a = double.Parse(headerBuffer[1].Split('\t')[1]);
+            double? b = double.Parse(headerBuffer[2].Split('\t')[1]);
+            double? c = double.Parse(headerBuffer[3].Split('\t')[1]);
             double rSquared = double.Parse(headerBuffer[4].Split('\t')[1]);
+
             return new AnalystExportHeaderRegressionInfo()
             {
                 Regression = regression,
@@ -168,11 +189,11 @@ namespace LIMS.Data
                 A = a,
                 B = b,
                 C = c,
-                RSquared = rSquared
+                RSquared = rSquared,
             };
         }
 
-        private AnalystExportRow ProcessDataRow(string line)
+        private static AnalystExportRow ProcessDataRow(string line)
         {
             string[] data = line.Split('\t');
             return new AnalystExportRow()
@@ -251,83 +272,57 @@ namespace LIMS.Data
             };
         }
 
-        private TransitionMRM ParseTransition(string transition)
+        private static TransitionMRM ParseTransition(string transition)
         {
             var splitTransition = transition.Split('/');
-            double Q1 = double.Parse(splitTransition[0]);
-            double Q3 = double.Parse(splitTransition[1]);
-            return new TransitionMRM() { Q1 = Q1, Q3 = Q3 };
+            double q1 = double.Parse(splitTransition[0]);
+            double q3 = double.Parse(splitTransition[1]);
+            return new TransitionMRM() { Q1 = q1, Q3 = q3 };
         }
 
-        private RegressionType ParseRegression(string inputRegression)
+        private static RegressionType ParseRegression(string inputRegression)
         {
-            RegressionType regression;
-            switch (inputRegression)
+            return inputRegression switch
             {
-                case "Linear":
-                    regression = RegressionType.Linear;
-                    break;
-                case "Quadratic":
-                    regression = RegressionType.Quadratic;
-                    break;
-                default:
-                    throw new FileFormatException("unrecognised regression type in analyst result table export");
-            }
-
-            return regression;
+                "Linear" => RegressionType.Linear,
+                "Quadratic" => RegressionType.Quadratic,
+                _ => throw new FileFormatException("unrecognised regression type in analyst result table export"),
+            };
         }
 
-        private WeightingFactor ParseWeightingFactor(string inputWeightingFactor)
+        private static WeightingFactor ParseWeightingFactor(string inputWeightingFactor)
         {
-            WeightingFactor weightingFactor;
-            switch (inputWeightingFactor)
+            return inputWeightingFactor switch
             {
-                case "1  / x":
-                    weightingFactor = WeightingFactor.OneOverX;
-                    break;
-                case "1  / (x * x)":
-                    weightingFactor = WeightingFactor.OneOverXSquared;
-                    break;
-                case "1  / y":
-                    weightingFactor = WeightingFactor.OneOverY;
-                    break;
-                case "1  / (y * y)":
-                    weightingFactor = WeightingFactor.OneOverYSquared;
-                    break;
-                default:
-                    throw new FileFormatException("unrecognised weighting factor in analyst result table export");
-            }
-
-            return weightingFactor;
+                "1  / x" => WeightingFactor.OneOverX,
+                "1  / (x * x)" => WeightingFactor.OneOverXSquared,
+                "1  / y" => WeightingFactor.OneOverY,
+                "1  / (y * y)" => WeightingFactor.OneOverYSquared,
+                _ => throw new FileFormatException("unrecognised weighting factor in analyst result table export"),
+            };
         }
 
-        private SampleType ParseSampleType(string sampleType)
+        private static SampleType ParseSampleType(string sampleType)
         {
-            switch (sampleType)
+            return sampleType switch
             {
-                case "Unknown":
-                    return SampleType.Unknown;
-                case "Standard":
-                    return SampleType.Standard;
-                case "Quality Control":
-                    return SampleType.QualityControl;
-                default:
-                    throw new FileFormatException("Invalid sample type (STD/QC etc.) in analyst export");
-            }
+                "Unknown" => SampleType.Unknown,
+                "Standard" => SampleType.Standard,
+                "Quality Control" => SampleType.QualityControl,
+                _ => throw new FileFormatException("Invalid sample type (STD/QC etc.) in analyst export"),
+            };
         }
 
-        private Units ParseUnits(string units)
+        private static Units ParseUnits(string units)
         {
-            switch (units)
+            return units switch
             {
-                case "ng/mL":
-                    return Units.ng_mL;
-                default:
-                    throw new FileFormatException("Unrecognised units in analyst export");
-            }
+                "ng/mL" => Units.ng_mL,
+                _ => throw new FileFormatException("Unrecognised units in analyst export"),
+            };
         }
 
-        private void VerifyDataRowHeaders(string headerRow)
+        private static void VerifyDataRowHeaders(string headerRow)
         {
             string[] headers = headerRow.Split('\t');
             string[] validHeaderFormat =
@@ -412,17 +407,12 @@ namespace LIMS.Data
                 "Resp.Factor",
                 "Resp.Factor",
                 "Resp.Factor",
-                string.Empty
+                string.Empty,
             };
             if (headers.SequenceEqual(validHeaderFormat))
             {
                 throw new FileFormatException("Data Row headers in export do not match expected format");
             }
-        }
-
-        public Regression BuildRegressionFromImportedRawData(string rawData)
-        {
-            throw new NotImplementedException();
         }
     }
 }

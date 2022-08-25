@@ -6,6 +6,6 @@
     public enum AnalystExportSections
     {
         Header,
-        DataRows
+        DataRows,
     }
 }

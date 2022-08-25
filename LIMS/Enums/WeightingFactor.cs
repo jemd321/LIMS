@@ -8,6 +8,6 @@
         OneOverXSquared,
         OneOverYHalf,
         OneOverY,
-        OneOverYSquared
+        OneOverYSquared,
     }
 }

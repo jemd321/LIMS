@@ -12,14 +12,14 @@ namespace LIMS.ViewModel.DialogViewModel
     {
         private const int MAXPROJECTNAMELENGTH = 36;
 
-        private readonly IDataProvider _fileDataService;
+        private readonly IDataService _fileDataService;
         private ObservableCollection<Project> _loadedProjects;
         private string _newProjectName;
         private Project _selectedProject;
 
         public event EventHandler DialogAccepted;
 
-        public ProjectCreationDialogViewModel(IDataProvider fileDataService)
+        public ProjectCreationDialogViewModel(IDataService fileDataService)
         {
             _fileDataService = fileDataService;
 
