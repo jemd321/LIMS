@@ -94,8 +94,7 @@ namespace LIMS.Data
             }
         }
 
-        // TODO refactor to private by updating tests
-        public static AnalystExport ParseAnalystExport(ref string analystExport)
+        private static AnalystExport ParseAnalystExport(ref string analystExport)
         {
             // Analyst files are split into a header and data rows. The header has two subsections, peak info and regression info.
             // Regression information is calculated by Analyst separately and so can be discarded.

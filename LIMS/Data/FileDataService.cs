@@ -186,6 +186,12 @@ namespace LIMS.Data
         /// <exception cref="DirectoryNotFoundException">The parent project (which the user should have selected, so should exist) was not found on the file system.</exception>
         public void SaveAnalyticalRun(AnalyticalRun analyticalRun)
         {
+            if (string.IsNullOrEmpty(analyticalRun.AnalyticalRunID))
+            {
+                // User has not chosen an analytical run ID
+                return;
+            }
+
             var projects = from p in _fileSystem.Directory.GetDirectories(ProjectsDirectory)
                            select p.Split('\\').Last();
             if (!projects.Contains(analyticalRun.ParentProjectID))

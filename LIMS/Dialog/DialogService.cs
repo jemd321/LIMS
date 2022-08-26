@@ -7,17 +7,34 @@ using Microsoft.Win32;
 
 namespace LIMS.Dialog
 {
+    /// <summary>
+    /// Service that handles the creation and showing of dialogs. Win32 dialogs are wrapped, and custom dialogs can be requested
+    /// by providing the type of the dialogViewModel to be shown.
+    /// </summary>
+    /// <remarks>All new custom dialogs need to be registered in the service collection, and in the ConfigureDialogService method of app.xaml.cs.</remarks>
     public class DialogService : IDialogService
     {
         private static readonly Dictionary<Type, Type> _mappings = new();
 
+        /// <summary>
+        /// Reference to the service provider, allowing this class to resolve dialog views and viewModels.
+        /// </summary>
         public static IServiceProvider ServiceProvider { get; set; }
 
+        /// <summary>
+        /// Adds a dialogView and dialogViewModel to a dictionary, to associate them.
+        /// </summary>
+        /// <typeparam name="TView">The type of dialogView to register</typeparam>
+        /// <typeparam name="TViewModel">The type of dialogViewModel to associate with the dialogView</typeparam>
         public static void RegisterDialog<TView, TViewModel>()
         {
             _mappings.Add(typeof(TViewModel), typeof(TView));
         }
 
+        /// <summary>
+        /// Displays the Win32 <see cref="OpenFileDialog"/> and returning the user selected file path.
+        /// </summary>
+        /// <returns>The user selected file path as a string.</returns>
         public string ShowOpenFileDialog()
         {
             var fileDialog = new OpenFileDialog
@@ -29,12 +46,26 @@ namespace LIMS.Dialog
             return fileSelected ? fileDialog.FileName : string.Empty;
         }
 
+        /// <summary>
+        /// Displays a custom dialog that requires no input or output.
+        /// </summary>
+        /// <typeparam name="TViewModel">The name of the dialogViewModel to be resolved,
+        /// which must implement <see cref="IDialogViewModel"/>.</typeparam>
+        /// <param name="dialogResultCallback">Optional callback to indicate whether the user accepted or cancelled the dialog if required.</param>
         public void ShowActionDialog<TViewModel>(Action<bool> dialogResultCallback)
         {
             var viewType = _mappings[typeof(TViewModel)];
             ShowActionDialogInternal(viewType, typeof(TViewModel), dialogResultCallback);
         }
 
+        /// <summary>
+        /// Displays a custom dialog that accepts string input and can return a string.
+        /// </summary>
+        /// <typeparam name="TViewModel">The name of the dialogViewModel to be resolved,
+        /// which must implement <see cref="IStringIODialogViewModel"/>.</typeparam>
+        /// <param name="dialogResultCallback">Optional callback to indicate whether the user accepted or cancelled the dialog if required.</param>
+        /// <param name="dialogInput">The string input passed to the viewModel.</param>
+        /// <param name="dialogOutputCallback">The string output returned from the viewModel.</param>
         public void ShowStringIODialog<TViewModel>(Action<bool> dialogResultCallback, string dialogInput, Action<string> dialogOutputCallback)
         {
             var viewType = _mappings[typeof(TViewModel)];
