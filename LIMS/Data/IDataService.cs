@@ -10,6 +10,14 @@ namespace LIMS.Data
     public interface IDataService
     {
         /// <summary>
+        /// Reads raw data from a text file, indicating whether or not the operation succeeded.
+        /// </summary>
+        /// <param name="filePath">the filePath of the text file to be read.</param>
+        /// <returns>A <see cref="DataReadResult"/> object containing the raw data as a string, and the success/fail state of the operation.</returns>
+        /// <remarks>This method would typically be used to read exports from external instrument data acquisition or processing software.</remarks>
+        DataReadResult ReadDataFromTextFile(string filePath);
+
+        /// <summary>
         /// Initialises the storage to be used by the application.
         /// </summary>
         void SetupApplicationStorage();
@@ -52,9 +60,5 @@ namespace LIMS.Data
         /// <param name="project">The <see cref="Project"/> that contains the <see cref="AnalyticalRun"/> to be deleted.</param>
         /// <param name="analyticalRunID">The string ID of the analytical run to be deleted.</param>
         void DeleteAnalyticalRun(Project project, string analyticalRunID);
-
-        FileInfo ValidateFilePath(string filePath);
-
-        string GetRawData(FileInfo fileInfo);
     }
 }

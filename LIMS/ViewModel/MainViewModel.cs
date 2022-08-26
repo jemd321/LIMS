@@ -4,6 +4,7 @@ using System.IO;
 using LIMS.Command;
 using LIMS.Data;
 using LIMS.Dialog;
+using LIMS.Enums;
 using LIMS.Model;
 using LIMS.ViewModel.DialogViewModel;
 
@@ -126,20 +127,37 @@ namespace LIMS.ViewModel
 
         private void ImportAnalystFile(object parameter)
         {
-            string selectedFile = _dialogService.ShowOpenFileDialog();
-            if (string.IsNullOrEmpty(selectedFile))
+            string selectedFilePath = _dialogService.ShowOpenFileDialog();
+            if (string.IsNullOrEmpty(selectedFilePath))
             {
-                throw new NotImplementedException();
-
-                // Handle gracefully with message box
+                // No choice made by the user.
+                return;
             }
 
-            FileInfo validFilePath = _fileDataService.ValidateFilePath(selectedFile);
-            string rawData = _fileDataService.GetRawData(validFilePath);
-            var regressionData = _dataImporter.ParseImportedRawData(rawData);
-            var analyticalRun = new AnalyticalRun(analyticalRunID: string.Empty, SelectedProject.ProjectID, regressionData);
-            SelectedViewModel = (ViewModelBase)RegressionViewModel;
-            SelectedViewModel.Load(analyticalRun);
+            var dataReadResult = _fileDataService.ReadDataFromTextFile(selectedFilePath);
+            if (dataReadResult.IsSuccess)
+            {
+                // TODO wrap this parse in try and handle errors gracefully with dialog.
+                var regressionData = _dataImporter.ParseImportedRawData(dataReadResult.Data);
+                var analyticalRun = new AnalyticalRun(analyticalRunID: string.Empty, SelectedProject.ProjectID, regressionData);
+                SelectedViewModel = (ViewModelBase)RegressionViewModel;
+                SelectedViewModel.Load(analyticalRun);
+            }
+            else
+            {
+                string errorMessage = dataReadResult.DataReadFailureReason switch
+                {
+                    DataReadFailureReason.PathTooLong => "The file you selected has a path that is too long. Rename it and try again.",
+                    DataReadFailureReason.InvalidDirectory => "A directory was selected instead of a text file.",
+                    DataReadFailureReason.UnauthorizedAccess => "You may not have the permissions required to access this file.",
+                    DataReadFailureReason.FileNotFound => "The file you selected could not be found.",
+                    DataReadFailureReason.NotSupported => "The file you selected has an invalid file path format.",
+                    DataReadFailureReason.GenericArgumentProblem => "The file you selected contains only white space, or contains one or more invalid characters.",
+                    DataReadFailureReason.GenericIOProblem => "The application could not open the file you selected",
+                    _ => "The application could not open the file you selected",
+                };
+                _dialogService.ShowStringIODialog<ErrorMessageDialogViewModel>(accepted => { }, dialogInput: errorMessage, dialogOutput => { });
+            }
         }
     }
 }

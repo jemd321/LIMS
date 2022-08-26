@@ -153,22 +153,6 @@ namespace LIMS.Data.Tests
         }
 
         [TestMethod()]
-        public void ApplicationDirectory_Returns_CorrectDirectory()
-        {
-            string actualAppDirectory = _fileDataService.ApplicationDirectory;
-
-            Assert.AreEqual(_expectedAppDirectory, actualAppDirectory);
-        }
-
-        [TestMethod()]
-        public void ProjectsDirectory_Returns_CorrectDirectory()
-        {
-            string actualProjectsDirectory = _fileDataService.ProjectsDirectory;
-
-            Assert.AreEqual(_expectedProjectsDirectory, actualProjectsDirectory);
-        }
-
-        [TestMethod()]
         public void LoadProjects_WhenNoProjects_ReturnsEmptyList()
         {
             _mockfileSystem.AddDirectory(_expectedProjectsDirectory);

@@ -13,7 +13,7 @@ namespace LIMS
 {
     public partial class App : Application
     {
-        public readonly ServiceProvider _serviceProvider;
+        private readonly ServiceProvider _serviceProvider;
 
         public App()
         {
@@ -52,6 +52,7 @@ namespace LIMS
             DialogService.RegisterDialog<ProjectCreationDialog, ProjectCreationDialogViewModel>();
             DialogService.RegisterDialog<OpenAnalyticalRunDialog, OpenAnalyticalRunDialogViewModel>();
             DialogService.RegisterDialog<SaveAnalyticalRunDialog, SaveAnalyticalRunDialogViewModel>();
+            DialogService.RegisterDialog<ErrorMessageDialog, ErrorMessageDialogViewModel>();
         }
 
         protected override void OnStartup(StartupEventArgs e)

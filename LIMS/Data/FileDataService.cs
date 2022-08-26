@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Text.Json;
+using LIMS.Enums;
 using LIMS.Model;
 
 namespace LIMS.Data
@@ -27,6 +28,53 @@ namespace LIMS.Data
         private static string ApplicationDirectory => GetApplicationDirectory();
 
         private static string ProjectsDirectory => GetProjectsDirectory();
+
+        /// <summary>
+        /// Reads raw data from a text file, indicating whether or not the operation succeeded.
+        /// </summary>
+        /// <param name="filePath">the filePath of the text file to be read.</param>
+        /// <returns>A <see cref="DataReadResult"/> object containing the raw data as a string, and the success/fail state of the operation.</returns>
+        /// <remarks>This method would typically be used to read exports from external instrument data acquisition or processing software.</remarks>
+        public DataReadResult ReadDataFromTextFile(string filePath)
+        {
+            try
+            {
+                string rawData = File.ReadAllText(filePath);
+                return new DataReadResult
+                {
+                    Data = rawData,
+                    DataReadFailureReason = DataReadFailureReason.None,
+                };
+            }
+            catch (PathTooLongException)
+            {
+                return new DataReadResult { DataReadFailureReason = DataReadFailureReason.PathTooLong };
+            }
+            catch (DirectoryNotFoundException)
+            {
+                return new DataReadResult { DataReadFailureReason = DataReadFailureReason.InvalidDirectory };
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return new DataReadResult { DataReadFailureReason = DataReadFailureReason.UnauthorizedAccess };
+            }
+            catch (FileNotFoundException)
+            {
+                return new DataReadResult { DataReadFailureReason = DataReadFailureReason.FileNotFound };
+            }
+            catch (NotSupportedException)
+            {
+                return new DataReadResult { DataReadFailureReason = DataReadFailureReason.NotSupported };
+            }
+            catch (ArgumentException)
+            {
+                return new DataReadResult { DataReadFailureReason = DataReadFailureReason.GenericArgumentProblem };
+            }
+            catch (IOException)
+            {
+                return new DataReadResult { DataReadFailureReason = DataReadFailureReason.GenericIOProblem };
+            }
+        }
 
         /// <summary>
         /// Creates the required directory structure in the user's application data roaming folder, if it does not yet exist.
@@ -173,18 +221,6 @@ namespace LIMS.Data
             {
                 return;
             }
-        }
-
-        // TODO - refactor to be private
-        public FileInfo ValidateFilePath(string filePath)
-        {
-            return new FileInfo(filePath);
-        }
-
-        // TODO refactor to be private with public get filedata method.
-        public string GetRawData(FileInfo fileInfo)
-        {
-            return File.ReadAllText(fileInfo.FullName);
         }
 
         private static string GetApplicationDirectory()
