@@ -18,55 +18,80 @@ namespace LIMS.Data
         /// </summary>
         /// <param name="rawAnalystData">The entire contents of an Analyst export .txt file as a string.</param>
         /// <returns>The parsed data, as <c>RegressionData</c> format which can be used in a regression.</returns>
-        public RegressionData ParseImportedRawData(string rawAnalystData)
+        public ImportedDataParseResult ParseImportedRawData(string rawAnalystData)
         {
             // Each sample must be categorised as one of the following three types:
             List<Standard> standards = new();
             List<QualityControl> qualityControls = new();
             List<Unknown> unknowns = new();
 
-            AnalystExport analystExport = ParseAnalystExport(ref rawAnalystData);
-
-            foreach (var dataRow in analystExport.DataRows)
+            try
             {
-                SampleType sampleType = dataRow.SampleType;
-                switch (sampleType)
+                AnalystExport analystExport = ParseAnalystExport(ref rawAnalystData);
+
+                foreach (var dataRow in analystExport.DataRows)
                 {
-                    case SampleType.Standard:
-                        standards.Add(new Standard
-                        {
-                            NominalConcentration = dataRow.NominalConcentration,
-                            InstrumentResponse = dataRow.Area,
-                            SampleName = dataRow.SampleName,
-                        });
-                        break;
-                    case SampleType.QualityControl:
-                        qualityControls.Add(new QualityControl
-                        {
-                            NominalConcentration = dataRow.NominalConcentration,
-                            InstrumentResponse = dataRow.Area,
-                            SampleName = dataRow.SampleName,
-                        });
-                        break;
-                    case SampleType.Unknown:
-                        unknowns.Add(new Unknown
-                        {
-                            // Unknown samples have no nominal concentration, unlike Standards or QC samples.
-                            InstrumentResponse = dataRow.Area,
-                            SampleName = dataRow.SampleName,
-                        });
-                        break;
-                    default:
-                        break;
+                    SampleType sampleType = dataRow.SampleType;
+                    switch (sampleType)
+                    {
+                        case SampleType.Standard:
+                            standards.Add(new Standard
+                            {
+                                NominalConcentration = dataRow.NominalConcentration,
+                                InstrumentResponse = dataRow.Area,
+                                SampleName = dataRow.SampleName,
+                            });
+                            break;
+                        case SampleType.QualityControl:
+                            qualityControls.Add(new QualityControl
+                            {
+                                NominalConcentration = dataRow.NominalConcentration,
+                                InstrumentResponse = dataRow.Area,
+                                SampleName = dataRow.SampleName,
+                            });
+                            break;
+                        case SampleType.Unknown:
+                            unknowns.Add(new Unknown
+                            {
+                                // Unknown samples have no nominal concentration, unlike Standards or QC samples.
+                                InstrumentResponse = dataRow.Area,
+                                SampleName = dataRow.SampleName,
+                            });
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
 
-            return new RegressionData
+                var regressionData = new RegressionData
+                {
+                    Standards = standards,
+                    QualityControls = qualityControls,
+                    Unknowns = unknowns,
+                };
+
+                return new ImportedDataParseResult
+                {
+                    Data = regressionData,
+                    ParseFailureReason = ParseFailureReason.None,
+                };
+            }
+            catch (FileFormatException)
             {
-                Standards = standards,
-                QualityControls = qualityControls,
-                Unknowns = unknowns,
-            };
+                return new ImportedDataParseResult { ParseFailureReason = ParseFailureReason.InvalidFileFormat };
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                return new ImportedDataParseResult { ParseFailureReason = ParseFailureReason.InvalidFileFormat };
+            }
+            catch (ArgumentException)
+            {
+                return new ImportedDataParseResult { ParseFailureReason = ParseFailureReason.InvalidCast };
+            }
+            catch (SystemException)
+            {
+                return new ImportedDataParseResult { ParseFailureReason = ParseFailureReason.OtherSystemException };
+            }
         }
 
         // TODO refactor to private by updating tests

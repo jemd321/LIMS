@@ -138,10 +138,24 @@ namespace LIMS.ViewModel
             if (dataReadResult.IsSuccess)
             {
                 // TODO wrap this parse in try and handle errors gracefully with dialog.
-                var regressionData = _dataImporter.ParseImportedRawData(dataReadResult.Data);
-                var analyticalRun = new AnalyticalRun(analyticalRunID: string.Empty, SelectedProject.ProjectID, regressionData);
-                SelectedViewModel = (ViewModelBase)RegressionViewModel;
-                SelectedViewModel.Load(analyticalRun);
+                var parsedData = _dataImporter.ParseImportedRawData(dataReadResult.Data);
+                if (parsedData.IsSuccess)
+                {
+                    var analyticalRun = new AnalyticalRun(analyticalRunID: string.Empty, SelectedProject.ProjectID, parsedData.Data);
+                    SelectedViewModel = (ViewModelBase)RegressionViewModel;
+                    SelectedViewModel.Load(analyticalRun);
+                }
+                else
+                {
+                    string errorMessage = parsedData.ParseFailureReason switch
+                    {
+                        ParseFailureReason.InvalidFileFormat => "The file you selected was not in a format that was recognised.",
+                        ParseFailureReason.InvalidCast => "The application encountered an error in converting the data into a useable format.",
+                        ParseFailureReason.OtherSystemException => "An error occured during the import of the data.",
+                        _ => "An error occured during the import of the data.",
+                    };
+                    _dialogService.ShowStringIODialog<ErrorMessageDialogViewModel>(accepted => { }, dialogInput: errorMessage, dialogOutput => { });
+                }
             }
             else
             {

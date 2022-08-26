@@ -44,6 +44,8 @@ namespace LIMS
             services.AddTransient<OpenAnalyticalRunDialog>();
             services.AddTransient<SaveAnalyticalRunDialogViewModel>();
             services.AddTransient<SaveAnalyticalRunDialog>();
+            services.AddTransient<ErrorMessageDialog>();
+            services.AddTransient<ErrorMessageDialogViewModel>();
         }
 
         private void ConfigureDialogService()
