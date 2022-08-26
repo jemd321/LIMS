@@ -6,9 +6,18 @@
              xmlns:local="clr-namespace:LIMS.View.Dialog"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="100">
-    <StackPanel Orientation="Vertical">
-        <TextBlock Text="{Binding ErrorMessage}"/>
-        <Button Content="OK"
-                IsCancel="True"/>
+    <StackPanel Margin="15"
+                MinWidth="150"
+                MaxWidth="300">
+        <TextBlock Text="An Error Occured:"
+                   FontSize="14"
+                   FontWeight="Bold" />
+        <TextBlock Text="{Binding DialogInput}"
+                   Margin="8"
+                   TextWrapping="Wrap"/>
+        <Button Content="Close"
+                IsCancel="True"
+                Height="20"
+                Width="70"/>
     </StackPanel>
 </UserControl>

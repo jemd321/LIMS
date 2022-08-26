@@ -20,6 +20,6 @@ namespace LIMS.ViewModel.DialogViewModel
         /// <summary>
         /// Gets or sets the result returned from the dialog - not required for this error dialog.
         /// </summary>
-        public string DialogOutput { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string DialogOutput { get; set; }
     }
 }
