@@ -19,6 +19,7 @@ namespace LIMS.ViewModel
         private ViewModelBase _selectedRegressionViewModel;
         private Project _selectedProject;
         private ObservableCollection<Project> _projects;
+        private string _openAnalyticalRunName;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainViewModel"/> class.
@@ -94,6 +95,19 @@ namespace LIMS.ViewModel
         }
 
         /// <summary>
+        /// Gets the currently open Analytical Run Name
+        /// </summary>
+        public string OpenAnalyticalRunName
+        {
+            get => _openAnalyticalRunName;
+            set
+            {
+                _openAnalyticalRunName = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        /// <summary>
         /// Gets the command to open the project creation and deletion dialog.
         /// </summary>
         public DelegateCommand CreateNewProjectCommand { get; }
@@ -155,6 +169,7 @@ namespace LIMS.ViewModel
                 return;
             }
 
+            OpenAnalyticalRunName = selectedAnalyticalRunID;
             var openedAnalyticalRun = _dataService.LoadAnalyticalRun(SelectedProject, selectedAnalyticalRunID);
             SelectedViewModel = (ViewModelBase)RegressionViewModel;
             SelectedViewModel.Load(openedAnalyticalRun);
@@ -173,6 +188,7 @@ namespace LIMS.ViewModel
                      currentlyOpenRun.AnalyticalRunID = userSelectedAnalyticalRunID;
                  });
                 _dataService.SaveAnalyticalRun(currentlyOpenRun);
+                OpenAnalyticalRunName = currentlyOpenRun.AnalyticalRunID;
             }
             else
             {

@@ -7,13 +7,25 @@
              mc:Ignorable="d"
              d:DesignHeight="40"
              d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin"
+                    Value="3 0 3 0" />
+            <Setter Property="Padding"
+                    Value="2" />
+            <Setter Property="Height"
+                    Value="30" />
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin"
+                    Value="3 2 3 3" />
+            <Setter Property="VerticalAlignment"
+                    Value="Center" />
+        </Style>
+    </UserControl.Resources>
     <StackPanel Orientation="Horizontal">
-        <TextBlock Text="Project:"
-                   Margin="3 2 3 3"
-                   VerticalAlignment="Center" />
-        <Button Padding="2"
-                Margin="3 0 3 0"
-                Command="{Binding CreateNewProjectCommand}"
+        <TextBlock Text="Project:" />
+        <Button Command="{Binding CreateNewProjectCommand}"
                 Height="27">
             <iconPacks:Modern Kind="Add" />
         </Button>
@@ -29,26 +41,21 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
-        <TextBlock Text="Analytical Run:"
-                   Margin="3 2 3 3"
-                   VerticalAlignment="Center" />
-        <Button Padding="2"
-                Margin="3 0 3 0"
-                HorizontalAlignment="Center"
-                Height="30"
-                Command="{Binding OpenAnalyticalRunCommand}">
+        <TextBlock Text="Analytical Run:" />
+        <TextBox Text="{Binding OpenAnalyticalRunName}"
+                 IsReadOnly="True"
+                 MinWidth="90"
+                 Margin="0 3 5 3"
+                 Height="30"
+                 MinHeight="30">
+        </TextBox>
+        <Button Command="{Binding OpenAnalyticalRunCommand}">
             <iconPacks:Modern Kind="FolderOpen" />
         </Button>
-        <Button Padding="2"
-                Margin="3 0 3 0"
-                Height="30"
-                Command="{Binding ImportAnalystFileCommand}">
+        <Button Command="{Binding ImportAnalystFileCommand}">
             <iconPacks:Modern Kind="CabinetIn" />
         </Button>
-        <Button Padding="2"
-                Margin="3 0 3 0"
-                Height="30"
-                Command="{Binding SaveAnalyticalRunCommand}">
+        <Button Command="{Binding SaveAnalyticalRunCommand}">
             <iconPacks:Modern Kind="Save" />
         </Button>
     </StackPanel>
