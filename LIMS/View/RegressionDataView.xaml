@@ -9,26 +9,35 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="100" />
+            <ColumnDefinition Width="0" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <DataGrid Grid.Row ="0"
-                  ItemsSource="{Binding Standards}">
-
+        <DataGrid Grid.Row="0"
+                  ItemsSource="{Binding Standards}"
+                  AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Sample Number"
+                                    Binding="{Binding SampleNumber}" />
+                <DataGridTextColumn Header="Sample Name"
+                                    Binding="{Binding SampleName}" />
+                <DataGridTextColumn Header="Peak Area"
+                                    Binding="{Binding InstrumentResponse}" />
+                <DataGridTextColumn Header="Calculated Concentration"
+                                    Binding="{Binding CalculatedConcentration}" />
+                <DataGridTextColumn Header="Nominal Concentration"
+                                    Binding="{Binding NominalConcentration}" />
+                <DataGridTextColumn Header="Accuracy"
+                                    Binding="{Binding Accuracy}" />
+                <DataGridCheckBoxColumn Header="Included"
+                                    Binding="{Binding IsActive}" />
+            </DataGrid.Columns>
         </DataGrid>
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding QualityControls}">
 
         </DataGrid>
-        <TextBlock Grid.Column="2"
-                   Background="Azure"
-                   Text="Calibration Curve"/>
-        <TextBlock Grid.Column="2"
-                   Grid.Row="1"
-                   Background="Azure"
-                   Text="Internal Standard Plot" />
     </Grid>
 </UserControl>
