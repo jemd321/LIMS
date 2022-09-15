@@ -75,6 +75,11 @@ namespace LIMS.ViewModel.DialogViewModel
 
         private void OpenAnalyticalRun(object parameter)
         {
+            if (SelectedAnalyticalRun is null)
+            {
+                return;
+            }
+
             DialogOutput = SelectedAnalyticalRun;
             RaiseDialogAccepted(EventArgs.Empty);
         }

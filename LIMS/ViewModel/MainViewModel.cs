@@ -32,8 +32,8 @@ namespace LIMS.ViewModel
 
             CreateNewProjectCommand = new DelegateCommand(CreateNewProject);
             OpenAnalyticalRunCommand = new DelegateCommand(OpenAnalyticalRun, CanOpenAnalyticalRunExecute);
-            ImportAnalystFileCommand = new DelegateCommand(ImportAnalystFile);
-            SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun);
+            ImportAnalystFileCommand = new DelegateCommand(ImportAnalystFile, CanImportAnalystFileExecute);
+            SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun, CanSaveAnalyticalRunExecute);
         }
 
         public ViewModelBase SelectedViewModel
@@ -54,6 +54,8 @@ namespace LIMS.ViewModel
                 _selectedProject = value;
                 RaisePropertyChanged();
                 OpenAnalyticalRunCommand.RaiseCanExecuteChanged();
+                ImportAnalystFileCommand.RaiseCanExecuteChanged();
+                SaveAnalyticalRunCommand.RaiseCanExecuteChanged();
             }
         }
 
@@ -88,6 +90,16 @@ namespace LIMS.ViewModel
             return SelectedProject is not null;
         }
 
+        private bool CanImportAnalystFileExecute(object arg)
+        {
+            return SelectedProject is not null;
+        }
+
+        private bool CanSaveAnalyticalRunExecute(object arg)
+        {
+            return SelectedProject is not null && RegressionViewModel.OpenAnalyticalRun is not null;
+        }
+
         private void CreateNewProject(object parameter)
         {
             _dialogService.ShowActionDialog<ProjectCreationDialogViewModel>(result => { });
@@ -101,6 +113,12 @@ namespace LIMS.ViewModel
              {
                  selectedAnalyticalRunID = output;
              });
+
+            if (string.IsNullOrEmpty(selectedAnalyticalRunID))
+            {
+                return;
+            }
+
             var openedAnalyticalRun = _fileDataService.LoadAnalyticalRun(SelectedProject, selectedAnalyticalRunID);
             SelectedViewModel = (ViewModelBase)RegressionViewModel;
             SelectedViewModel.Load(openedAnalyticalRun);
@@ -172,6 +190,8 @@ namespace LIMS.ViewModel
                 };
                 _dialogService.ShowStringIODialog<ErrorMessageDialogViewModel>(accepted => { }, dialogInput: errorMessage, dialogOutput => { });
             }
+
+            SaveAnalyticalRunCommand.RaiseCanExecuteChanged();
         }
     }
 }
