@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.IO;
+﻿using System.Collections.ObjectModel;
 using LIMS.Command;
 using LIMS.Data;
 using LIMS.Dialog;
@@ -10,22 +8,32 @@ using LIMS.ViewModel.DialogViewModel;
 
 namespace LIMS.ViewModel
 {
+    /// <summary>
+    /// ViewModel for the <see cref="MainWindow.xaml"/>.
+    /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private readonly IDataService _fileDataService;
+        private readonly IDataService _dataService;
         private readonly IDataImporter _dataImporter;
         private readonly IDialogService _dialogService;
         private ViewModelBase _selectedRegressionViewModel;
         private Project _selectedProject;
         private ObservableCollection<Project> _projects;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainViewModel"/> class.
+        /// </summary>
+        /// <param name="regressionViewModel">The <see cref="RegressionViewModel"/> that will be filled with a regression to be displayed.</param>
+        /// <param name="dataService">The <see cref="IDataService"/> service used save and load data to storage.</param>
+        /// <param name="dataImporter">The <see cref="IDataImporter"/> service used to import data from external programs.</param>
+        /// <param name="dialogService">The <see cref="IDialogService"/> used to create and show any dialogs in an MVVM fashion.</param>
         public MainViewModel(
             IRegressionViewModel regressionViewModel,
-            IDataService fileDataService,
+            IDataService dataService,
             IDataImporter dataImporter,
             IDialogService dialogService)
         {
-            _fileDataService = fileDataService;
+            _dataService = dataService;
             _dataImporter = dataImporter;
             _dialogService = dialogService;
             RegressionViewModel = regressionViewModel;
@@ -36,6 +44,9 @@ namespace LIMS.ViewModel
             SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun, CanSaveAnalyticalRunExecute);
         }
 
+        /// <summary>
+        /// Gets or sets current VM and corresponding view to be displayed in the mainWindow.
+        /// </summary>
         public ViewModelBase SelectedViewModel
         {
             get => _selectedRegressionViewModel;
@@ -46,6 +57,9 @@ namespace LIMS.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets or sets the currently selected project, raising canExecuteChange on other project bar buttons.
+        /// </summary>
         public Project SelectedProject
         {
             get => _selectedProject;
@@ -53,14 +67,22 @@ namespace LIMS.ViewModel
             {
                 _selectedProject = value;
                 RaisePropertyChanged();
+
+                // Update the execution status of the other buttons - we don't want to be able to do anything without a project open.
                 OpenAnalyticalRunCommand.RaiseCanExecuteChanged();
                 ImportAnalystFileCommand.RaiseCanExecuteChanged();
                 SaveAnalyticalRunCommand.RaiseCanExecuteChanged();
             }
         }
 
+        /// <summary>
+        /// Gets the currently loaded <see cref="RegressionViewModel"/>.
+        /// </summary>
         public IRegressionViewModel RegressionViewModel { get; }
 
+        /// <summary>
+        /// Gets a list of the projects that have been loaded from storage on startup.
+        /// </summary>
         public ObservableCollection<Project> Projects
         {
             get => _projects;
@@ -71,18 +93,32 @@ namespace LIMS.ViewModel
             }
         }
 
+        /// <summary>
+        /// Gets the command to open the project creation and deletion dialog.
+        /// </summary>
         public DelegateCommand CreateNewProjectCommand { get; }
 
+        /// <summary>
+        /// Gets the command to open the openAnalyticalRun Dialog, allowing user to open a run from a project.
+        /// </summary>
         public DelegateCommand OpenAnalyticalRunCommand { get; }
 
+        /// <summary>
+        /// Gets the command to open the importAnalystFile dialog, allowing user to import external data.
+        /// </summary>
         public DelegateCommand ImportAnalystFileCommand { get; }
 
+        /// <summary>
+        /// Gets the command to open the saveAnalyticalRun dialog, allowing user to save a run.
+        /// </summary>
         public DelegateCommand SaveAnalyticalRunCommand { get; }
 
+        /// <inheritdoc/>
         public override void Load()
         {
-            _fileDataService.SetupApplicationStorage();
-            Projects = _fileDataService.LoadProjects();
+            // Configure the application storage and load all projects.
+            _dataService.SetupApplicationStorage();
+            Projects = _dataService.LoadProjects();
         }
 
         private bool CanOpenAnalyticalRunExecute(object parameter)
@@ -103,7 +139,7 @@ namespace LIMS.ViewModel
         private void CreateNewProject(object parameter)
         {
             _dialogService.ShowActionDialog<ProjectCreationDialogViewModel>(result => { });
-            Projects = _fileDataService.LoadProjects();
+            Projects = _dataService.LoadProjects();
         }
 
         private void OpenAnalyticalRun(object parameter)
@@ -119,7 +155,7 @@ namespace LIMS.ViewModel
                 return;
             }
 
-            var openedAnalyticalRun = _fileDataService.LoadAnalyticalRun(SelectedProject, selectedAnalyticalRunID);
+            var openedAnalyticalRun = _dataService.LoadAnalyticalRun(SelectedProject, selectedAnalyticalRunID);
             SelectedViewModel = (ViewModelBase)RegressionViewModel;
             SelectedViewModel.Load(openedAnalyticalRun);
         }
@@ -129,17 +165,19 @@ namespace LIMS.ViewModel
             AnalyticalRun currentlyOpenRun = RegressionViewModel.OpenAnalyticalRun;
             if (currentlyOpenRun.AnalyticalRunID == string.Empty)
             {
+                // If there is no run name the user is prompted to choose a name via dialog.
                 string userSelectedAnalyticalRunID = string.Empty;
                 _dialogService.ShowStringIODialog<SaveAnalyticalRunDialogViewModel>(result => { }, dialogInput: SelectedProject.ProjectID, output =>
                  {
                      userSelectedAnalyticalRunID = output;
                      currentlyOpenRun.AnalyticalRunID = userSelectedAnalyticalRunID;
                  });
-                _fileDataService.SaveAnalyticalRun(currentlyOpenRun);
+                _dataService.SaveAnalyticalRun(currentlyOpenRun);
             }
             else
             {
-                _fileDataService.SaveAnalyticalRun(currentlyOpenRun);
+                // The run already exists and can be saved over freely.
+                _dataService.SaveAnalyticalRun(currentlyOpenRun);
             }
         }
 
@@ -152,10 +190,10 @@ namespace LIMS.ViewModel
                 return;
             }
 
-            var dataReadResult = _fileDataService.ReadDataFromTextFile(selectedFilePath);
+            var dataReadResult = _dataService.ReadDataFromTextFile(selectedFilePath);
             if (dataReadResult.IsSuccess)
             {
-                // TODO wrap this parse in try and handle errors gracefully with dialog.
+                // File read successfully, continue and parse data.
                 var parsedData = _dataImporter.ParseImportedRawData(dataReadResult.Data);
                 if (parsedData.IsSuccess)
                 {
@@ -165,6 +203,7 @@ namespace LIMS.ViewModel
                 }
                 else
                 {
+                    // Inform user that parsing failed with error message.
                     string errorMessage = parsedData.ParseFailureReason switch
                     {
                         ParseFailureReason.InvalidFileFormat => "The file you selected was not in a format that was recognised.",
@@ -177,6 +216,7 @@ namespace LIMS.ViewModel
             }
             else
             {
+                // File read error, inform user of error.
                 string errorMessage = dataReadResult.DataReadFailureReason switch
                 {
                     DataReadFailureReason.PathTooLong => "The file you selected has a path that is too long. Rename it and try again.",
@@ -191,6 +231,7 @@ namespace LIMS.ViewModel
                 _dialogService.ShowStringIODialog<ErrorMessageDialogViewModel>(accepted => { }, dialogInput: errorMessage, dialogOutput => { });
             }
 
+            // Update execution status of save command so that successfully imported data can be saved.
             SaveAnalyticalRunCommand.RaiseCanExecuteChanged();
         }
     }
