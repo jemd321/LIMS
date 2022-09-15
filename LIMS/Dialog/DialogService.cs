@@ -24,8 +24,8 @@ namespace LIMS.Dialog
         /// <summary>
         /// Adds a dialogView and dialogViewModel to a dictionary, to associate them.
         /// </summary>
-        /// <typeparam name="TView">The type of dialogView to register</typeparam>
-        /// <typeparam name="TViewModel">The type of dialogViewModel to associate with the dialogView</typeparam>
+        /// <typeparam name="TView">The type of dialogView to register.</typeparam>
+        /// <typeparam name="TViewModel">The type of dialogViewModel to associate with the dialogView.</typeparam>
         public static void RegisterDialog<TView, TViewModel>()
         {
             _mappings.Add(typeof(TViewModel), typeof(TView));
