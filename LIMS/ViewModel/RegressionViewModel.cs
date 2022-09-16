@@ -8,7 +8,12 @@ namespace LIMS.ViewModel
     {
         private readonly IRegressionFactory _regressionFactory;
         private IRegressionDataViewModel _regressionDataViewModel;
+        private IRegressionGraphViewModel _regressionGraphViewModel;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegressionViewModel"/> class.
+        /// </summary>
+        /// <param name="regressionFactory"></param>
         public RegressionViewModel(IRegressionFactory regressionFactory)
         {
             _regressionFactory = regressionFactory;
@@ -20,6 +25,15 @@ namespace LIMS.ViewModel
             set
             {
                 _regressionDataViewModel = value;
+                RaisePropertyChanged();
+            }
+        }
+        public IRegressionGraphViewModel RegressionGraphViewModel
+        {
+            get => _regressionGraphViewModel;
+            set
+            {
+                _regressionGraphViewModel = value;
                 RaisePropertyChanged();
             }
         }
@@ -38,6 +52,8 @@ namespace LIMS.ViewModel
                 analyticalRun.RegressionType,
                 analyticalRun.WeightingFactor);
             RegressionDataViewModel = new RegressionDataViewModel(Regression);
+            RegressionGraphViewModel = new RegressionGraphViewModel(Regression);
+            RegressionGraphViewModel.DrawGraph();
         }
     }
 }

@@ -29,6 +29,7 @@ namespace LIMS
 
             services.AddTransient<MainViewModel>();
             services.AddTransient<IRegressionViewModel, RegressionViewModel>();
+            services.AddTransient<IRegressionGraphViewModel, RegressionGraphViewModel>();
 
             services.AddSingleton<IDialogService, DialogService>();
 

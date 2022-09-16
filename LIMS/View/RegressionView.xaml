@@ -12,6 +12,9 @@
         <DataTemplate DataType="{x:Type viewModel:RegressionDataViewModel}">
             <view:RegressionDataView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:RegressionGraphViewModel}">
+            <view:RegressionGraphView />
+        </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -21,8 +24,8 @@
         <TabControl Grid.Column="0">
             <TabItem Header="Data"
                      IsSelected="True">
-                <ContentControl Content="{Binding RegressionDataViewModel}">
-                </ContentControl>
+                <ContentControl Content="{Binding RegressionDataViewModel}" />
+
             </TabItem>
             <TabItem Header="Statistics">
                 <view:RegressionStatisticsView>
@@ -30,9 +33,7 @@
                 </view:RegressionStatisticsView>
             </TabItem>
             <TabItem Header="Calibration Line">
-                <view:RegressionGraphView>
-
-                </view:RegressionGraphView>
+                <ContentControl Content="{Binding RegressionGraphViewModel}" />
             </TabItem>
             <TabItem Header="IStd Plot">
                 <view:RegressionISPlotView>

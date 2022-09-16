@@ -1,4 +1,5 @@
-﻿using LIMS.Enums;
+﻿using System;
+using LIMS.Enums;
 
 namespace LIMS.ViewModel
 {
@@ -46,6 +47,11 @@ namespace LIMS.ViewModel
             Accuracy = accuracy;
             IsActive = isActive;
         }
+
+        /// <summary>
+        /// Event handler for an event signalling that the user has activated or deactivated a standard or QC.
+        /// </summary>
+        public event EventHandler RegressionDataChanged;
 
         /// <summary>
         /// Gets the sequence number of the sample - ie. the position in the order that the run was acquired.
@@ -113,12 +119,12 @@ namespace LIMS.ViewModel
         }
 
         /// <summary>
-        /// Gets or sets the known concentration that the sample was prepared at.
+        /// Gets the known concentration that the sample was prepared at.
         /// </summary>
         public string NominalConcentration
         {
             get => _nominalConcentration;
-            set
+            private set
             {
                 _nominalConcentration = value;
                 RaisePropertyChanged();
@@ -148,7 +154,17 @@ namespace LIMS.ViewModel
             {
                 _isActive = value;
                 RaisePropertyChanged();
+                RaiseRegressionDataChanged(EventArgs.Empty);
             }
+        }
+
+        /// <summary>
+        /// Raises an event signalling that the user has activated or deactivated a standard or QC.
+        /// </summary>
+        /// <param name="e">event args.</param>
+        protected virtual void RaiseRegressionDataChanged(EventArgs e)
+        {
+            RegressionDataChanged?.Invoke(this, e);
         }
     }
 }

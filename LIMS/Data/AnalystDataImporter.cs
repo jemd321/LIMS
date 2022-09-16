@@ -39,7 +39,8 @@ namespace LIMS.Data
                             {
                                 NominalConcentration = dataRow.NominalConcentration,
                                 InstrumentResponse = dataRow.Area,
-                                SampleName = dataRow.SampleName,
+                                SampleNumber = int.Parse(dataRow.SampleName.Split(' ')[1]),
+                                SampleName = dataRow.SampleName.Split(' ')[3] + ' ' + dataRow.SampleName.Split(' ')[4],
                             });
                             break;
                         case SampleType.QualityControl:
@@ -47,7 +48,8 @@ namespace LIMS.Data
                             {
                                 NominalConcentration = dataRow.NominalConcentration,
                                 InstrumentResponse = dataRow.Area,
-                                SampleName = dataRow.SampleName,
+                                SampleNumber = int.Parse(dataRow.SampleName.Split(' ')[1]),
+                                SampleName = dataRow.SampleName.Split(' ')[3] + ' ' + dataRow.SampleName.Split(' ')[4],
                             });
                             break;
                         case SampleType.Unknown:
@@ -55,7 +57,8 @@ namespace LIMS.Data
                             {
                                 // Unknown samples have no nominal concentration, unlike Standards or QC samples.
                                 InstrumentResponse = dataRow.Area,
-                                SampleName = dataRow.SampleName,
+                                SampleNumber = int.Parse(dataRow.SampleName.Split(' ')[1]),
+                                SampleName = dataRow.SampleName.Split(' ')[3] + ' ' + dataRow.SampleName.Split(' ')[4],
                             });
                             break;
                         default:
