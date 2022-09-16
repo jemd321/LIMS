@@ -95,7 +95,7 @@ namespace LIMS.ViewModel
         }
 
         /// <summary>
-        /// Gets the currently open Analytical Run Name
+        /// Gets or sets the currently open Analytical Run Name.
         /// </summary>
         public string OpenAnalyticalRunName
         {
@@ -166,6 +166,7 @@ namespace LIMS.ViewModel
 
             if (string.IsNullOrEmpty(selectedAnalyticalRunID))
             {
+                // No choice made by user - do nothing.
                 return;
             }
 
@@ -173,6 +174,9 @@ namespace LIMS.ViewModel
             var openedAnalyticalRun = _dataService.LoadAnalyticalRun(SelectedProject, selectedAnalyticalRunID);
             SelectedViewModel = (ViewModelBase)RegressionViewModel;
             SelectedViewModel.Load(openedAnalyticalRun);
+
+            // Update availability of save button
+            SaveAnalyticalRunCommand.RaiseCanExecuteChanged();
         }
 
         private void SaveAnalyticalRun(object parameter)
