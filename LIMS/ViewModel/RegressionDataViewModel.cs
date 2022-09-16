@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using LIMS.Model.RegressionModels;
+using LIMS.Utility;
 
 namespace LIMS.ViewModel
 {
@@ -25,31 +26,31 @@ namespace LIMS.ViewModel
             foreach (var standard in _currentRegression.RegressionData.Standards)
             {
                 Standards.Add(
-                    new RegressionDataItemViewModel()
-                    {
-                        SampleName = standard.SampleName,
-                        SampleType = standard.SampleType,
-                        InstrumentResponse = standard.InstrumentResponse,
-                        Accuracy = standard.Accuracy,
-                        CalculatedConcentration = standard.CalculatedConcentration,
-                        NominalConcentration = standard.NominalConcentration,
-                        IsActive = standard.IsActive,
-                    });
+                    new RegressionDataItemViewModel(
+                        // SAMPLE NUMBER PLACEHOLDER VALUE
+                        sampleNumber: 0,
+                        sampleName: standard.SampleName,
+                        sampleType: standard.SampleType,
+                        instrumentResponse: $"{standard.InstrumentResponse:F1}",
+                        accuracy: $"{standard.Accuracy:P1}",
+                        calculatedConcentration: SignificantFigures.Format(standard.CalculatedConcentration.GetValueOrDefault(), 3),
+                        nominalConcentration: $"{standard.NominalConcentration:F0}",
+                        isActive: standard.IsActive));
             }
 
             foreach (var qualityControl in _currentRegression.RegressionData.QualityControls)
             {
                 QualityControls.Add(
-                    new RegressionDataItemViewModel()
-                    {
-                        SampleName = qualityControl.SampleName,
-                        SampleType = qualityControl.SampleType,
-                        InstrumentResponse = qualityControl.InstrumentResponse,
-                        Accuracy = qualityControl.Accuracy,
-                        CalculatedConcentration = qualityControl.CalculatedConcentration,
-                        NominalConcentration = qualityControl.NominalConcentration,
-                        IsActive = qualityControl.IsActive,
-                    });
+                    new RegressionDataItemViewModel(
+                        // SAMPLE NUMBER PLACEHOLDER VALUE
+                        sampleNumber: 0,
+                        sampleName: qualityControl.SampleName,
+                        sampleType: qualityControl.SampleType,
+                        instrumentResponse: $"{qualityControl.InstrumentResponse:F1}",
+                        accuracy: $"{qualityControl.Accuracy:P1}",
+                        calculatedConcentration: SignificantFigures.Format(qualityControl.CalculatedConcentration.GetValueOrDefault(), 3),
+                        nominalConcentration: $"{qualityControl.NominalConcentration:F0}",
+                        isActive: qualityControl.IsActive));
             }
         }
 

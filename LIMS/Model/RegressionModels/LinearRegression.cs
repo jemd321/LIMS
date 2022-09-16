@@ -215,7 +215,8 @@ namespace LIMS.Model.RegressionModels
 
         private double? CalculateAccuracy(double? observedConcentration, double? nominalConcentration)
         {
-            return nominalConcentration == 0 ? null : ((observedConcentration - nominalConcentration) / nominalConcentration) * 100;
+            // expressed without *100, as string formating as a percantage will be applied at UI level.
+            return nominalConcentration == 0 ? null : ((observedConcentration - nominalConcentration) / nominalConcentration);
         }
 
         private void CalculateQCPresicion()

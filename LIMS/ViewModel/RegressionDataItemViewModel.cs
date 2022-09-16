@@ -2,69 +2,120 @@
 
 namespace LIMS.ViewModel
 {
+    /// <summary>
+    /// ViewModel to expose individual data rows for samples, for display in a datagrid control.
+    /// </summary>
     public class RegressionDataItemViewModel : ViewModelBase
     {
-        // refactor to take from model rather than store in private backing field.
         private int _sampleNumber;
         private string _sampleName;
         private SampleType _sampleType;
-        private double? _instrumentResponse;
-        private double? _accuracy;
+        private string _instrumentResponse;
+        private string _calculatedConcentration;
+        private string _nominalConcentration;
+        private string _accuracy;
         private bool _isActive;
-        private double? _calculatedConcentration;
-        private double? _nominalConcentration;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegressionDataItemViewModel"/> class.
+        /// </summary>
+        /// <param name="sampleNumber">The sequence number of the sample - ie. the position in the order that the run was acquired.</param>
+        /// <param name="sampleName">The name of the sample.</param>
+        /// <param name="sampleType">The category of the sample.</param>
+        /// <param name="instrumentResponse">The instrument response of the sample - ie. the peak area.</param>
+        /// <param name="calculatedConcentration">The concentration calculated by the regression.</param>
+        /// <param name="nominalConcentration">The known concentration that the sample was prepared at.</param>
+        /// <param name="accuracy">The bias of the sample relative to the nominal concentration in percent.</param>
+        /// <param name="isActive">A value indicating whether the sample should be included in the regression and/or statistical calculations.</param>
+        public RegressionDataItemViewModel(
+            int sampleNumber,
+            string sampleName,
+            SampleType sampleType,
+            string instrumentResponse,
+            string calculatedConcentration,
+            string nominalConcentration,
+            string accuracy,
+            bool isActive)
+        {
+            SampleNumber = sampleNumber;
+            SampleName = sampleName;
+            SampleType = sampleType;
+            InstrumentResponse = instrumentResponse;
+            CalculatedConcentration = calculatedConcentration;
+            NominalConcentration = nominalConcentration;
+            Accuracy = accuracy;
+            IsActive = isActive;
+        }
+
+        /// <summary>
+        /// Gets the sequence number of the sample - ie. the position in the order that the run was acquired.
+        /// </summary>
         public int SampleNumber
         {
             get => _sampleNumber;
-            set
+            private set
             {
                 _sampleNumber = value;
                 RaisePropertyChanged();
             }
         }
 
+        /// <summary>
+        /// Gets the name of the sample.
+        /// </summary>
         public string SampleName
         {
             get => _sampleName;
-            set
+            private set
             {
                 _sampleName = value;
                 RaisePropertyChanged();
             }
         }
 
+        /// <summary>
+        /// Gets the category of the sample.
+        /// </summary>
         public SampleType SampleType
         {
             get => _sampleType;
-            set
+            private set
             {
                 _sampleType = value;
                 RaisePropertyChanged();
             }
         }
 
-        public double? InstrumentResponse
+        /// <summary>
+        /// Gets the instrument response of the sample - ie. the peak area.
+        /// </summary>
+        public string InstrumentResponse
         {
             get => _instrumentResponse;
-            set
+            private set
             {
                 _instrumentResponse = value;
                 RaisePropertyChanged();
             }
         }
 
-        public double? CalculatedConcentration
+        /// <summary>
+        /// Gets the concentration calculated by the regression.
+        /// </summary>
+        public string CalculatedConcentration
         {
             get => _calculatedConcentration;
-            set
+            private set
             {
                 _calculatedConcentration = value;
                 RaisePropertyChanged();
             }
         }
 
-        public double? NominalConcentration
+        /// <summary>
+        /// Gets or sets the known concentration that the sample was prepared at.
+        /// </summary>
+        public string NominalConcentration
         {
             get => _nominalConcentration;
             set
@@ -74,16 +125,22 @@ namespace LIMS.ViewModel
             }
         }
 
-        public double? Accuracy
+        /// <summary>
+        /// Gets the bias of the sample relative to the nominal concentration in percent.
+        /// </summary>
+        public string Accuracy
         {
             get => _accuracy;
-            set
+            private set
             {
                 _accuracy = value;
                 RaisePropertyChanged();
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the sample should be included in the regression and/or statistical calculations.
+        /// </summary>
         public bool IsActive
         {
             get => _isActive;
