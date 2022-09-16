@@ -6,38 +6,88 @@
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}"
+                   TargetType="DataGridColumnHeader">
+                <Setter Property="ContentTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+
+                            <TextBlock Text="{Binding}"
+                                       TextAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       MinWidth="20" />
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+    </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="0" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <DataGrid Grid.Row="0"
+        <TextBlock Text="Calibration Standards"
+                   FontWeight="Bold"
+                   FontSize="20"
+                   Margin="10,5,0,5" />
+        <DataGrid Grid.Row="1"
                   ItemsSource="{Binding Standards}"
                   AutoGenerateColumns="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Sample Number"
-                                    Binding="{Binding SampleNumber}" />
+                                    Binding="{Binding SampleNumber}"
+                                    Width="75" />
                 <DataGridTextColumn Header="Sample Name"
                                     Binding="{Binding SampleName}" />
                 <DataGridTextColumn Header="Peak Area"
                                     Binding="{Binding InstrumentResponse}" />
                 <DataGridTextColumn Header="Calculated Concentration"
-                                    Binding="{Binding CalculatedConcentration}" />
+                                    Binding="{Binding CalculatedConcentration}"
+                                    Width="125" />
                 <DataGridTextColumn Header="Nominal Concentration"
-                                    Binding="{Binding NominalConcentration}" />
+                                    Binding="{Binding NominalConcentration}"
+                                    Width="125" />
                 <DataGridTextColumn Header="Accuracy"
                                     Binding="{Binding Accuracy}" />
                 <DataGridCheckBoxColumn Header="Included"
-                                    Binding="{Binding IsActive}" />
+                                        Binding="{Binding IsActive}" />
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid Grid.Row="1"
-                  ItemsSource="{Binding QualityControls}">
-
+        <TextBlock Grid.Row="2"
+            Text="Quality Controls"
+                   FontWeight="Bold"
+                   FontSize="20"
+                   Margin="10,5,0,5" />
+        <DataGrid Grid.Row="3"
+                  ItemsSource="{Binding QualityControls}"
+                  AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Sample Number"
+                                    Binding="{Binding SampleNumber}"
+                                    Width="75" />
+                <DataGridTextColumn Header="Sample Name"
+                                    Binding="{Binding SampleName}" />
+                <DataGridTextColumn Header="Peak Area"
+                                    Binding="{Binding InstrumentResponse}" />
+                <DataGridTextColumn Header="Calculated Concentration"
+                                    Binding="{Binding CalculatedConcentration}"
+                                    Width="125" />
+                <DataGridTextColumn Header="Nominal Concentration"
+                                    Binding="{Binding NominalConcentration}"
+                                    Width="125" />
+                <DataGridTextColumn Header="Accuracy"
+                                    Binding="{Binding Accuracy}" />
+                <DataGridCheckBoxColumn Header="Included"
+                                        Binding="{Binding IsActive}" />
+            </DataGrid.Columns>
         </DataGrid>
     </Grid>
 </UserControl>
