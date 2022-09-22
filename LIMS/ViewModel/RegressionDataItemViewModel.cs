@@ -1,4 +1,5 @@
 ﻿using System;
+using LIMS.CustomEvent;
 using LIMS.Enums;
 
 namespace LIMS.ViewModel
@@ -51,7 +52,7 @@ namespace LIMS.ViewModel
         /// <summary>
         /// Event handler for an event signalling that the user has activated or deactivated a standard or QC.
         /// </summary>
-        public event EventHandler RegressionDataChanged;
+        public event EventHandler<RegressionChangedEventArgs> RegressionDataChanged;
 
         /// <summary>
         /// Gets the sequence number of the sample - ie. the position in the order that the run was acquired.
@@ -154,7 +155,7 @@ namespace LIMS.ViewModel
             {
                 _isActive = value;
                 RaisePropertyChanged();
-                RaiseRegressionDataChanged(EventArgs.Empty);
+                RaiseRegressionDataChanged(new RegressionChangedEventArgs { SampleNumber = SampleNumber, IsActive = IsActive });
             }
         }
 
@@ -162,8 +163,10 @@ namespace LIMS.ViewModel
         /// Raises an event signalling that the user has activated or deactivated a standard or QC.
         /// </summary>
         /// <param name="e">event args.</param>
-        protected virtual void RaiseRegressionDataChanged(EventArgs e)
+        protected virtual void RaiseRegressionDataChanged(RegressionChangedEventArgs e)
         {
+            e.SampleNumber = SampleNumber;
+            e.IsActive = IsActive;
             RegressionDataChanged?.Invoke(this, e);
         }
     }
