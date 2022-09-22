@@ -18,8 +18,8 @@
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="200" />
         </Grid.ColumnDefinitions>
         <TabControl Grid.Column="0">
             <TabItem Header="Data"
@@ -27,27 +27,23 @@
                 <ContentControl Content="{Binding RegressionDataViewModel}" />
 
             </TabItem>
-            <TabItem Header="Statistics">
-                <view:RegressionStatisticsView>
-
-                </view:RegressionStatisticsView>
-            </TabItem>
             <TabItem Header="Calibration Line">
                 <ContentControl Content="{Binding RegressionGraphViewModel}" />
             </TabItem>
-            <TabItem Header="IStd Plot">
-                <view:RegressionISPlotView>
-
-                </view:RegressionISPlotView>
-            </TabItem>
         </TabControl>
-        <StackPanel Grid.Column="1"
-                    Margin="5">
-            <TextBlock Text="Regression Information"/>
-            <TextBlock Text="Regression Type" />
-            <ComboBox />
-            <TextBlock Text="Weighting Factor" />
-            <ComboBox />
-        </StackPanel>
+        <Grid Grid.Column="1"
+              Background="{DynamicResource MahApps.Brushes.Gray10}">
+            <StackPanel Grid.Column="1"
+                        Margin="5">
+                <TextBlock Text="Regression Information"
+                           Foreground="{DynamicResource MahApps.Brushes.Accent}"
+                           FontSize="17"
+                           Margin="10,2,0,5" />
+                <TextBlock Text="Regression Type" />
+                <ComboBox />
+                <TextBlock Text="Weighting Factor" />
+                <ComboBox />
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

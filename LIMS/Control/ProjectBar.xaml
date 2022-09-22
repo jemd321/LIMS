@@ -23,7 +23,7 @@
                     Value="Center" />
         </Style>
     </UserControl.Resources>
-    <Grid>
+    <Grid Background="{DynamicResource MahApps.Brushes.Gray10}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="100" />

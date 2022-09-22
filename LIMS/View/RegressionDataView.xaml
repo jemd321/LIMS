@@ -35,9 +35,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <TextBlock Text="Calibration Standards"
-                   FontWeight="Bold"
+                   Foreground="{DynamicResource MahApps.Brushes.Accent}"
                    FontSize="20"
-                   Margin="10,5,0,5" />
+                   Margin="10,2,0,5" />
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding Standards}"
                   AutoGenerateColumns="False">
@@ -63,7 +63,7 @@
         </DataGrid>
         <TextBlock Grid.Row="2"
             Text="Quality Controls"
-                   FontWeight="Bold"
+                   Foreground="{DynamicResource MahApps.Brushes.Accent}"
                    FontSize="20"
                    Margin="10,5,0,5" />
         <DataGrid Grid.Row="3"
