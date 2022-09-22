@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using LIMS.Command;
 using LIMS.Data;
 using LIMS.Dialog;
@@ -20,6 +21,7 @@ namespace LIMS.ViewModel
         private Project _selectedProject;
         private ObservableCollection<Project> _projects;
         private string _openAnalyticalRunName;
+        private bool _canCurrentProjectBeChanged;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainViewModel"/> class.
@@ -39,10 +41,11 @@ namespace LIMS.ViewModel
             _dialogService = dialogService;
             RegressionViewModel = regressionViewModel;
 
-            CreateNewProjectCommand = new DelegateCommand(CreateNewProject);
+            CreateNewProjectCommand = new DelegateCommand(CreateNewProject, CanCreateNewProjectExecute);
             OpenAnalyticalRunCommand = new DelegateCommand(OpenAnalyticalRun, CanOpenAnalyticalRunExecute);
             ImportAnalystFileCommand = new DelegateCommand(ImportAnalystFile, CanImportAnalystFileExecute);
             SaveAnalyticalRunCommand = new DelegateCommand(SaveAnalyticalRun, CanSaveAnalyticalRunExecute);
+            CloseAnalyticalRunCommand = new DelegateCommand(CloseAnalyticalRun, CanCloseAnalyticalRunExecute);
         }
 
         /// <summary>
@@ -108,6 +111,32 @@ namespace LIMS.ViewModel
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the currently open project can be changed - should be disabled when a run is open.
+        /// </summary>
+        public bool CanCurrentProjectBeChanged
+        {
+            get => _canCurrentProjectBeChanged;
+            set
+            {
+                _canCurrentProjectBeChanged = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the 'close run' button is visibile - should only be visible when a run is open.
+        /// </summary>
+        public bool CloseRunButtonVisibility
+        {
+            get => _canCurrentProjectBeChanged;
+            set
+            {
+                _canCurrentProjectBeChanged = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        /// <summary>
         /// Gets the command to open the project creation and deletion dialog.
         /// </summary>
         public DelegateCommand CreateNewProjectCommand { get; }
@@ -127,6 +156,11 @@ namespace LIMS.ViewModel
         /// </summary>
         public DelegateCommand SaveAnalyticalRunCommand { get; }
 
+        /// <summary>
+        /// Gets the command to close the currently open analytical run.
+        /// </summary>
+        public DelegateCommand CloseAnalyticalRunCommand { get; }
+
         /// <inheritdoc/>
         public override void Load()
         {
@@ -137,17 +171,42 @@ namespace LIMS.ViewModel
 
         private bool CanOpenAnalyticalRunExecute(object parameter)
         {
-            return SelectedProject is not null;
+            return SelectedProject is not null && SelectedViewModel is null;
         }
 
         private bool CanImportAnalystFileExecute(object arg)
         {
-            return SelectedProject is not null;
+            return SelectedProject is not null && SelectedViewModel is null;
         }
 
         private bool CanSaveAnalyticalRunExecute(object arg)
         {
-            return SelectedProject is not null && RegressionViewModel.OpenAnalyticalRun is not null;
+            return (SelectedProject is not null && RegressionViewModel.OpenAnalyticalRun is not null) && SelectedViewModel is not null;
+        }
+
+        private bool CanCreateNewProjectExecute(object parameter)
+        {
+            bool canExecute;
+            canExecute = string.IsNullOrEmpty(OpenAnalyticalRunName);
+            CanCurrentProjectBeChanged = canExecute;
+            return canExecute;
+        }
+
+        private bool CanCloseAnalyticalRunExecute(object arg)
+        {
+            bool canExecute;
+            canExecute = !string.IsNullOrEmpty(OpenAnalyticalRunName);
+            CloseRunButtonVisibility = canExecute;
+            return canExecute;
+        }
+
+        private void UpdateProjectBarButtonAvailability()
+        {
+            CreateNewProjectCommand?.RaiseCanExecuteChanged();
+            OpenAnalyticalRunCommand?.RaiseCanExecuteChanged();
+            ImportAnalystFileCommand?.RaiseCanExecuteChanged();
+            SaveAnalyticalRunCommand?.RaiseCanExecuteChanged();
+            CloseAnalyticalRunCommand?.RaiseCanExecuteChanged();
         }
 
         private void CreateNewProject(object parameter)
@@ -174,9 +233,7 @@ namespace LIMS.ViewModel
             var openedAnalyticalRun = _dataService.LoadAnalyticalRun(SelectedProject, selectedAnalyticalRunID);
             SelectedViewModel = (ViewModelBase)RegressionViewModel;
             SelectedViewModel.Load(openedAnalyticalRun);
-
-            // Update availability of save button
-            SaveAnalyticalRunCommand.RaiseCanExecuteChanged();
+            UpdateProjectBarButtonAvailability();
         }
 
         private void SaveAnalyticalRun(object parameter)
@@ -251,8 +308,14 @@ namespace LIMS.ViewModel
                 _dialogService.ShowStringIODialog<ErrorMessageDialogViewModel>(accepted => { }, dialogInput: errorMessage, dialogOutput => { });
             }
 
-            // Update execution status of save command so that successfully imported data can be saved.
-            SaveAnalyticalRunCommand.RaiseCanExecuteChanged();
+            UpdateProjectBarButtonAvailability();
+        }
+
+        private void CloseAnalyticalRun(object parameter)
+        {
+            SelectedViewModel = null;
+            OpenAnalyticalRunName = string.Empty;
+            UpdateProjectBarButtonAvailability();
         }
     }
 }
