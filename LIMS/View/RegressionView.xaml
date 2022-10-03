@@ -15,6 +15,9 @@
         <DataTemplate DataType="{x:Type viewModel:RegressionGraphViewModel}">
             <view:RegressionGraphView />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:RegressionInformationViewModel}">
+            <view:RegressionInformationView />
+        </DataTemplate>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -31,19 +34,8 @@
                 <ContentControl Content="{Binding RegressionGraphViewModel}" />
             </TabItem>
         </TabControl>
-        <Grid Grid.Column="1"
-              Background="{DynamicResource MahApps.Brushes.Gray10}">
-            <StackPanel Grid.Column="1"
-                        Margin="5">
-                <TextBlock Text="Regression Information"
-                           Foreground="{DynamicResource MahApps.Brushes.Accent}"
-                           FontSize="17"
-                           Margin="10,2,0,5" />
-                <TextBlock Text="Regression Type" />
-                <ComboBox ItemsSource="{Binding RegressionType}"/>
-                <TextBlock Text="Weighting Factor" />
-                <ComboBox ItemsSource="{Binding WeightingFactor}"/>
-            </StackPanel>
+        <Grid Grid.Column="1">
+            <ContentControl Content="{Binding RegressionInformationViewModel}" />
         </Grid>
     </Grid>
 </UserControl>

@@ -4,9 +4,9 @@ namespace LIMS.ViewModel
 {
     public interface IRegressionInformationViewModel
     {
-        double Gradient { get; set; }
-        RegressionType RegressionType { get; set; }
-        WeightingFactor WeightingFactor { get; set; }
-        double YIntercept { get; set; }
+        double ATerm { get; set; }
+        RegressionType SelectedRegressionType { get; set; }
+        WeightingFactor SelectedWeightingFactor { get; set; }
+        double BTerm { get; set; }
     }
 }

@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="LIMS.View.RegressionInformationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LIMS.View"
+             mc:Ignorable="d"
+             d:DesignHeight="450"
+             d:DesignWidth="200">
+    <Grid Background="{DynamicResource MahApps.Brushes.Gray10}">
+        <StackPanel Grid.Column="1"
+                    Margin="5">
+            <Label Content="Regression Settings"
+                   Foreground="{DynamicResource MahApps.Brushes.Accent}"
+                   FontSize="17" />
+            <Label Content="Regression Type" />
+            <ComboBox ItemsSource="{Binding RegressionTypesCaptioned}"
+                      DisplayMemberPath="Key"
+                      SelectedValuePath="Value"
+                      SelectedValue="{Binding SelectedRegressionType}" />
+            <Label Content="Weighting Factor" />
+            <ComboBox ItemsSource="{Binding WeightingFactorsCaptioned}"
+                      DisplayMemberPath="Key"
+                      SelectedValuePath="Value"
+                      SelectedValue="{Binding SelectedWeightingFactor}" />
+            <Label Content="Regression Details:"
+                   Foreground="{DynamicResource MahApps.Brushes.Accent}"
+                   FontSize="13" />
+            <Grid Margin="10 0 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock Text="Equation:" />
+                <TextBlock Text="{Binding Equation}"
+                           Grid.Column="1" />
+                <TextBlock Text="a (Gradient):"
+                           Grid.Row="1" />
+                <TextBlock Text="{Binding ATerm}"
+                           Grid.Column="1"
+                           Grid.Row="1" />
+                <TextBlock Text="b (Y Intercept):"
+                           Grid.Row="2" />
+                <TextBlock Text="{Binding BTerm}"
+                           Grid.Column="1"
+                           Grid.Row="2" />
+            </Grid>
+
+        </StackPanel>
+    </Grid>
+</UserControl>

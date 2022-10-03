@@ -8,6 +8,7 @@ namespace LIMS.Model.RegressionModels
         public LinearRegression(RegressionData regressionData, WeightingFactor weightingFactor)
         {
             RegressionData = regressionData;
+            WeightingFactor = weightingFactor;
             UpdateRegression();
         }
 

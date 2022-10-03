@@ -29,6 +29,8 @@ namespace LIMS
 
             services.AddTransient<MainViewModel>();
             services.AddTransient<IRegressionViewModel, RegressionViewModel>();
+            services.AddTransient<IRegressionDataViewModel, RegressionDataViewModel>();
+            services.AddTransient<IRegressionInformationViewModel, RegressionInformationViewModel>();
             services.AddTransient<IRegressionGraphViewModel, RegressionGraphViewModel>();
 
             services.AddSingleton<IDialogService, DialogService>();
@@ -36,7 +38,6 @@ namespace LIMS
             services.AddTransient<IDataImporter, AnalystDataImporter>();
             services.AddTransient<IRegressionFactory, RegressionFactory>();
             services.AddTransient<IDataService, FileDataService>();
-            services.AddSingleton<IDialogService, DialogService>();
             services.AddTransient<IFileSystem, FileSystem>();
 
             services.AddTransient<ProjectCreationDialogViewModel>();
