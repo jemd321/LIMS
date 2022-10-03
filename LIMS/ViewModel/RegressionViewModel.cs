@@ -1,4 +1,5 @@
-﻿using LIMS.Factory;
+﻿using LIMS.Enums;
+using LIMS.Factory;
 using LIMS.Model;
 using LIMS.Model.RegressionModels;
 
@@ -12,6 +13,7 @@ namespace LIMS.ViewModel
         private readonly IRegressionFactory _regressionFactory;
         private IRegressionDataViewModel _regressionDataViewModel;
         private IRegressionGraphViewModel _regressionGraphViewModel;
+        private IRegressionInformationViewModel _regressionInformationViewModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RegressionViewModel"/> class.
@@ -20,6 +22,15 @@ namespace LIMS.ViewModel
         public RegressionViewModel(IRegressionFactory regressionFactory)
         {
             _regressionFactory = regressionFactory;
+        }
+
+        /// <summary>
+        /// Gets or sets the viewModel that controls the regression information pane.
+        /// </summary>
+        public IRegressionInformationViewModel RegressionInformationViewModel
+        {
+            get { return _regressionInformationViewModel; }
+            set { _regressionInformationViewModel = value; }
         }
 
         /// <summary>
@@ -79,8 +90,16 @@ namespace LIMS.ViewModel
                 RegressionDataViewModel.RegressionUpdated -= OnRegressionUpdated;
             }
 
+            RegressionType regressionType = Regression.RegressionType;
+            WeightingFactor weightingFactor = Regression.WeightingFactor;
+            double gradient = Regression.Gradient.GetValueOrDefault();
+            double yIntercept = Regression.YIntercept.GetValueOrDefault();
+
+            RegressionInformationViewModel = new RegressionInformationViewModel(regressionType, weightingFactor, gradient, yIntercept);
+
             RegressionDataViewModel = new RegressionDataViewModel(Regression);
             RegressionDataViewModel.RegressionUpdated += OnRegressionUpdated;
+
             RegressionGraphViewModel = new RegressionGraphViewModel(Regression);
             RegressionGraphViewModel.DrawGraph();
         }

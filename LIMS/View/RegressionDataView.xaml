@@ -40,7 +40,9 @@
                    Margin="10,2,0,5" />
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding Standards}"
-                  AutoGenerateColumns="False">
+                  AutoGenerateColumns="False"
+                  CanUserSortColumns="False"
+                  CanUserResizeRows="False">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Sample Number"
                                     Binding="{Binding SampleNumber}"
@@ -58,7 +60,7 @@
                 <DataGridTextColumn Header="Accuracy"
                                     Binding="{Binding Accuracy}" />
                 <DataGridCheckBoxColumn Header="Included"
-                                        Binding="{Binding IsActive}" />
+                                        Binding="{Binding IsActive, UpdateSourceTrigger=PropertyChanged}" />
             </DataGrid.Columns>
         </DataGrid>
         <TextBlock Grid.Row="2"

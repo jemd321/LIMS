@@ -6,6 +6,8 @@ namespace LIMS.Model.RegressionModels
     {
         public RegressionData RegressionData { get; private protected set; }
 
+        public RegressionType RegressionType { get; private protected set; }
+
         public WeightingFactor WeightingFactor { get; private protected set; }
 
         public double? Gradient { get; private protected set; }

@@ -40,9 +40,9 @@
                            FontSize="17"
                            Margin="10,2,0,5" />
                 <TextBlock Text="Regression Type" />
-                <ComboBox />
+                <ComboBox ItemsSource="{Binding RegressionType}"/>
                 <TextBlock Text="Weighting Factor" />
-                <ComboBox />
+                <ComboBox ItemsSource="{Binding WeightingFactor}"/>
             </StackPanel>
         </Grid>
     </Grid>

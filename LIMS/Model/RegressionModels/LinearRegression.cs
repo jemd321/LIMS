@@ -11,6 +11,8 @@ namespace LIMS.Model.RegressionModels
             UpdateRegression();
         }
 
+        public new RegressionType RegressionType => RegressionType.Linear;
+
         public override void UpdateRegression()
         {
             switch (WeightingFactor)
