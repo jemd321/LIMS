@@ -37,7 +37,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <TextBlock Text="Equation:" />
-                <TextBlock Text="{Binding Equation}"
+                <TextBlock Text="{Binding RegressionEquation}"
                            Grid.Column="1" />
                 <TextBlock Text="a (Gradient):"
                            Grid.Row="1" />

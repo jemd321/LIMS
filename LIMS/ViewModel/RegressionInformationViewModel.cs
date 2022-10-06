@@ -1,5 +1,5 @@
-﻿using LIMS.Enums;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using LIMS.Enums;
 
 namespace LIMS.ViewModel
 {
@@ -10,8 +10,8 @@ namespace LIMS.ViewModel
     {
         private RegressionType _selectedRegressionType;
         private WeightingFactor _selectedWeightingFactor;
-        private double _aTerm;
-        private double _bTerm;
+        private string _aTerm;
+        private string _bTerm;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RegressionInformationViewModel"/> class.
@@ -28,8 +28,8 @@ namespace LIMS.ViewModel
         {
             _selectedRegressionType = regressionType;
             _selectedWeightingFactor = weightingFactor;
-            _aTerm = aTerm;
-            _bTerm = bTerm;
+            ATerm = $"{aTerm:F3}";
+            BTerm = $"{bTerm:F3}";
         }
 
         /// <summary>
@@ -77,10 +77,20 @@ namespace LIMS.ViewModel
         }
 
         /// <summary>
+        /// Gets the equation of the regression based on the selected regression type.
+        /// </summary>
+        public string RegressionEquation => SelectedRegressionType switch
+        {
+            // Add equations for further regression types when implemented.
+            RegressionType.Linear => "y = ax + b",
+            _ => "Unknown",
+        };
+
+        /// <summary>
         /// Gets or sets the 'A' term of the regression equation.
         /// </summary>
         /// <remarks>In a linear regression the A term is the gradient.</remarks>
-        public double ATerm
+        public string ATerm
         {
             get => _aTerm;
             set
@@ -94,7 +104,7 @@ namespace LIMS.ViewModel
         /// Gets or sets the 'B' term of the regression equation.
         /// </summary>
         /// <remarks>In a linear regression the B term is the Y intercept.</remarks>
-        public double BTerm
+        public string BTerm
         {
             get => _bTerm;
             set
