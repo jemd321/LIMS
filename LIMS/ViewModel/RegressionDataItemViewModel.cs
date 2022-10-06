@@ -165,8 +165,6 @@ namespace LIMS.ViewModel
         /// <param name="e">event args.</param>
         protected virtual void RaiseRegressionDataChanged(RegressionChangedEventArgs e)
         {
-            e.SampleNumber = SampleNumber;
-            e.IsActive = IsActive;
             RegressionDataChanged?.Invoke(this, e);
         }
     }

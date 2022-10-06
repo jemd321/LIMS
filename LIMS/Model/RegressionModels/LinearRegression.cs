@@ -3,8 +3,16 @@ using LIMS.Enums;
 
 namespace LIMS.Model.RegressionModels
 {
+    /// <summary>
+    /// A class representing a linear regression, allowing the calculation of the line equation, standard & QC accuracy and unknown concentration. Inherits from <see cref="Regression"/>.
+    /// </summary>
     public class LinearRegression : Regression
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LinearRegression"/> class.
+        /// </summary>
+        /// <param name="regressionData">The <see cref="RegressionData"/> that will be used to perform the regression.</param>
+        /// <param name="weightingFactor">The weighting factor to be applied to the regression. By default this is 1/x^2 since this is the most common.</param>
         public LinearRegression(RegressionData regressionData, WeightingFactor weightingFactor)
         {
             RegressionData = regressionData;
@@ -12,8 +20,15 @@ namespace LIMS.Model.RegressionModels
             UpdateRegression();
         }
 
-        public new RegressionType RegressionType => RegressionType.Linear;
+        /// <summary>
+        /// Gets the type of the regression.
+        /// </summary>
+        public static new RegressionType RegressionType => RegressionType.Linear;
 
+        /// <summary>
+        /// Re-calculates all parameters of the regression. If the regressionData is updated this method should be called to recalculate.
+        /// </summary>
+        /// <exception cref="ArgumentException">Thrown when an invalid weighting factor is supplied to the regression.</exception>
         public override void UpdateRegression()
         {
             switch (WeightingFactor)
@@ -21,10 +36,14 @@ namespace LIMS.Model.RegressionModels
                 case WeightingFactor.Unweighted:
                     PerformUnweightedRegression();
                     break;
-                case WeightingFactor.OneOverXHalf | WeightingFactor.OneOverX | WeightingFactor.OneOverXSquared:
+                case WeightingFactor.OneOverXHalf:
+                case WeightingFactor.OneOverX:
+                case WeightingFactor.OneOverXSquared:
                     PerformXWeightedRegression();
                     break;
-                case WeightingFactor.OneOverYHalf | WeightingFactor.OneOverY | WeightingFactor.OneOverYSquared:
+                case WeightingFactor.OneOverYHalf:
+                case WeightingFactor.OneOverY:
+                case WeightingFactor.OneOverYSquared:
                     PerformYWeightedRegression();
                     break;
                 default:
@@ -33,7 +52,13 @@ namespace LIMS.Model.RegressionModels
 
             UpdateAllCalculatedConcentrations();
             CalculateStandardAndQCAccuracy();
-            CalculateQCPresicion();
+        }
+
+#pragma warning disable SA1119 // Statement should not use unnecessary parenthesis - suppressed since paranthesis make the maths clearer here.
+        private static double? CalculateAccuracy(double? observedConcentration, double? nominalConcentration)
+        {
+            // expressed without *100, as string formating as a percantage will be applied at UI level.
+            return nominalConcentration == 0 ? null : ((observedConcentration - nominalConcentration) / nominalConcentration);
         }
 
         private void PerformUnweightedRegression()
@@ -65,22 +90,13 @@ namespace LIMS.Model.RegressionModels
 
         private void PerformXWeightedRegression()
         {
-            Func<double?, double?> wFactorEquation;
-            switch (WeightingFactor)
+            Func<double?, double?> wFactorEquation = WeightingFactor switch
             {
-                case WeightingFactor.OneOverXHalf:
-                    wFactorEquation = x => Math.Sqrt((double)x);
-                    break;
-                case WeightingFactor.OneOverX:
-                    wFactorEquation = x => x;
-                    break;
-                case WeightingFactor.OneOverXSquared:
-                    wFactorEquation = x => x * x;
-                    break;
-                default:
-                    throw new ArgumentException("Invalid Weighting factor during gradient calculation");
-            }
-
+                WeightingFactor.OneOverXHalf => x => Math.Sqrt((double)x),
+                WeightingFactor.OneOverX => x => x,
+                WeightingFactor.OneOverXSquared => x => x * x,
+                _ => throw new ArgumentException("Invalid Weighting factor during gradient calculation"),
+            };
             double? wxSum = 0;
             double? wySum = 0;
             double? wxySum = 0;
@@ -110,22 +126,13 @@ namespace LIMS.Model.RegressionModels
 
         private void PerformYWeightedRegression()
         {
-            Func<double?, double?> wFactorEquation;
-            switch (WeightingFactor)
+            Func<double?, double?> wFactorEquation = WeightingFactor switch
             {
-                case WeightingFactor.OneOverYHalf:
-                    wFactorEquation = y => Math.Sqrt((double)y);
-                    break;
-                case WeightingFactor.OneOverY:
-                    wFactorEquation = y => y;
-                    break;
-                case WeightingFactor.OneOverYSquared:
-                    wFactorEquation = y => y * y;
-                    break;
-                default:
-                    throw new ArgumentException("Invalid Weighting factor during gradient calculation");
-            }
-
+                WeightingFactor.OneOverYHalf => y => Math.Sqrt((double)y),
+                WeightingFactor.OneOverY => y => y,
+                WeightingFactor.OneOverYSquared => y => y * y,
+                _ => throw new ArgumentException("Invalid Weighting factor during gradient calculation"),
+            };
             double? wxSum = 0;
             double? wySum = 0;
             double? wxySum = 0;
@@ -168,7 +175,6 @@ namespace LIMS.Model.RegressionModels
 
         private void CalculateWeightedGradient(double? wxSum, double? wySum, double? wxySum, double? wxSquaredSum, double? wSum)
         {
-
             Gradient =
                 ((wSum * wxySum) - (wxSum * wySum)) /
                 ((wSum * wxSquaredSum) - (wxSum * wxSum));
@@ -214,17 +220,6 @@ namespace LIMS.Model.RegressionModels
             {
                 qualityControl.Accuracy = CalculateAccuracy(qualityControl.CalculatedConcentration, qualityControl.NominalConcentration);
             }
-        }
-
-        private double? CalculateAccuracy(double? observedConcentration, double? nominalConcentration)
-        {
-            // expressed without *100, as string formating as a percantage will be applied at UI level.
-            return nominalConcentration == 0 ? null : ((observedConcentration - nominalConcentration) / nominalConcentration);
-        }
-
-        private void CalculateQCPresicion()
-        {
-            // TODO
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using LIMS.Enums;
+﻿using System;
+using LIMS.CustomEvent;
+using LIMS.Enums;
 
 namespace LIMS.ViewModel
 {
@@ -7,6 +9,11 @@ namespace LIMS.ViewModel
     /// </summary>
     public interface IRegressionInformationViewModel
     {
+        /// <summary>
+        /// Event handler for the regression information changed event, which signals that the user has changed the regression type or weighting factor.
+        /// </summary>
+        public event EventHandler<RegressionInformationChangedEventArgs> RegressionInformationChanged;
+
         /// <summary>
         /// Gets or sets the currently selected type of the regression.
         /// </summary>

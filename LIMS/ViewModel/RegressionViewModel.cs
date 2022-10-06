@@ -1,4 +1,5 @@
-﻿using LIMS.Enums;
+﻿using LIMS.CustomEvent;
+using LIMS.Enums;
 using LIMS.Factory;
 using LIMS.Model;
 using LIMS.Model.RegressionModels;
@@ -63,7 +64,6 @@ namespace LIMS.ViewModel
             }
         }
 
-
         /// <summary>
         /// Gets or sets the currently open analytical run.
         /// </summary>
@@ -90,28 +90,48 @@ namespace LIMS.ViewModel
 
         private void LoadChildViewModels()
         {
-            if (RegressionDataViewModel is not null)
-            {
-                RegressionDataViewModel.RegressionUpdated -= OnRegressionUpdated;
-            }
+            UnsubscribeFromEvents();
 
             RegressionType regressionType = Regression.RegressionType;
             WeightingFactor weightingFactor = Regression.WeightingFactor;
             double gradient = Regression.Gradient.GetValueOrDefault();
             double yIntercept = Regression.YIntercept.GetValueOrDefault();
 
-            RegressionInformationViewModel = new RegressionInformationViewModel(regressionType, weightingFactor, gradient, yIntercept);
-
             RegressionDataViewModel = new RegressionDataViewModel(Regression);
             RegressionDataViewModel.RegressionUpdated += OnRegressionUpdated;
 
             RegressionGraphViewModel = new RegressionGraphViewModel(Regression);
             RegressionGraphViewModel.DrawGraph();
+
+            RegressionInformationViewModel = new RegressionInformationViewModel(regressionType, weightingFactor, gradient, yIntercept);
+            RegressionInformationViewModel.RegressionInformationChanged += OnRegressionInformationChanged;
+        }
+
+        private void UnsubscribeFromEvents()
+        {
+            // Unsubscribe from events to prevent memory leaks when updating the regression.
+            if (RegressionDataViewModel is not null)
+            {
+                RegressionDataViewModel.RegressionUpdated -= OnRegressionUpdated;
+            }
+
+            if (RegressionInformationViewModel is not null)
+            {
+                RegressionInformationViewModel.RegressionInformationChanged -= OnRegressionInformationChanged;
+            }
         }
 
         private void OnRegressionUpdated(object sender, System.EventArgs e)
         {
             Regression.UpdateRegression();
+            LoadChildViewModels();
+        }
+
+        private void OnRegressionInformationChanged(object sender, RegressionInformationChangedEventArgs e)
+        {
+            var userSelectedRegressionType = e.RegressionType;
+            var userSelectedWeightingFactor = e.WeightingFactor;
+            Regression = _regressionFactory.ConstructRegression(Regression.RegressionData, userSelectedRegressionType, userSelectedWeightingFactor);
             LoadChildViewModels();
         }
     }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using LIMS.CustomEvent;
 using LIMS.Enums;
 
 namespace LIMS.ViewModel
@@ -33,6 +35,11 @@ namespace LIMS.ViewModel
         }
 
         /// <summary>
+        /// Event handler for the regression information changed event, which signals that the user has changed the regression type or weighting factor.
+        /// </summary>
+        public event EventHandler<RegressionInformationChangedEventArgs> RegressionInformationChanged;
+
+        /// <summary>
         /// Gets a dictionary that displays the available regression types with a caption that can be displayed by a combobox.
         /// </summary>
         public Dictionary<string, RegressionType> RegressionTypesCaptioned { get; } = new()
@@ -47,7 +54,13 @@ namespace LIMS.ViewModel
         public Dictionary<string, WeightingFactor> WeightingFactorsCaptioned { get; } = new()
         {
             // Add other weighting factors when implemented.
+            { "Unweighted", WeightingFactor.Unweighted },
+            { "1/x^1/2", WeightingFactor.OneOverXHalf },
+            { "1/x", WeightingFactor.OneOverX },
             { "1/x\u00B2", WeightingFactor.OneOverXSquared },
+            { "1/y^1/2", WeightingFactor.OneOverYHalf },
+            { "1/y", WeightingFactor.OneOverY },
+            { "1/y\u00B2", WeightingFactor.OneOverYSquared },
         };
 
         /// <summary>
@@ -58,6 +71,12 @@ namespace LIMS.ViewModel
             get => _selectedRegressionType;
             set
             {
+                if (_selectedRegressionType != value)
+                {
+                    RaiseRegressionInformationChanged(
+                        new RegressionInformationChangedEventArgs { RegressionType = value, WeightingFactor = SelectedWeightingFactor });
+                }
+
                 _selectedRegressionType = value;
                 RaisePropertyChanged();
             }
@@ -71,6 +90,12 @@ namespace LIMS.ViewModel
             get => _selectedWeightingFactor;
             set
             {
+                if (_selectedWeightingFactor != value)
+                {
+                    RaiseRegressionInformationChanged(
+                        new RegressionInformationChangedEventArgs { RegressionType = SelectedRegressionType, WeightingFactor = value });
+                }
+
                 _selectedWeightingFactor = value;
                 RaisePropertyChanged();
             }
@@ -112,6 +137,15 @@ namespace LIMS.ViewModel
                 _bTerm = value;
                 RaisePropertyChanged();
             }
+        }
+
+        /// <summary>
+        /// Raises the regression information changed event, signalling that the user has selected a different regression type or weighing factor.
+        /// </summary>
+        /// <param name="e">The <see cref="RegressionInformationChangedEventArgs"/> object containing the regression type and weighting factor changes selected by the user.</param>
+        protected virtual void RaiseRegressionInformationChanged(RegressionInformationChangedEventArgs e)
+        {
+            RegressionInformationChanged?.Invoke(this, e);
         }
     }
 }
