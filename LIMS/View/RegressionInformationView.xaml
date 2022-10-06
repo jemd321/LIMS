@@ -46,7 +46,7 @@
                            Grid.Row="1" />
                 <TextBlock Text="b (Y Intercept):"
                            Grid.Row="2" />
-                <TextBlock Text="{Binding BTerm}"
+                <TextBlock Text="{Binding BTerm, UpdateSourceTrigger=PropertyChanged}"
                            Grid.Column="1"
                            Grid.Row="2" />
             </Grid>

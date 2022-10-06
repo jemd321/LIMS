@@ -25,15 +25,6 @@ namespace LIMS.ViewModel
         }
 
         /// <summary>
-        /// Gets or sets the viewModel that controls the regression information pane.
-        /// </summary>
-        public IRegressionInformationViewModel RegressionInformationViewModel
-        {
-            get { return _regressionInformationViewModel; }
-            set { _regressionInformationViewModel = value; }
-        }
-
-        /// <summary>
         /// Gets or sets the viewModel that controls the regression 'data' view.
         /// </summary>
         public IRegressionDataViewModel RegressionDataViewModel
@@ -58,6 +49,20 @@ namespace LIMS.ViewModel
                 RaisePropertyChanged();
             }
         }
+
+        /// <summary>
+        /// Gets or sets the viewModel that controls the regression 'information' view.
+        /// </summary>
+        public IRegressionInformationViewModel RegressionInformationViewModel
+        {
+            get => _regressionInformationViewModel;
+            set
+            {
+                _regressionInformationViewModel = value;
+                RaisePropertyChanged();
+            }
+        }
+
 
         /// <summary>
         /// Gets or sets the currently open analytical run.
