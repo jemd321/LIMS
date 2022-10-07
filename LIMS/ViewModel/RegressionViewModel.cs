@@ -100,11 +100,17 @@ namespace LIMS.ViewModel
             RegressionDataViewModel = new RegressionDataViewModel(Regression);
             RegressionDataViewModel.RegressionUpdated += OnRegressionUpdated;
 
-            RegressionGraphViewModel = new RegressionGraphViewModel(Regression);
-            RegressionGraphViewModel.DrawGraph();
-
             RegressionInformationViewModel = new RegressionInformationViewModel(regressionType, weightingFactor, gradient, yIntercept);
             RegressionInformationViewModel.RegressionInformationChanged += OnRegressionInformationChanged;
+
+            // Testing
+            if (RegressionGraphViewModel is null)
+            {
+                RegressionGraphViewModel = new RegressionGraphViewModel(Regression);
+            }
+
+            RegressionGraphViewModel.Regression = Regression;
+            RegressionGraphViewModel.DrawGraph();
         }
 
         private void UnsubscribeFromEvents()
@@ -124,6 +130,9 @@ namespace LIMS.ViewModel
         private void OnRegressionUpdated(object sender, System.EventArgs e)
         {
             Regression.UpdateRegression();
+            OpenAnalyticalRun.RegressionData = Regression.RegressionData;
+            OpenAnalyticalRun.RegressionType = Regression.RegressionType;
+            OpenAnalyticalRun.WeightingFactor = Regression.WeightingFactor;
             LoadChildViewModels();
         }
 
