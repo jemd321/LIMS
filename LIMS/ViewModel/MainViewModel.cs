@@ -111,6 +111,11 @@ namespace LIMS.ViewModel
         }
 
         /// <summary>
+        /// Gets a value indicating whether any analytical run is open.
+        /// </summary>
+        public bool IsAnalyticalRunOpen => SelectedViewModel is not null;
+
+        /// <summary>
         /// Gets or sets a value indicating whether the currently open project can be changed - should be disabled when a run is open.
         /// </summary>
         public bool CanCurrentProjectBeChanged
@@ -187,7 +192,9 @@ namespace LIMS.ViewModel
         private bool CanCreateNewProjectExecute(object parameter)
         {
             bool canExecute;
-            canExecute = string.IsNullOrEmpty(OpenAnalyticalRunName);
+
+            // Not allowed to change the project when an analytical run is open.
+            canExecute = !IsAnalyticalRunOpen;
             CanCurrentProjectBeChanged = canExecute;
             return canExecute;
         }
@@ -195,7 +202,9 @@ namespace LIMS.ViewModel
         private bool CanCloseAnalyticalRunExecute(object arg)
         {
             bool canExecute;
-            canExecute = !string.IsNullOrEmpty(OpenAnalyticalRunName);
+
+            // Can only close a run when one is open.
+            canExecute = IsAnalyticalRunOpen;
             CloseRunButtonVisibility = canExecute;
             return canExecute;
         }
