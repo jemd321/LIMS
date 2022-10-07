@@ -132,6 +132,9 @@ namespace LIMS.ViewModel
             var userSelectedRegressionType = e.RegressionType;
             var userSelectedWeightingFactor = e.WeightingFactor;
             Regression = _regressionFactory.ConstructRegression(Regression.RegressionData, userSelectedRegressionType, userSelectedWeightingFactor);
+            OpenAnalyticalRun.RegressionData = Regression.RegressionData;
+            OpenAnalyticalRun.RegressionType = Regression.RegressionType;
+            OpenAnalyticalRun.WeightingFactor = Regression.WeightingFactor;
             LoadChildViewModels();
         }
     }

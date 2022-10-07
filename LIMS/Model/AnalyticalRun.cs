@@ -21,10 +21,10 @@ namespace LIMS.Model
 
         public string ParentProjectID { get; }
 
-        public RegressionData RegressionData { get; }
+        public RegressionData RegressionData { get; set; }
 
-        public RegressionType RegressionType { get; }
+        public RegressionType RegressionType { get; set; }
 
-        public WeightingFactor WeightingFactor { get; }
+        public WeightingFactor WeightingFactor { get; set; }
     }
 }

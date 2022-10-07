@@ -175,8 +175,7 @@ namespace LIMS.Data
             }
 
             string fileContents = _fileSystem.File.ReadAllText(runFilePath);
-            var regressionData = JsonSerializer.Deserialize<RegressionData>(fileContents);
-            return new AnalyticalRun(analyticalRunID, project.ProjectID, regressionData);
+            return JsonSerializer.Deserialize<AnalyticalRun>(fileContents);
         }
 
         /// <summary>
@@ -207,7 +206,7 @@ namespace LIMS.Data
 
             string filePath = _fileSystem.Path.Combine(analyticalRunDirectory, analyticalRun.AnalyticalRunID + ".json");
 
-            string jsonDoc = JsonSerializer.Serialize(analyticalRun.RegressionData);
+            string jsonDoc = JsonSerializer.Serialize(analyticalRun);
             _fileSystem.File.WriteAllText(filePath, jsonDoc);
         }
 
