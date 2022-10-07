@@ -8,7 +8,7 @@ namespace LIMS.Model.RegressionModels
     public class Standard : RegressionDataPoint
     {
         /// <summary>
-        /// Gets the sample type, which is a calibration standard.
+        /// Gets the type of the sample.
         /// </summary>
         public override SampleType SampleType => SampleType.Standard;
     }

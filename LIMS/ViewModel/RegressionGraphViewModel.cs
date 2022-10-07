@@ -154,8 +154,8 @@ namespace LIMS.ViewModel
             const double LINEPOINTINTEVRAL = 0.1;
 
             // Plot the equation of the linear regression as a second series to be displayed at the same time.
-            var a = Regression.Gradient.GetValueOrDefault();
-            var b = Regression.YIntercept.GetValueOrDefault();
+            var a = Regression.ATerm.GetValueOrDefault();
+            var b = Regression.BTerm.GetValueOrDefault();
             double RegressionLineEquation(double x) => (a * x) + b;
 
             const string GREENCOLORFORLINE = "#0fba48";

@@ -94,8 +94,8 @@ namespace LIMS.ViewModel
 
             RegressionType regressionType = Regression.RegressionType;
             WeightingFactor weightingFactor = Regression.WeightingFactor;
-            double gradient = Regression.Gradient.GetValueOrDefault();
-            double yIntercept = Regression.YIntercept.GetValueOrDefault();
+            double gradient = Regression.ATerm.GetValueOrDefault();
+            double yIntercept = Regression.BTerm.GetValueOrDefault();
 
             RegressionDataViewModel = new RegressionDataViewModel(Regression);
             RegressionDataViewModel.RegressionUpdated += OnRegressionUpdated;
@@ -129,7 +129,7 @@ namespace LIMS.ViewModel
 
         private void OnRegressionUpdated(object sender, System.EventArgs e)
         {
-            Regression.UpdateRegression();
+            Regression.RunRegression();
             OpenAnalyticalRun.RegressionData = Regression.RegressionData;
             OpenAnalyticalRun.RegressionType = Regression.RegressionType;
             OpenAnalyticalRun.WeightingFactor = Regression.WeightingFactor;

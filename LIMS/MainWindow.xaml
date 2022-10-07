@@ -10,8 +10,8 @@
                  xmlns:control="clr-namespace:LIMS.Control"
                  mc:Ignorable="d"
                  Title="LIMS"
-                 Height="450"
-                 Width="800">
+                 WindowStartupLocation="CenterScreen"
+                 WindowState="Maximized">
     <Window.Resources>
         <DataTemplate DataType="{x:Type viewModel:RegressionViewModel}">
             <view:RegressionView />

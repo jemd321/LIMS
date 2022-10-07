@@ -17,7 +17,7 @@ namespace LIMS.Model.RegressionModels
         {
             RegressionData = regressionData;
             WeightingFactor = weightingFactor;
-            UpdateRegression();
+            RunRegression();
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace LIMS.Model.RegressionModels
         /// Re-calculates all parameters of the regression. If the regressionData is updated this method should be called to recalculate.
         /// </summary>
         /// <exception cref="ArgumentException">Thrown when an invalid weighting factor is supplied to the regression.</exception>
-        public override void UpdateRegression()
+        public override void RunRegression()
         {
             switch (WeightingFactor)
             {
@@ -162,28 +162,28 @@ namespace LIMS.Model.RegressionModels
 
         private void CalculateUnweightedGradient(double? xSum, double? ySum, double? xySum, double? xSquaredSum, int activeStandards)
         {
-            Gradient =
+            ATerm =
                 ((activeStandards * xySum) - (xSum * ySum)) /
                 ((activeStandards * xSquaredSum) - (xSum * xSum));
         }
 
         private void CalculateUnweightedYIntercept(double? xSum, double? ySum, int activeStandards)
         {
-            YIntercept =
-                (ySum - (Gradient * xSum)) / activeStandards;
+            BTerm =
+                (ySum - (ATerm * xSum)) / activeStandards;
         }
 
         private void CalculateWeightedGradient(double? wxSum, double? wySum, double? wxySum, double? wxSquaredSum, double? wSum)
         {
-            Gradient =
+            ATerm =
                 ((wSum * wxySum) - (wxSum * wySum)) /
                 ((wSum * wxSquaredSum) - (wxSum * wxSum));
         }
 
         private void CalculateWeightedYIntercept(double? wxSum, double? wySum, double? wSum)
         {
-            YIntercept =
-                (wySum - (Gradient * wxSum)) / wSum;
+            BTerm =
+                (wySum - (ATerm * wxSum)) / wSum;
         }
 
         private void UpdateAllCalculatedConcentrations()
@@ -206,7 +206,7 @@ namespace LIMS.Model.RegressionModels
 
         private double? CalculateConcentration(double? instrumentResponse)
         {
-            return (instrumentResponse - YIntercept) / Gradient;
+            return (instrumentResponse - BTerm) / ATerm;
         }
 
         private void CalculateStandardAndQCAccuracy()

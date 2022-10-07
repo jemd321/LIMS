@@ -18,7 +18,7 @@ namespace LIMS.Model
         public DataReadFailureReason DataReadFailureReason { get; init; }
 
         /// <summary>
-        /// <c>true</c> if the data read operation succeeded; otherwise, <c>false</c>.
+        /// Gets a value indicating whether the read operation was successful. <c>true</c> if the data read operation succeeded; otherwise, <c>false</c>.
         /// </summary>
         public bool IsSuccess => DataReadFailureReason == DataReadFailureReason.None;
     }

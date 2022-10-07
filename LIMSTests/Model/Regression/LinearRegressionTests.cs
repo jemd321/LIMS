@@ -45,7 +45,7 @@
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
             const double EXPECTEDGRADIENT = 120.706;
 
-            Assert.IsTrue(Math.Abs((double)(EXPECTEDGRADIENT - testRegression.Gradient)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(EXPECTEDGRADIENT - testRegression.ATerm)) < TOLERANCE);
         }
 
         [TestMethod()]
@@ -54,7 +54,7 @@
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
             const double EXPECTEDYINTERCEPT = 0.209;
 
-            Assert.IsTrue(Math.Abs((double)(EXPECTEDYINTERCEPT - testRegression.YIntercept)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(EXPECTEDYINTERCEPT - testRegression.BTerm)) < TOLERANCE);
         }
 
         [TestMethod()]

@@ -50,7 +50,6 @@
                            Grid.Column="1"
                            Grid.Row="2" />
             </Grid>
-
         </StackPanel>
     </Grid>
 </UserControl>

@@ -19,7 +19,7 @@ namespace LIMS.Model
         public ParseFailureReason ParseFailureReason { get; init; }
 
         /// <summary>
-        /// <c>true</c> if the parsing succeeded; otherwise, <c>false</c>.
+        /// Gets a value indicating whether parsing succedded. <c>true</c> if the parsing succeeded; otherwise, <c>false</c>.
         /// </summary>
         public bool IsSuccess => ParseFailureReason == ParseFailureReason.None;
     }

@@ -3,8 +3,12 @@ using LIMS.Enums;
 
 namespace LIMS.Model
 {
+    /// <summary>
+    /// Record that represents a single row in an Analyst export file.
+    /// </summary>
     public record AnalystExportRow
     {
+#pragma warning disable SA1600 // Elements should be documented
         public string SampleName { get; init; }
 
         public int SampleID { get; init; }
