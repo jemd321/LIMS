@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="LIMS.View.Dialog.ProjectCreationDialog"
+﻿<UserControl x:Class="LIMS.View.Dialog.ProjectEditDialog"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -55,7 +55,6 @@
                 <Button Content="Delete"
                         Command="{Binding DeleteProjectCommand}" />
                 <Button Content="Close"
-                        Click="ButtonCancel_Click"
                         IsCancel="True" />
             </StackPanel>
         </Grid>

@@ -8,35 +8,57 @@ using LIMS.Model;
 
 namespace LIMS.ViewModel.DialogViewModel
 {
-    public class ProjectCreationDialogViewModel : ValidationViewModelBase, IDialogViewModel
+    /// <summary>
+    /// ViewModel for the dialog that allows users to create and delete projects.
+    /// </summary>
+    public class ProjectEditDialogViewModel : ValidationViewModelBase, IDialogViewModel
     {
-        private const int MAXPROJECTNAMELENGTH = 36;
-
-        private readonly IDataService _fileDataService;
+        private readonly IDataService _dataService;
         private ObservableCollection<Project> _loadedProjects;
         private string _newProjectName;
         private Project _selectedProject;
 
-        public event EventHandler DialogAccepted;
-
-        public ProjectCreationDialogViewModel(IDataService fileDataService)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProjectEditDialogViewModel"/> class.
+        /// </summary>
+        /// <param name="dataService">The data service that will handle the creation and deletion of projects in storage.</param>
+        public ProjectEditDialogViewModel(IDataService dataService)
         {
-            _fileDataService = fileDataService;
+            _dataService = dataService;
 
             CreateProjectCommand = new DelegateCommand(CreateProject, CanCreateProject);
             DeleteProjectCommand = new DelegateCommand(DeleteProject, CanDeleteProject);
         }
 
+        /// <inheritdoc/>
+        public event EventHandler DialogAccepted;
+
+        /// <summary>
+        /// Gets the command that executes when the user clicks the create project button, creating the new project in storage.
+        /// </summary>
         public DelegateCommand CreateProjectCommand { get; }
 
+        /// <summary>
+        /// Gets the command that executes when the user clicks the delete project button, deleting the project from storage.
+        /// </summary>
         public DelegateCommand DeleteProjectCommand { get; }
 
+        /// <summary>
+        /// Gets or sets the collection of projects that has been loaded from storage.
+        /// </summary>
         public ObservableCollection<Project> LoadedProjects
         {
             get => _loadedProjects;
-            set { _loadedProjects = value; RaisePropertyChanged(); }
+            set
+            {
+                _loadedProjects = value;
+                RaisePropertyChanged();
+            }
         }
 
+        /// <summary>
+        /// Gets or sets the name of the project that the user has selected.
+        /// </summary>
         public string NewProjectName
         {
             get => _newProjectName;
@@ -47,6 +69,9 @@ namespace LIMS.ViewModel.DialogViewModel
                 RaisePropertyChanged();
 
                 ClearErrors();
+
+                // Length set to 36 chars to avoid the resulting file name being too long for Windows.
+                const int MAXPROJECTNAMELENGTH = 36;
                 if (NewProjectName.Length > MAXPROJECTNAMELENGTH)
                 {
                     AddError("Project name is too long");
@@ -68,6 +93,9 @@ namespace LIMS.ViewModel.DialogViewModel
             }
         }
 
+        /// <summary>
+        /// Gets or sets the project that the user has selected in the dialog.
+        /// </summary>
         public Project SelectedProject
         {
             get => _selectedProject;
@@ -79,21 +107,26 @@ namespace LIMS.ViewModel.DialogViewModel
             }
         }
 
+        /// <summary>
+        /// Initialises the viewModel.
+        /// </summary>
         public override void Load()
         {
-            LoadedProjects = _fileDataService.LoadProjects();
+            LoadedProjects = _dataService.LoadProjects();
             NewProjectName = string.Empty;
         }
 
         private void CreateProject(object parameter)
         {
             var newProject = new Project(NewProjectName);
-            _fileDataService.CreateProject(newProject);
-            LoadedProjects = _fileDataService.LoadProjects();
+            _dataService.CreateProject(newProject);
+            LoadedProjects = _dataService.LoadProjects();
         }
 
         private bool CanCreateProject(object parameter)
         {
+            // Length set to 36 chars to avoid the resulting file name being too long for Windows.
+            const int MAXPROJECTNAMELENGTH = 36;
             return !string.IsNullOrEmpty(NewProjectName)
                 && NewProjectName.Length <= MAXPROJECTNAMELENGTH
                 && !SelectedProjectAlreadyExists()
@@ -112,11 +145,10 @@ namespace LIMS.ViewModel.DialogViewModel
             return Regex.Match(NewProjectName, illegalCharactersPattern).Success;
         }
 
-
         private void DeleteProject(object parameter)
         {
-            _fileDataService.DeleteProject(SelectedProject);
-            LoadedProjects = _fileDataService.LoadProjects();
+            _dataService.DeleteProject(SelectedProject);
+            LoadedProjects = _dataService.LoadProjects();
             SelectedProject = null;
         }
 

@@ -1,4 +1,5 @@
 ﻿using LIMS.Model.RegressionModels;
+using OxyPlot;
 
 namespace LIMS.ViewModel
 {
@@ -13,6 +14,14 @@ namespace LIMS.ViewModel
         /// <remarks>Allows updates to the regression in the other regressionViewModels to propagate here for display.</remarks>
         public Regression Regression { get; set; }
 
+        /// <summary>
+        /// Gets or sets the plot that the plotView control binds to.
+        /// </summary>
+        public PlotModel CalibrationCurve { get; set; }
+
+        /// <summary>
+        /// Renders the graph, based on the data that has been supplied previously.
+        /// </summary>
         public void DrawGraph();
     }
 }

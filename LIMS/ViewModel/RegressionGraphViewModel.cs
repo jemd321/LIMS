@@ -29,12 +29,12 @@ namespace LIMS.ViewModel
         public Regression Regression { get; set; }
 
         /// <summary>
-        /// Gets the plot that the plotView control binds to.
+        /// Gets or sets the plot that the plotView control binds to.
         /// </summary>
         public PlotModel CalibrationCurve
         {
             get => _calibrationCurve;
-            private set
+            set
             {
                 _calibrationCurve = value;
                 RaisePropertyChanged();

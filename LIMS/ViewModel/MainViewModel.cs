@@ -220,7 +220,7 @@ namespace LIMS.ViewModel
 
         private void CreateNewProject(object parameter)
         {
-            _dialogService.ShowActionDialog<ProjectCreationDialogViewModel>(result => { });
+            _dialogService.ShowActionDialog<ProjectEditDialogViewModel>(result => { });
             Projects = _dataService.LoadProjects();
         }
 

@@ -108,6 +108,10 @@ namespace LIMS.ViewModel
             {
                 RegressionGraphViewModel = new RegressionGraphViewModel(Regression);
             }
+            else
+            {
+                RegressionGraphViewModel.CalibrationCurve = null;
+            }
 
             RegressionGraphViewModel.Regression = Regression;
             RegressionGraphViewModel.DrawGraph();

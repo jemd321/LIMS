@@ -11,10 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace LIMS
 {
+    /// <summary>
+    /// The base class for the application.
+    /// </summary>
     public partial class App : Application
     {
         private readonly ServiceProvider _serviceProvider;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="App"/> class.
+        /// </summary>
         public App()
         {
             var services = new ServiceCollection();
@@ -23,7 +29,19 @@ namespace LIMS
             ConfigureDialogService();
         }
 
-        private void ConfigureServices(ServiceCollection services)
+        /// <summary>
+        /// Raises with override the onstartup event of the appliaction, setting up the mainwindow.
+        /// </summary>
+        /// <param name="e">Event args.</param>
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            var mainWindow = _serviceProvider.GetService<MainWindow>();
+            mainWindow.Show();
+        }
+
+        private static void ConfigureServices(ServiceCollection services)
         {
             services.AddTransient<MainWindow>();
 
@@ -40,8 +58,8 @@ namespace LIMS
             services.AddTransient<IDataService, FileDataService>();
             services.AddTransient<IFileSystem, FileSystem>();
 
-            services.AddTransient<ProjectCreationDialogViewModel>();
-            services.AddTransient<ProjectCreationDialog>();
+            services.AddTransient<ProjectEditDialogViewModel>();
+            services.AddTransient<ProjectEditDialog>();
             services.AddTransient<OpenAnalyticalRunDialogViewModel>();
             services.AddTransient<OpenAnalyticalRunDialog>();
             services.AddTransient<SaveAnalyticalRunDialogViewModel>();
@@ -53,18 +71,10 @@ namespace LIMS
         private void ConfigureDialogService()
         {
             DialogService.ServiceProvider = _serviceProvider;
-            DialogService.RegisterDialog<ProjectCreationDialog, ProjectCreationDialogViewModel>();
+            DialogService.RegisterDialog<ProjectEditDialog, ProjectEditDialogViewModel>();
             DialogService.RegisterDialog<OpenAnalyticalRunDialog, OpenAnalyticalRunDialogViewModel>();
             DialogService.RegisterDialog<SaveAnalyticalRunDialog, SaveAnalyticalRunDialogViewModel>();
             DialogService.RegisterDialog<ErrorMessageDialog, ErrorMessageDialogViewModel>();
-        }
-
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
-
-            var mainWindow = _serviceProvider.GetService<MainWindow>();
-            mainWindow.Show();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace LIMS.ViewModel.Tests
     [TestClass()]
     public class ProjectCreationDialogViewModelTests
     {
-        ProjectCreationDialogViewModel _viewModel = default!;
+        ProjectEditDialogViewModel _viewModel = default!;
         Mock<IDataService> _mockFileDataService = default!;
         FileDataService _fileDataService = default!;
         MockFileSystem _mockFileSystem = default!;
@@ -22,14 +22,14 @@ namespace LIMS.ViewModel.Tests
             _mockFileSystem = new MockFileSystem();
             _mockFileDataService = new Mock<IDataService>();
             _mockFileDataService.Setup(m => m.LoadProjects()).Returns(new System.Collections.ObjectModel.ObservableCollection<Project> { });
-            _viewModel = new ProjectCreationDialogViewModel(_mockFileDataService.Object);
+            _viewModel = new ProjectEditDialogViewModel(_mockFileDataService.Object);
         }
 
         public void SetupTestForMockFileSystem()
         {
             _mockFileSystem = new MockFileSystem();
             _fileDataService = new FileDataService(_mockFileSystem);
-            _viewModel = new ProjectCreationDialogViewModel(_fileDataService);
+            _viewModel = new ProjectEditDialogViewModel(_fileDataService);
         }
 
         private Project SetupTestProject(string projectName)
