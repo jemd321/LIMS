@@ -13,22 +13,22 @@
 
             var testStandards = new List<Standard>()
             {
-                new Standard { NominalConcentration= 0.0, InstrumentResponse = 0.0, SampleName = "Zero"},
-                new Standard { NominalConcentration = 0.1, InstrumentResponse = 12.36, SampleName = "F"},
-                new Standard { NominalConcentration = 0.2, InstrumentResponse = 24.83, SampleName = "E"},
-                new Standard { NominalConcentration = 0.3, InstrumentResponse = 35.91, SampleName = "D"},
-                new Standard { NominalConcentration = 0.4, InstrumentResponse = 48.79, SampleName = "C"},
-                new Standard { NominalConcentration = 0.5, InstrumentResponse = 60.42, SampleName = "B"},
+                new Standard { NominalConcentration= 0.0, InstrumentResponse = 0.0, SampleName = "Zero" },
+                new Standard { NominalConcentration = 0.1, InstrumentResponse = 12.36, SampleName = "F" },
+                new Standard { NominalConcentration = 0.2, InstrumentResponse = 24.83, SampleName = "E" },
+                new Standard { NominalConcentration = 0.3, InstrumentResponse = 35.91, SampleName = "D" },
+                new Standard { NominalConcentration = 0.4, InstrumentResponse = 48.79, SampleName = "C" },
+                new Standard { NominalConcentration = 0.5, InstrumentResponse = 60.42, SampleName = "B" },
             };
 
             var testQCs = new List<QualityControl>()
             {
-                new QualityControl { NominalConcentration = 0.35, InstrumentResponse = 40.0, SampleName="MQC" },
+                new QualityControl { NominalConcentration = 0.35, InstrumentResponse = 40.0, SampleName = "MQC" },
             };
 
             var testUnknowns = new List<Unknown>()
             {
-                new Unknown {InstrumentResponse = 20.0, SampleName="001"},
+                new Unknown { InstrumentResponse = 20.0, SampleName = "001"},
             };
 
             _regressionData = new RegressionData()
@@ -92,11 +92,11 @@
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
 
             Assert.IsNull(testRegression.RegressionData.Standards[0].Accuracy);
-            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[1].Accuracy - 0.67)) < TOLERANCE);
-            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[2].Accuracy - 1.985)) < TOLERANCE);
-            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[3].Accuracy - -1.413)) < TOLERANCE);
-            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[4].Accuracy - 0.6175)) < TOLERANCE);
-            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[5].Accuracy - -0.236)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[1].Accuracy - 0.0067)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[2].Accuracy - 0.01985)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[3].Accuracy - -0.01413)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[4].Accuracy - 0.006175)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[5].Accuracy - -0.00236)) < TOLERANCE);
         }
 
         [TestMethod]
@@ -104,7 +104,7 @@
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
 
-            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.QualityControls[0].Accuracy - -5.8142)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.QualityControls[0].Accuracy - -0.058142)) < TOLERANCE);
         }
 
         [TestMethod]
