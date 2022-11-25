@@ -8,7 +8,7 @@ using Moq;
 
 namespace LIMS.ViewModel.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class MainViewModelTests
     {
         private MainViewModel _mainViewModel = default!;
@@ -29,7 +29,7 @@ namespace LIMS.ViewModel.Tests
             _mainViewModel = new MainViewModel(_regressionViewModelMock.Object, _fileDataService, _dataImporterMock.Object, _dialogServiceMock.Object);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void SelectedViewModel_OnVMChanged_FiresPropertyChangedEvent()
         {
             var fired = _mainViewModel.IsPropertyChangedFired(() =>
@@ -40,7 +40,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsTrue(fired);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Load_WhenNoProjects_LoadsEmptyProjectList()
         {
             _mainViewModel.Load();
@@ -48,7 +48,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsTrue(_mainViewModel.Projects.Count == 0);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Load_WhenProjectsExist_LoadsProjectList()
         {
             var expectedProject = new Project("Test");
@@ -66,7 +66,7 @@ namespace LIMS.ViewModel.Tests
             Assert.AreEqual(expectedProject.ProjectID, actualProjectsList.Single().ProjectID);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CreateNewProjectCommand_WhenInvoked_ShowsDialog()
         {
             _mainViewModel.Load();

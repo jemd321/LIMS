@@ -4,7 +4,7 @@ using LIMS.Model.RegressionModels;
 
 namespace LIMS.Data.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class FileDataProviderTests
     {
         private MockFileSystem _mockfileSystem = default!;
@@ -14,8 +14,6 @@ namespace LIMS.Data.Tests
         private string _expectedAppDataRoaming = default!;
         private string _expectedAppDirectory = default!;
         private string _expectedProjectsDirectory = default!;
-
-
 
         [TestInitialize]
         public void TestSetup()
@@ -31,25 +29,24 @@ namespace LIMS.Data.Tests
 
         public static RegressionData SetupMockRegressionData()
         {
-
             var testStandards = new List<Standard>()
             {
-                new Standard { NominalConcentration= 0.0, InstrumentResponse = 0.0, SampleName = "Zero"},
-                new Standard { NominalConcentration = 0.1, InstrumentResponse = 12.36, SampleName = "F"},
-                new Standard { NominalConcentration = 0.2, InstrumentResponse = 24.83, SampleName = "E"},
-                new Standard { NominalConcentration = 0.3, InstrumentResponse = 35.91, SampleName = "D"},
-                new Standard { NominalConcentration = 0.4, InstrumentResponse = 48.79, SampleName = "C"},
-                new Standard { NominalConcentration = 0.5, InstrumentResponse = 60.42, SampleName = "B"},
+                new Standard { NominalConcentration = 0.0, InstrumentResponse = 0.0, SampleName = "Zero" },
+                new Standard { NominalConcentration = 0.1, InstrumentResponse = 12.36, SampleName = "F" },
+                new Standard { NominalConcentration = 0.2, InstrumentResponse = 24.83, SampleName = "E" },
+                new Standard { NominalConcentration = 0.3, InstrumentResponse = 35.91, SampleName = "D" },
+                new Standard { NominalConcentration = 0.4, InstrumentResponse = 48.79, SampleName = "C" },
+                new Standard { NominalConcentration = 0.5, InstrumentResponse = 60.42, SampleName = "B" },
             };
 
             var testQCs = new List<QualityControl>()
             {
-                new QualityControl { NominalConcentration = 0.35, InstrumentResponse = 40.0, SampleName="MQC" },
+                new QualityControl { NominalConcentration = 0.35, InstrumentResponse = 40.0, SampleName = "MQC" },
             };
 
             var testUnknowns = new List<Unknown>()
             {
-                new Unknown {InstrumentResponse = 20.0, SampleName="001"},
+                new Unknown { InstrumentResponse = 20.0, SampleName = "001" },
             };
 
             return new RegressionData()
@@ -60,7 +57,7 @@ namespace LIMS.Data.Tests
             };
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void LoadAnalyticalRun_GivenAnalyticalRunID_GetsAnalyticalRun()
         {
             string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
@@ -79,7 +76,7 @@ namespace LIMS.Data.Tests
             Assert.AreEqual(mockAnalyticalRun.ParentProjectID, actualLoadedRun.ParentProjectID);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void LoadAnalyticalRun_GivenIncorrectAnalyticalRunID_Throws()
         {
             string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
@@ -95,7 +92,7 @@ namespace LIMS.Data.Tests
             Assert.ThrowsException<FileNotFoundException>(() => _fileDataService.LoadAnalyticalRun(testProject, TESTANALYTICALRUN));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void SaveAnalyticalRun_GivenRun_SavesAsJsonFile()
         {
             string testProjectDirectory = Path.Combine(_expectedProjectsDirectory, "Test", "TestRun");
@@ -119,7 +116,6 @@ namespace LIMS.Data.Tests
             _mockfileSystem.AddFile(expectedSaveFilePath, new MockFileData(string.Empty));
             _fileDataService = new FileDataService(_mockfileSystem);
 
-
             var mockAnalyticalRun = new AnalyticalRun("TestRun", "Test", _mockRegressionData);
 
             _fileDataService.SaveAnalyticalRun(mockAnalyticalRun);
@@ -128,7 +124,7 @@ namespace LIMS.Data.Tests
             Assert.IsTrue(actualFileContent.Length > 0);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void SetupApplicationStorage_WhenNotSetup_CreatesNewFolders()
         {
             _mockfileSystem.AddDirectory(_expectedAppDataRoaming);
@@ -139,7 +135,7 @@ namespace LIMS.Data.Tests
             Assert.IsTrue(_mockfileSystem.Directory.Exists(_expectedProjectsDirectory));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void SetupApplicationStorage_WhenAlreadySetup_KeepsDirectoriesAsIs()
         {
             _mockfileSystem.AddDirectory(_expectedAppDataRoaming);
@@ -152,7 +148,7 @@ namespace LIMS.Data.Tests
             Assert.IsTrue(_mockfileSystem.Directory.Exists(_expectedProjectsDirectory));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void LoadProjects_WhenNoProjects_ReturnsEmptyList()
         {
             _mockfileSystem.AddDirectory(_expectedProjectsDirectory);
@@ -162,7 +158,7 @@ namespace LIMS.Data.Tests
             Assert.IsFalse(loadedProjects.Any());
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void LoadProjects_WhenProjectsExist_ReturnsLoadedProject()
         {
             var expectedProject = new Project("test");
@@ -175,7 +171,7 @@ namespace LIMS.Data.Tests
             Assert.IsTrue(expectedProject.ProjectID == loadedProjects.First().ProjectID);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void LoadProjects_WhenProjectsWithRunsExist_ReturnsLoadedProject()
         {
             var expectedProject = new Project("test");
@@ -193,7 +189,7 @@ namespace LIMS.Data.Tests
             Assert.IsTrue(actualAnalyticalRun == expectedProject.AnalyticalRunIDs.First());
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CreateProject_WhenGivenNewProject_CreatesProject()
         {
             var testProject = new Project("test");
@@ -205,7 +201,7 @@ namespace LIMS.Data.Tests
             Assert.IsTrue(_mockfileSystem.Directory.Exists(expectedProjectDirectory));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CreateProject_WhenGivenExistingProject_DoesNothing()
         {
             var testProject = new Project("test");
@@ -219,7 +215,7 @@ namespace LIMS.Data.Tests
             Assert.AreEqual(expectedDirectoryCount, actualDirectoryCount);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void DeleteProject_GivenExistingProject_DeletesIt()
         {
             var testProject = new Project("test");
@@ -231,7 +227,7 @@ namespace LIMS.Data.Tests
             Assert.IsFalse(_mockfileSystem.Directory.Exists(expectedProjectDirectory));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void DeleteProject_ProjectNotFound_DoesNothing()
         {
             var testProject = new Project("test");

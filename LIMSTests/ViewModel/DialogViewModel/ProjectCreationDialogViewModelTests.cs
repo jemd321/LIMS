@@ -7,7 +7,7 @@ using Moq;
 
 namespace LIMS.ViewModel.Tests
 {
-    [TestClass()]
+    [TestClass]
     public class ProjectCreationDialogViewModelTests
     {
         ProjectEditDialogViewModel _viewModel = default!;
@@ -16,7 +16,7 @@ namespace LIMS.ViewModel.Tests
         MockFileSystem _mockFileSystem = default!;
 
 
-        [TestInitialize()]
+        [TestInitialize]
         public void SetupTestWithMockFileDataService()
         {
             _mockFileSystem = new MockFileSystem();
@@ -44,7 +44,7 @@ namespace LIMS.ViewModel.Tests
             return expectedProject;
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Load_WhenVMLoaded_GetsProjects()
         {
             const string TESTPROJECTNAME = "test";
@@ -58,7 +58,7 @@ namespace LIMS.ViewModel.Tests
             Assert.AreEqual(expectedProject.ProjectID, actualProjectsList.Single().ProjectID);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void NewProjectName_RaisesPropertyChanged_WhenPropertyChanged()
         {
             _viewModel.Load();
@@ -70,7 +70,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsTrue(fired);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void NewProjectName_WhenTooLong_AddsValidationError()
         {
             _viewModel.Load();
@@ -83,7 +83,7 @@ namespace LIMS.ViewModel.Tests
             Assert.AreEqual(EXPECTEDERRORMESSAGE, errorList.SingleOrDefault());
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void NewProjectName_WhenNoLongerTooLong_ClearsError()
         {
             _viewModel.Load();
@@ -95,7 +95,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsFalse(errorList.Any());
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void NewProjectName_WhenInvalidCharacter_AddsValidationError()
         {
             _viewModel.Load();
@@ -108,7 +108,7 @@ namespace LIMS.ViewModel.Tests
             Assert.AreEqual(EXPECTEDERRORMESSAGE, errorList.SingleOrDefault());
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void NewProjectName_WhenInvalidCharacterCleared_ClearsError()
         {
             _viewModel.Load();
@@ -120,7 +120,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsFalse(errorList.Any());
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void NewProjectName_WhenProjectExists_AddsProjectError()
         {
             const string TESTPROJECTNAME = "test";
@@ -136,7 +136,7 @@ namespace LIMS.ViewModel.Tests
             Assert.AreEqual(EXPECTEDERRORMESSAGE, errorList.SingleOrDefault());
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CreateProjectCommand_CanExecute_WhenNewProjectNameEntered()
         {
             _viewModel.Load();
@@ -144,7 +144,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsTrue(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CreateProjectCommand_CannotExecute_WhenNewProjectNameIsNullOrEmpty()
         {
             _viewModel.Load();
@@ -152,7 +152,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CreateProjectCommand_CannotExecute_WhenNewProjectNameIsTooLong()
         {
             _viewModel.Load();
@@ -160,7 +160,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CreateProjectCommand_CannotExecute_WhenNewProjectNameContainsInvalidCharacter()
         {
             _viewModel.Load();
@@ -168,7 +168,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void CreateProjectCommand_CannotExecute_WhenNewProjectNameAlreadyExists()
         {
             _viewModel.Load();
@@ -177,7 +177,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsFalse(_viewModel.CreateProjectCommand.CanExecute(null));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void SelectedProject_RaisesPropertyChanged_WhenPropertyChanged()
         {
             _viewModel.Load();
@@ -189,7 +189,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsTrue(fired);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void DeleteProjectCommand_WhenExecuted_MakesCallToFileDataService()
         {
             _viewModel.Load();
@@ -199,7 +199,7 @@ namespace LIMS.ViewModel.Tests
             _mockFileDataService.Verify(fds => fds.DeleteProject(It.IsAny<Project>()), Times.Once());
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void DeleteProjectCommand_CanExecute_WhenProjectSelected()
         {
             _viewModel.Load();
@@ -207,7 +207,7 @@ namespace LIMS.ViewModel.Tests
             Assert.IsTrue(_viewModel.DeleteProjectCommand.CanExecute(null));
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void DeleteProjectCommand_CannotExecute_WhenNoProjectSelected()
         {
             _viewModel.Load();

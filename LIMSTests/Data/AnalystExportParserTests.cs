@@ -1,13 +1,14 @@
 using LIMS.Data;
 using LIMS.Enums;
 using LIMS.Model;
+using LIMS.Model.RegressionModels;
 
 namespace LIMSTests.Data
 {
     [TestClass]
     public class AnalystExportParserTests
     {
-        AnalystDataImporter _analystDataImporter = default!;
+        private AnalystDataImporter _analystDataImporter = default!;
 
         [TestInitialize]
         public void SetupTest()
@@ -30,7 +31,7 @@ namespace LIMSTests.Data
                 TransitionMRM = new TransitionMRM()
                 {
                     Q1 = 714.50,
-                    Q3 = 401.30
+                    Q3 = 401.30,
                 },
             };
             var analytePeakInfo = new AnalystExportHeaderPeakInfo()
@@ -41,7 +42,7 @@ namespace LIMSTests.Data
                 TransitionMRM = new TransitionMRM()
                 {
                     Q1 = 705.20,
-                    Q3 = 392.30
+                    Q3 = 392.30,
                 },
             };
             peakInfo.Add(internalStandardPeakInfo);
@@ -76,7 +77,6 @@ namespace LIMSTests.Data
                 DilutionFactor = 1,
                 WeightToVolumeRatio = 0,
                 SampleAnnotation = string.Empty,
-                SampleAnnotation2 = string.Empty,
                 PeakName = "Itraconazole",
                 Units = Units.ng_mL,
                 Area = 153.4,
@@ -142,19 +142,20 @@ namespace LIMSTests.Data
             };
             dataRows.Add(dataRow1);
 
-            var expected = new AnalystExport()
+            var expectedSample = new Unknown()
             {
-                Peaks = peakInfo,
-                RegressionInfo = headerInfo,
-                DataRows = dataRows,
+                InstrumentResponse = 153.4d,
+                SampleName = "SST-LLOQ 1",
+                SampleNumber = 1,
+                IsActive = true,
             };
 
-            var actual = AnalystDataImporter.ParseAnalystExport(ref sampleAnalystExport);
+            var actualData = _analystDataImporter.ParseImportedRawData(sampleAnalystExport);
+            var actualSample = actualData.Data.Unknowns.First();
 
-            Assert.AreEqual(expected.Peaks[0], actual.Peaks[0]);
-            Assert.AreEqual(expected.Peaks[1], actual.Peaks[1]);
-            Assert.AreEqual(expected.RegressionInfo, actual.RegressionInfo);
-            Assert.AreEqual(expected.DataRows[0], actual.DataRows[0]);
+            Assert.AreEqual(expectedSample.SampleName, actualSample.SampleName);
+            Assert.AreEqual(expectedSample.InstrumentResponse, actualSample.InstrumentResponse);
+            Assert.AreEqual(expectedSample.SampleNumber, actualSample.SampleNumber);
         }
     }
 }

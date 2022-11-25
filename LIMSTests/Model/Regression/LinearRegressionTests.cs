@@ -1,7 +1,7 @@
 ﻿namespace LIMS.Model.RegressionModels.Tests
 {
 #pragma warning disable CS8629 // Nullable value type may be null.
-    [TestClass()]
+    [TestClass]
     public class LinearRegressionTests
     {
         private RegressionData _regressionData = new();
@@ -39,7 +39,7 @@
             };
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_GivenRegressionData_CorrectGradient()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
@@ -48,7 +48,7 @@
             Assert.IsTrue(Math.Abs((double)(EXPECTEDGRADIENT - testRegression.ATerm)) < TOLERANCE);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_GivenRegressionData_CorrectYIntercept()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
@@ -57,7 +57,7 @@
             Assert.IsTrue(Math.Abs((double)(EXPECTEDYINTERCEPT - testRegression.BTerm)) < TOLERANCE);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_GivenRegressionData_CalculatesStandardConcentrations()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
@@ -70,7 +70,7 @@
             Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[5].CalculatedConcentration - 0.49882)) < TOLERANCE);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_GivenRegressionData_CalculatesQCConcentrations()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
@@ -78,7 +78,7 @@
             Assert.IsTrue(Math.Abs(((double)testRegression.RegressionData.QualityControls[0].CalculatedConcentration - 0.32965)) < TOLERANCE);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_GivenRegressionData_CalculatesUnknownConcentrations()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
@@ -86,7 +86,7 @@
             Assert.IsTrue(Math.Abs(((double)testRegression.RegressionData.Unknowns[0].CalculatedConcentration - 0.16396)) < TOLERANCE);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_GivenRegressionData_CalculatesStandardAccuracy()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
@@ -99,7 +99,7 @@
             Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.Standards[5].Accuracy - -0.236)) < TOLERANCE);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_GivenRegressionData_CalculatesQCAccuracy()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
@@ -107,7 +107,7 @@
             Assert.IsTrue(Math.Abs((double)(testRegression.RegressionData.QualityControls[0].Accuracy - -5.8142)) < TOLERANCE);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_GivenRegressionData_AccuracyNotCalculatedforUnknown()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
@@ -115,7 +115,7 @@
             Assert.IsNull(testRegression.RegressionData.Unknowns[0].Accuracy);
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_WeightingFactor1OverXHalf_CalculatesCorrectGradient()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverXHalf);
@@ -123,7 +123,7 @@
             Assert.Fail();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_WeightingFactor1OverX_CalculatesCorrectGradient()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverX);
@@ -131,7 +131,7 @@
             Assert.Fail();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_WeightingFactor1OverXSquared_CalculatesCorrectGradient()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverXSquared);
@@ -139,7 +139,7 @@
             Assert.Fail();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_WeightingFactor1OverYHalf_CalculatesCorrectGradient()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverYHalf);
@@ -147,7 +147,7 @@
             Assert.Fail();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_WeightingFactor11OverY_CalculatesCorrectGradient()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverY);
@@ -155,7 +155,7 @@
             Assert.Fail();
         }
 
-        [TestMethod()]
+        [TestMethod]
         public void Regression_WeightingFactor1OverYSquared_CalculatesCorrectGradient()
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverYSquared);
