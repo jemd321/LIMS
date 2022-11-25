@@ -110,6 +110,7 @@ namespace LIMS.Data
             // Token to keep track of which section of the export we are in.
             var currentSection = AnalystExportSections.Header;
             var headerBuffer = new List<string>();
+            var skippedColumns = new List<int>();
 
             int dataRowHeaderSeparatorCount = 0;
             const int ENDTOKEN = -1;
@@ -150,12 +151,12 @@ namespace LIMS.Data
                     // Three empty lines indicates the start of the data row section, of which the first line is the column headers.
                     if (dataRowHeaderSeparatorCount == 3)
                     {
-                        VerifyDataRowHeaders(line);
+                        skippedColumns = ProcessDataRowHeaders(line);
                         dataRowHeaderSeparatorCount = 0;
                         continue;
                     }
 
-                    dataRows.Add(ProcessDataRow(line));
+                    dataRows.Add(ProcessDataRow(line, skippedColumns));
                     continue;
                 }
 
@@ -207,8 +208,20 @@ namespace LIMS.Data
 
             double? a = double.Parse(headerBuffer[1].Split('\t')[1]);
             double? b = double.Parse(headerBuffer[2].Split('\t')[1]);
-            double? c = double.Parse(headerBuffer[3].Split('\t')[1]);
-            double rSquared = double.Parse(headerBuffer[4].Split('\t')[1]);
+
+            double? c = 0;
+            double rSquared;
+            if (regression == RegressionType.Quadratic)
+            {
+                // In a quadratic regression, there are four lines, to the header, with the 3rd being the c term.
+                c = double.Parse(headerBuffer[3].Split('\t')[1]);
+                rSquared = double.Parse(headerBuffer[4].Split('\t')[1]);
+            }
+            else
+            {
+                // The regression is linear, therefore there is no c term to the regression - the 3rd line is the RSquared.
+                rSquared = double.Parse(headerBuffer[3].Split('\t')[1]);
+            }
 
             return new AnalystExportHeaderRegressionInfo()
             {
@@ -221,82 +234,81 @@ namespace LIMS.Data
             };
         }
 
-        private static AnalystExportRow ProcessDataRow(string line)
+        private static AnalystExportRow ProcessDataRow(string line, List<int> ignoredColumnIndices)
         {
-            string[] data = line.Split('\t');
+            List<string> data = line.Split('\t').ToList();
+
+            // Remove columns that should be skipped
+            var filteredColumns = data.Where((n, i) => !ignoredColumnIndices.Contains(i)).ToList();
             return new AnalystExportRow()
             {
-                SampleName = data[0],
-                SampleID = int.Parse(data[1]),
-                SampleType = ParseSampleType(data[2]),
-                SampleDescription = data[3] == "none" ? string.Empty : data[3],
-                SetNumber = int.Parse(data[4]),
-                AcquisitonMethod = data[5],
-                AcquisitionDate = DateTime.Parse(data[6]),
-                RackType = data[7],
-                RackNumber = int.Parse(data[8]),
-                VialPosition = int.Parse(data[9]),
-                PlateType = data[10],
-                PlateNumber = int.Parse(data[11]),
-                FileName = data[12],
-                DilutionFactor = double.Parse(data[13]),
-                WeightToVolumeRatio = double.Parse(data[14]),
-                SampleAnnotation1 = data[15],
-                SampleAnnotation2 = data[16],
-                PeakName = data[17],
-                Units = ParseUnits(data[18]),
-                Area = double.Parse(data[19]),
-                Height = double.Parse(data[21]),
-                AnalyteAnnotation = data[22] == "N/A" ? string.Empty : data[22],
-                NominalConcentration = data[23] == "N/A" ? 0d : double.Parse(data[23]),
-                RetentionTime = double.Parse(data[24]),
-                ExpectedRetentionTime = double.Parse(data[25]),
-                RetentionTimeWindow = double.Parse(data[26]),
-                CentroidLocation = double.Parse(data[27]),
-                StartScan = int.Parse(data[28]),
-                StartTime = double.Parse(data[29]),
-                EndScan = int.Parse(data[30]),
-                EndTime = double.Parse(data[31]),
-                IntegrationType = data[32],
-                SignalToNoiseRatio = data[33] == "N/A" ? null : double.Parse(data[33]),
-                PeakWidth = double.Parse(data[34]),
-                StandardQueryStatus = data[35] == "N/A" ? string.Empty : data[35],
-                AnalyteTransitionMRM = ParseTransition(data[36].Split(' ')[0]),
-                AnalyteToISAreaRatio = data[38] == "#DIV/0!" ? null : double.Parse(data[38]),
-                AnalyteToISHeightRatio = data[39] == "#DIV/0!" ? null : double.Parse(data[39]),
-                AnalytePeakWidthAtHalfHeight = double.Parse(data[42]),
-                AnalyteSlopeOfBaseline = data[43] == "#DIV/0!" ? 0d : double.Parse(data[43]),
-                AnalyteProcessingAlgorithm = data[44],
-                AnalytePeakAsymmetry = double.Parse(data[45]),
-                ISPeakName = data[46],
-                ISUnits = ParseUnits(data[47]),
-                ISArea = double.Parse(data[48]),
-                ISHeight = double.Parse(data[50]),
-                ISConcentration = double.Parse(data[52]),
-                ISRetentionTime = double.Parse(data[53]),
-                ISExpectedRetentionTime = double.Parse(data[54]),
-                ISRetentionTimeWindow = double.Parse(data[55]),
-                ISCentroidLocation = double.Parse(data[56]),
-                ISStartScan = int.Parse(data[57]),
-                ISStartTime = double.Parse(data[58]),
-                ISStopScan = int.Parse(data[59]),
-                ISEndTime = double.Parse(data[60]),
-                ISIntegrationType = data[61],
-                ISSignalToNoiseRatio = data[62] == "N/A" ? 0d : double.Parse(data[62]),
-                ISPeakWidth = double.Parse(data[63]),
-                ISTransitionMRM = ParseTransition(data[64].Split(' ')[0]),
-                ISPeakWidthAtHalfHeight = double.Parse(data[67]),
-                ISSlopeOfBaseline = double.Parse(data[68]),
-                ISProcessingAlgorithm = data[69],
-                ISPeakAsymmetry = double.Parse(data[70]),
-                UseRecord = data[71] == "1",
-                RecordModified = data[72] == "1",
-                CalculatedConcentration = data[73] == "#DIV/0!" || data[73] == "No Peak" ? 0d : double.Parse(data[73]),
-                RelativeRetentionTime = double.Parse(data[75]),
-                Accuracy = data[76] == "N/A" ? null : double.Parse(data[76]),
-                ResponseFactor1 = data[77] == "N/A" ? null : double.Parse(data[77]),
-                ResponseFactor2 = data[78] == "N/A" ? null : double.Parse(data[78]),
-                ResponseFactor3 = data[79] == "N/A" ? null : double.Parse(data[79]),
+                SampleName = filteredColumns[0],
+                SampleID = int.Parse(filteredColumns[1]),
+                SampleType = ParseSampleType(filteredColumns[2]),
+                SampleDescription = filteredColumns[3] == "none" ? string.Empty : filteredColumns[3],
+                SetNumber = int.Parse(filteredColumns[4]),
+                AcquisitonMethod = filteredColumns[5],
+                AcquisitionDate = DateTime.Parse(filteredColumns[6]),
+                RackType = filteredColumns[7],
+                RackNumber = int.Parse(filteredColumns[8]),
+                VialPosition = int.Parse(filteredColumns[9]),
+                PlateType = filteredColumns[10],
+                PlateNumber = int.Parse(filteredColumns[11]),
+                FileName = filteredColumns[12],
+                DilutionFactor = double.Parse(filteredColumns[13]),
+                WeightToVolumeRatio = double.Parse(filteredColumns[14]),
+                SampleAnnotation = filteredColumns[15],
+                PeakName = filteredColumns[16],
+                Units = ParseUnits(filteredColumns[17]),
+                Area = double.Parse(filteredColumns[18]),
+                Height = double.Parse(filteredColumns[20]),
+                AnalyteAnnotation = filteredColumns[21] == "N/A" ? string.Empty : filteredColumns[21],
+                NominalConcentration = filteredColumns[22] == "N/A" ? 0d : double.Parse(filteredColumns[22]),
+                RetentionTime = double.Parse(filteredColumns[23]),
+                ExpectedRetentionTime = double.Parse(filteredColumns[24]),
+                RetentionTimeWindow = double.Parse(filteredColumns[25]),
+                CentroidLocation = double.Parse(filteredColumns[26]),
+                StartScan = int.Parse(filteredColumns[27]),
+                StartTime = double.Parse(filteredColumns[28]),
+                EndScan = int.Parse(filteredColumns[29]),
+                EndTime = double.Parse(filteredColumns[30]),
+                IntegrationType = filteredColumns[31],
+                SignalToNoiseRatio = filteredColumns[32] == "N/A" ? null : double.Parse(filteredColumns[32]),
+                PeakWidth = double.Parse(filteredColumns[33]),
+                StandardQueryStatus = filteredColumns[34] == "N/A" ? string.Empty : filteredColumns[34],
+                AnalyteTransitionMRM = ParseTransition(filteredColumns[35].Split(' ')[0]),
+                AnalyteToISAreaRatio = filteredColumns[37] == "#DIV/0!" ? null : double.Parse(filteredColumns[37]),
+                AnalyteToISHeightRatio = filteredColumns[38] == "#DIV/0!" ? null : double.Parse(filteredColumns[38]),
+                AnalytePeakWidthAtHalfHeight = double.Parse(filteredColumns[41]),
+                AnalyteSlopeOfBaseline = filteredColumns[42] == "#DIV/0!" ? 0d : double.Parse(filteredColumns[42]),
+                AnalyteProcessingAlgorithm = filteredColumns[43],
+                AnalytePeakAsymmetry = double.Parse(filteredColumns[44]),
+                ISPeakName = filteredColumns[45],
+                ISUnits = ParseUnits(filteredColumns[46]),
+                ISArea = double.Parse(filteredColumns[47]),
+                ISHeight = double.Parse(filteredColumns[49]),
+                ISConcentration = double.Parse(filteredColumns[51]),
+                ISRetentionTime = double.Parse(filteredColumns[52]),
+                ISExpectedRetentionTime = double.Parse(filteredColumns[53]),
+                ISRetentionTimeWindow = double.Parse(filteredColumns[54]),
+                ISCentroidLocation = double.Parse(filteredColumns[55]),
+                ISStartScan = int.Parse(filteredColumns[56]),
+                ISStartTime = double.Parse(filteredColumns[57]),
+                ISStopScan = int.Parse(filteredColumns[58]),
+                ISEndTime = double.Parse(filteredColumns[59]),
+                ISIntegrationType = filteredColumns[60],
+                ISSignalToNoiseRatio = filteredColumns[61] == "N/A" ? 0d : double.Parse(filteredColumns[61]),
+                ISPeakWidth = double.Parse(filteredColumns[62]),
+                ISTransitionMRM = ParseTransition(filteredColumns[63].Split(' ')[0]),
+                ISPeakWidthAtHalfHeight = double.Parse(filteredColumns[66]),
+                ISSlopeOfBaseline = double.Parse(filteredColumns[67]),
+                ISProcessingAlgorithm = filteredColumns[68],
+                ISPeakAsymmetry = double.Parse(filteredColumns[69]),
+                UseRecord = filteredColumns[70] == "1",
+                RecordModified = filteredColumns[71] == "1",
+                CalculatedConcentration = filteredColumns[72] == "#DIV/0!" || filteredColumns[72] == "No Peak" ? 0d : double.Parse(filteredColumns[72]),
+                RelativeRetentionTime = double.Parse(filteredColumns[74]),
+                Accuracy = filteredColumns[76] == "N/A" ? null : double.Parse(filteredColumns[75]),
             };
         }
 
@@ -322,6 +334,7 @@ namespace LIMS.Data
         {
             return inputWeightingFactor switch
             {
+                "None" => WeightingFactor.Unweighted,
                 "1  / x" => WeightingFactor.OneOverX,
                 "1  / (x * x)" => WeightingFactor.OneOverXSquared,
                 "1  / y" => WeightingFactor.OneOverY,
@@ -350,9 +363,13 @@ namespace LIMS.Data
             };
         }
 
-        private static void VerifyDataRowHeaders(string headerRow)
+        private static List<int> ProcessDataRowHeaders(string headerRow)
         {
+            var dataRowHeaders = new HashSet<string>();
+            var ignoredColumnIndices = new List<int>();
             string[] headers = headerRow.Split('\t');
+
+            int validHeaderIndex = 0;
             string[] validHeaderFormat =
             {
                 "Sample Name",
@@ -361,7 +378,7 @@ namespace LIMS.Data
                 "Sample Desc.",
                 "Set Number",
                 "Acquisition Method",
-                "Date of Acq.",
+                "Date Of Acq.",
                 "Rack Type",
                 "Rack Number",
                 "Vial Position",
@@ -370,7 +387,6 @@ namespace LIMS.Data
                 "Filename",
                 "Dil.Factor",
                 "Weight To Volume Ratio",
-                "Sample Annotation",
                 "Sample Annotation",
                 "Peak Name",
                 "Units",
@@ -433,14 +449,29 @@ namespace LIMS.Data
                 "Rel.R.T.",
                 "Accuracy",
                 "Resp.Factor",
-                "Resp.Factor",
-                "Resp.Factor",
                 string.Empty,
             };
-            if (headers.SequenceEqual(validHeaderFormat))
+
+            for (int i = 0; i < headers.Length; i++)
             {
-                throw new FileFormatException("Data Row headers in export do not match expected format");
+                string currentHeader = headers[i];
+                if (dataRowHeaders.Contains(currentHeader))
+                {
+                    // Duplicate header columns should be ignored
+                    ignoredColumnIndices.Add(i);
+                    continue;
+                }
+
+                if (validHeaderFormat[validHeaderIndex] != currentHeader)
+                {
+                    throw new FileFormatException("Data Row headers in export do not match expected format");
+                }
+
+                validHeaderIndex++;
+                dataRowHeaders.Add(currentHeader);
             }
+
+            return ignoredColumnIndices;
         }
     }
 }

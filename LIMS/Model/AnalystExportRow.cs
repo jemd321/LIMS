@@ -39,9 +39,7 @@ namespace LIMS.Model
 
         public double WeightToVolumeRatio { get; init; }
 
-        public string SampleAnnotation1 { get; init; }
-
-        public string SampleAnnotation2 { get; init; }
+        public string SampleAnnotation { get; init; }
 
         public string PeakName { get; init; }
 

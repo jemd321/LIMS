@@ -75,7 +75,7 @@ namespace LIMSTests.Data
                 FileName = @"Run 166\996183-S15-166-001.wiff",
                 DilutionFactor = 1,
                 WeightToVolumeRatio = 0,
-                SampleAnnotation1 = string.Empty,
+                SampleAnnotation = string.Empty,
                 SampleAnnotation2 = string.Empty,
                 PeakName = "Itraconazole",
                 Units = Units.ng_mL,
