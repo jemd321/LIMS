@@ -32,10 +32,12 @@ namespace LIMS.ViewModel.Tests
         [TestMethod]
         public void SelectedViewModel_OnVMChanged_FiresPropertyChangedEvent()
         {
-            var fired = _mainViewModel.IsPropertyChangedFired(() =>
+            var fired = _mainViewModel.IsPropertyChangedFired(
+                () =>
             {
                 _mainViewModel.SelectedViewModel = _regressionViewModelMock.Object as ViewModelBase;
-            }, nameof(_mainViewModel.SelectedViewModel));
+            },
+                nameof(_mainViewModel.SelectedViewModel));
 
             Assert.IsTrue(fired);
         }

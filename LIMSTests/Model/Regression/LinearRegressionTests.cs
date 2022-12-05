@@ -4,16 +4,15 @@
     [TestClass]
     public class LinearRegressionTests
     {
+        private const double TOLERANCE = 0.01;
         private RegressionData _regressionData = new();
-        const double TOLERANCE = 0.01;
 
         [TestInitialize]
         public void SetupRegressionData()
         {
-
             var testStandards = new List<Standard>()
             {
-                new Standard { NominalConcentration= 0.0, InstrumentResponse = 0.0, SampleName = "Zero" },
+                new Standard { NominalConcentration = 0.0, InstrumentResponse = 0.0, SampleName = "Zero" },
                 new Standard { NominalConcentration = 0.1, InstrumentResponse = 12.36, SampleName = "F" },
                 new Standard { NominalConcentration = 0.2, InstrumentResponse = 24.83, SampleName = "E" },
                 new Standard { NominalConcentration = 0.3, InstrumentResponse = 35.91, SampleName = "D" },
@@ -28,7 +27,7 @@
 
             var testUnknowns = new List<Unknown>()
             {
-                new Unknown { InstrumentResponse = 20.0, SampleName = "001"},
+                new Unknown { InstrumentResponse = 20.0, SampleName = "001" },
             };
 
             _regressionData = new RegressionData()
@@ -75,7 +74,7 @@
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
 
-            Assert.IsTrue(Math.Abs(((double)testRegression.RegressionData.QualityControls[0].CalculatedConcentration - 0.32965)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)testRegression.RegressionData.QualityControls[0].CalculatedConcentration - 0.32965) < TOLERANCE);
         }
 
         [TestMethod]
@@ -83,7 +82,7 @@
         {
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
 
-            Assert.IsTrue(Math.Abs(((double)testRegression.RegressionData.Unknowns[0].CalculatedConcentration - 0.16396)) < TOLERANCE);
+            Assert.IsTrue(Math.Abs((double)testRegression.RegressionData.Unknowns[0].CalculatedConcentration - 0.16396) < TOLERANCE);
         }
 
         [TestMethod]
@@ -113,54 +112,6 @@
             var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.Unweighted);
 
             Assert.IsNull(testRegression.RegressionData.Unknowns[0].Accuracy);
-        }
-
-        [TestMethod]
-        public void Regression_WeightingFactor1OverXHalf_CalculatesCorrectGradient()
-        {
-            var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverXHalf);
-
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void Regression_WeightingFactor1OverX_CalculatesCorrectGradient()
-        {
-            var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverX);
-
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void Regression_WeightingFactor1OverXSquared_CalculatesCorrectGradient()
-        {
-            var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverXSquared);
-
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void Regression_WeightingFactor1OverYHalf_CalculatesCorrectGradient()
-        {
-            var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverYHalf);
-
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void Regression_WeightingFactor11OverY_CalculatesCorrectGradient()
-        {
-            var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverY);
-
-            Assert.Fail();
-        }
-
-        [TestMethod]
-        public void Regression_WeightingFactor1OverYSquared_CalculatesCorrectGradient()
-        {
-            var testRegression = new LinearRegression(_regressionData, Enums.WeightingFactor.OneOverYSquared);
-
-            Assert.Fail();
         }
     }
 }

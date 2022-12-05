@@ -8,10 +8,10 @@ namespace LIMS.ViewModel.Tests
     [TestClass]
     public class RegressionViewModelTests
     {
-        RegressionViewModel _regressionViewModel = default!;
-        Mock<IRegressionDataViewModel> _regressionDataViewModel = default!;
-        Mock<IRegressionFactory> _regressionFactoryMock = default!;
-        Mock<Regression> _regression = default!;
+        private RegressionViewModel _regressionViewModel = default!;
+        private Mock<IRegressionDataViewModel> _regressionDataViewModel = default!;
+        private Mock<IRegressionFactory> _regressionFactoryMock = default!;
+        private Mock<Regression> _regression = default!;
 
         [TestInitialize]
         public void SetupTest()
@@ -25,10 +25,12 @@ namespace LIMS.ViewModel.Tests
         [TestMethod]
         public void Load_WhenRegressionDataViewModelCreated_FiresPropertyChangedEvent()
         {
-            var fired = _regressionViewModel.IsPropertyChangedFired(() =>
+            var fired = _regressionViewModel.IsPropertyChangedFired(
+                () =>
             {
                 _regressionViewModel.RegressionDataViewModel = _regressionDataViewModel.Object;
-            }, nameof(_regressionViewModel.RegressionDataViewModel));
+            },
+                nameof(_regressionViewModel.RegressionDataViewModel));
 
             Assert.IsTrue(fired);
         }

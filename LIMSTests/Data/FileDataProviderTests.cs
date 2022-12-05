@@ -15,18 +15,6 @@ namespace LIMS.Data.Tests
         private string _expectedAppDirectory = default!;
         private string _expectedProjectsDirectory = default!;
 
-        [TestInitialize]
-        public void TestSetup()
-        {
-            _mockfileSystem = new MockFileSystem();
-            _fileDataService = new FileDataService(_mockfileSystem);
-            _mockRegressionData = SetupMockRegressionData();
-
-            _expectedAppDataRoaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            _expectedAppDirectory = Path.Combine(_expectedAppDataRoaming, "LIMS");
-            _expectedProjectsDirectory = Path.Combine(_expectedAppDirectory, "Projects");
-        }
-
         public static RegressionData SetupMockRegressionData()
         {
             var testStandards = new List<Standard>()
@@ -55,6 +43,18 @@ namespace LIMS.Data.Tests
                 QualityControls = testQCs,
                 Unknowns = testUnknowns,
             };
+        }
+
+        [TestInitialize]
+        public void TestSetup()
+        {
+            _mockfileSystem = new MockFileSystem();
+            _fileDataService = new FileDataService(_mockfileSystem);
+            _mockRegressionData = SetupMockRegressionData();
+
+            _expectedAppDataRoaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            _expectedAppDirectory = Path.Combine(_expectedAppDataRoaming, "LIMS");
+            _expectedProjectsDirectory = Path.Combine(_expectedAppDirectory, "Projects");
         }
 
         [TestMethod]

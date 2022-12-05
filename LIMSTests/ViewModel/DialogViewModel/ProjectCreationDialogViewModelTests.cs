@@ -10,11 +10,10 @@ namespace LIMS.ViewModel.Tests
     [TestClass]
     public class ProjectCreationDialogViewModelTests
     {
-        ProjectEditDialogViewModel _viewModel = default!;
-        Mock<IDataService> _mockFileDataService = default!;
-        FileDataService _fileDataService = default!;
-        MockFileSystem _mockFileSystem = default!;
-
+        private ProjectEditDialogViewModel _viewModel = default!;
+        private Mock<IDataService> _mockFileDataService = default!;
+        private FileDataService _fileDataService = default!;
+        private MockFileSystem _mockFileSystem = default!;
 
         [TestInitialize]
         public void SetupTestWithMockFileDataService()
@@ -30,18 +29,6 @@ namespace LIMS.ViewModel.Tests
             _mockFileSystem = new MockFileSystem();
             _fileDataService = new FileDataService(_mockFileSystem);
             _viewModel = new ProjectEditDialogViewModel(_fileDataService);
-        }
-
-        private Project SetupTestProject(string projectName)
-        {
-            var expectedProject = new Project(projectName);
-            var expectedAppDataRoaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            var expectedAppDirectory = Path.Combine(expectedAppDataRoaming, "LIMS");
-            var expectedProjectsDirectory = Path.Combine(expectedAppDirectory, "Projects");
-
-            _mockFileSystem.AddDirectory(expectedProjectsDirectory);
-            _mockFileSystem.AddDirectory(Path.Combine(expectedProjectsDirectory, projectName));
-            return expectedProject;
         }
 
         [TestMethod]
@@ -62,10 +49,12 @@ namespace LIMS.ViewModel.Tests
         public void NewProjectName_RaisesPropertyChanged_WhenPropertyChanged()
         {
             _viewModel.Load();
-            var fired = _viewModel.IsPropertyChangedFired(() =>
+            var fired = _viewModel.IsPropertyChangedFired(
+                () =>
             {
                 _viewModel.NewProjectName = "changed";
-            }, nameof(_viewModel.NewProjectName));
+            },
+                nameof(_viewModel.NewProjectName));
 
             Assert.IsTrue(fired);
         }
@@ -79,7 +68,7 @@ namespace LIMS.ViewModel.Tests
             const string EXPECTEDERRORMESSAGE = "Project name is too long";
 
             Assert.IsTrue(_viewModel.HasErrors);
-            Assert.IsTrue(errorList.Count() == 1);
+            Assert.IsTrue(errorList.Count == 1);
             Assert.AreEqual(EXPECTEDERRORMESSAGE, errorList.SingleOrDefault());
         }
 
@@ -104,7 +93,7 @@ namespace LIMS.ViewModel.Tests
             const string EXPECTEDERRORMESSAGE = "Project name cannot contain: < > \\ / \" : | ? * .";
 
             Assert.IsTrue(_viewModel.HasErrors);
-            Assert.IsTrue(errorList.Count() == 1);
+            Assert.IsTrue(errorList.Count == 1);
             Assert.AreEqual(EXPECTEDERRORMESSAGE, errorList.SingleOrDefault());
         }
 
@@ -125,14 +114,17 @@ namespace LIMS.ViewModel.Tests
         {
             const string TESTPROJECTNAME = "test";
             SetupTestForMockFileSystem();
-            Project expectedProject = SetupTestProject(TESTPROJECTNAME);
+            Project _ = SetupTestProject(TESTPROJECTNAME);
+
+
             _viewModel.Load();
+            _viewModel.NewProjectName = TESTPROJECTNAME;
             _viewModel.NewProjectName = TESTPROJECTNAME;
             List<string> errorList = _viewModel.GetErrorsAsList(nameof(_viewModel.NewProjectName));
             const string EXPECTEDERRORMESSAGE = "Project already exists";
 
             Assert.IsTrue(_viewModel.HasErrors);
-            Assert.IsTrue(errorList.Count() == 1);
+            Assert.IsTrue(errorList.Count == 1);
             Assert.AreEqual(EXPECTEDERRORMESSAGE, errorList.SingleOrDefault());
         }
 
@@ -181,10 +173,12 @@ namespace LIMS.ViewModel.Tests
         public void SelectedProject_RaisesPropertyChanged_WhenPropertyChanged()
         {
             _viewModel.Load();
-            var fired = _viewModel.IsPropertyChangedFired(() =>
+            var fired = _viewModel.IsPropertyChangedFired(
+                () =>
             {
                 _viewModel.SelectedProject = null;
-            }, nameof(_viewModel.SelectedProject));
+            },
+                nameof(_viewModel.SelectedProject));
 
             Assert.IsTrue(fired);
         }
@@ -213,6 +207,18 @@ namespace LIMS.ViewModel.Tests
             _viewModel.Load();
             _viewModel.SelectedProject = null;
             Assert.IsFalse(_viewModel.DeleteProjectCommand.CanExecute(null));
+        }
+
+        private Project SetupTestProject(string projectName)
+        {
+            var expectedProject = new Project(projectName);
+            var expectedAppDataRoaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            var expectedAppDirectory = Path.Combine(expectedAppDataRoaming, "LIMS");
+            var expectedProjectsDirectory = Path.Combine(expectedAppDirectory, "Projects");
+
+            _mockFileSystem.AddDirectory(expectedProjectsDirectory);
+            _mockFileSystem.AddDirectory(Path.Combine(expectedProjectsDirectory, projectName));
+            return expectedProject;
         }
     }
 }
