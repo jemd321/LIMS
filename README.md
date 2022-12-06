@@ -4,6 +4,8 @@ A full-stack C# WPF project, parsing raw output from LC-MS/MS instrument control
 
 The project is designed using MVVM architecture to allow for testability and maintainability. 
 
+Sample exports for import are available in /SampleExports.
+
 ## Project Creation
 Users can create a project structure using dialogs, with analytical run data stored on the local disk.
 ![LIMSProjects](https://user-images.githubusercontent.com/22641037/205672773-d340dd9e-16ef-4666-9db7-a8f8721c2e1f.jpg)
